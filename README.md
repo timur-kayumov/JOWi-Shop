@@ -1,2 +1,2 @@
 # JOWi-Shop
-Descruve later
+Describe later
