@@ -1,0 +1,44 @@
+{
+  "name": "@jowi/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next"
+  },
+  "dependencies": {
+    "next": "^15.1.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "@jowi/ui": "workspace:*",
+    "@jowi/validators": "workspace:*",
+    "@jowi/types": "workspace:*",
+    "@jowi/i18n": "workspace:*",
+    "next-auth": "^4.24.11",
+    "@tanstack/react-table": "^8.20.6",
+    "@tanstack/react-query": "^5.62.11",
+    "react-hook-form": "^7.54.2",
+    "@hookform/resolvers": "^3.9.1",
+    "zod": "^3.24.1",
+    "i18next": "^24.2.0",
+    "react-i18next": "^15.2.0",
+    "recharts": "^2.15.0",
+    "lucide-react": "^0.469.0",
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.6",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.4",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}

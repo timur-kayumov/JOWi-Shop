@@ -1,0 +1,35 @@
+{
+  "reports": {
+    "salesByPeriod": "Продажи по периодам",
+    "salesByProduct": "Продажи по товарам",
+    "salesByCategory": "Продажи по категориям",
+    "employeePerformance": "Эффективность сотрудников",
+    "shiftReport": "Сменный отчёт",
+    "stockReport": "Складской отчёт",
+    "profitReport": "Отчёт по прибыли"
+  },
+  "metrics": {
+    "revenue": "Выручка",
+    "profit": "Прибыль",
+    "margin": "Маржа",
+    "averageCheck": "Средний чек",
+    "transactions": "Транзакций",
+    "customers": "Клиентов"
+  },
+  "periods": {
+    "today": "Сегодня",
+    "yesterday": "Вчера",
+    "thisWeek": "Эта неделя",
+    "lastWeek": "Прошлая неделя",
+    "thisMonth": "Этот месяц",
+    "lastMonth": "Прошлый месяц",
+    "custom": "Произвольный период"
+  },
+  "cashbook": {
+    "title": "Кассовая книга",
+    "cashIn": "Внесение",
+    "cashOut": "Выплата",
+    "reason": "Основание",
+    "balance": "Баланс"
+  }
+}

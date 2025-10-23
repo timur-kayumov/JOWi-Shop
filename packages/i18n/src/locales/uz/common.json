@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "JOWi Shop",
+    "tagline": "Chakana savdo boshqaruv tizimi"
+  },
+  "actions": {
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash",
+    "add": "Qo'shish",
+    "create": "Yaratish",
+    "search": "Qidirish",
+    "filter": "Filtr",
+    "export": "Eksport",
+    "import": "Import",
+    "refresh": "Yangilash",
+    "close": "Yopish",
+    "submit": "Yuborish",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "confirm": "Tasdiqlash",
+    "view": "Ko'rish"
+  },
+  "status": {
+    "active": "Faol",
+    "inactive": "Faol emas",
+    "draft": "Qoralama",
+    "completed": "Tugallangan",
+    "pending": "Kutilmoqda",
+    "processing": "Qayta ishlanmoqda",
+    "failed": "Xato"
+  },
+  "navigation": {
+    "dashboard": "Boshqaruv paneli",
+    "sales": "Sotuvlar",
+    "products": "Mahsulotlar",
+    "inventory": "Ombor",
+    "customers": "Mijozlar",
+    "reports": "Hisobotlar",
+    "settings": "Sozlamalar",
+    "pos": "Kassa"
+  },
+  "fields": {
+    "name": "Nomi",
+    "description": "Tavsif",
+    "email": "Email",
+    "phone": "Telefon",
+    "address": "Manzil",
+    "date": "Sana",
+    "time": "Vaqt",
+    "amount": "Summa",
+    "quantity": "Miqdor",
+    "price": "Narx",
+    "total": "Jami",
+    "status": "Holat",
+    "createdAt": "Yaratilgan",
+    "updatedAt": "Yangilangan"
+  },
+  "messages": {
+    "loading": "Yuklanmoqda...",
+    "saving": "Saqlanmoqda...",
+    "saved": "Saqlandi",
+    "deleted": "O'chirildi",
+    "error": "Xatolik yuz berdi",
+    "success": "Muvaffaqiyatli",
+    "noData": "Ma'lumot yo'q",
+    "confirmDelete": "O'chirishni tasdiqlaysizmi?"
+  },
+  "currency": {
+    "uzs": "so'm"
+  },
+  "units": {
+    "pcs": "dona",
+    "kg": "kg",
+    "liter": "l",
+    "meter": "m"
+  }
+}

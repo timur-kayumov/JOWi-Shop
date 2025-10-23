@@ -1,0 +1,41 @@
+{
+  "documents": {
+    "receipt": "Приход",
+    "transfer": "Перемещение",
+    "return": "Возврат",
+    "writeoff": "Списание",
+    "count": "Инвентаризация"
+  },
+  "stock": {
+    "level": "Остаток",
+    "available": "Доступно",
+    "reserved": "Резерв",
+    "movement": "Движение",
+    "batch": "Партия",
+    "lowStock": "Низкий остаток"
+  },
+  "actions": {
+    "receive": "Оприходовать",
+    "transfer": "Переместить",
+    "writeOff": "Списать",
+    "count": "Провести инвентаризацию"
+  },
+  "fields": {
+    "documentNumber": "Номер документа",
+    "documentDate": "Дата документа",
+    "supplier": "Поставщик",
+    "fromStore": "Откуда",
+    "toStore": "Куда",
+    "expectedQuantity": "Ожидаемое количество",
+    "actualQuantity": "Фактическое количество",
+    "difference": "Разница",
+    "costPrice": "Себестоимость",
+    "totalCost": "Общая стоимость"
+  },
+  "messages": {
+    "stockUpdated": "Остатки обновлены",
+    "documentCreated": "Документ создан",
+    "lowStockWarning": "Товар заканчивается",
+    "outOfStock": "Товар отсутствует на складе"
+  }
+}

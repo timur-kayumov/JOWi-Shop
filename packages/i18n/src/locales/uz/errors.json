@@ -1,0 +1,40 @@
+{
+  "validation": {
+    "required": "Majburiy maydon",
+    "email": "Noto'g'ri email formati",
+    "minLength": "Minimal uzunlik: {{min}}",
+    "maxLength": "Maksimal uzunlik: {{max}}",
+    "min": "Minimal qiymat: {{min}}",
+    "max": "Maksimal qiymat: {{max}}",
+    "positive": "Qiymat musbat bo'lishi kerak",
+    "integer": "Qiymat butun son bo'lishi kerak"
+  },
+  "auth": {
+    "unauthorized": "Avtorizatsiya talab qilinadi",
+    "forbidden": "Ruxsat yo'q",
+    "invalidCredentials": "Noto'g'ri email yoki parol",
+    "sessionExpired": "Sessiya tugadi"
+  },
+  "pos": {
+    "shiftNotOpen": "Smena ochilmagan",
+    "shiftAlreadyOpen": "Smena allaqachon ochiq",
+    "insufficientStock": "Mahsulot yetarli emas",
+    "fiscalError": "Fiskalizatsiya xatosi",
+    "paymentFailed": "To'lov xatosi"
+  },
+  "inventory": {
+    "insufficientStock": "Mahsulot yetarli emas",
+    "invalidTransfer": "Noto'g'ri ko'chirish",
+    "documentNotFound": "Hujjat topilmadi"
+  },
+  "network": {
+    "offline": "Internet aloqasi yo'q",
+    "syncFailed": "Sinxronizatsiya xatosi",
+    "timeout": "Kutish vaqti tugadi"
+  },
+  "generic": {
+    "notFound": "Topilmadi",
+    "serverError": "Server xatosi",
+    "unknownError": "Noma'lum xato"
+  }
+}

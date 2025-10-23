@@ -1,0 +1,120 @@
+version: '3.9'
+
+services:
+  # PostgreSQL - Main OLTP Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: jowi-postgres
+    environment:
+      POSTGRES_USER: jowi
+      POSTGRES_PASSWORD: jowi_dev_password
+      POSTGRES_DB: jowi_shop
+      POSTGRES_INITDB_ARGS: '--encoding=UTF8 --lc-collate=C --lc-ctype=C'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U jowi']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jowi-network
+
+  # Redis - Caching & Queues
+  redis:
+    image: redis:7-alpine
+    container_name: jowi-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - jowi-network
+
+  # NATS - Event Broker
+  nats:
+    image: nats:2-alpine
+    container_name: jowi-nats
+    ports:
+      - '4222:4222' # Client connections
+      - '8222:8222' # HTTP monitoring
+    command: --jetstream --store_dir=/data
+    volumes:
+      - nats_data:/data
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', 'http://localhost:8222/healthz']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jowi-network
+
+  # ClickHouse - Analytics Database
+  clickhouse:
+    image: clickhouse/clickhouse-server:24-alpine
+    container_name: jowi-clickhouse
+    environment:
+      CLICKHOUSE_DB: jowi_analytics
+      CLICKHOUSE_USER: jowi
+      CLICKHOUSE_PASSWORD: jowi_dev_password
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    ports:
+      - '8123:8123' # HTTP interface
+      - '9000:9000' # Native protocol
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'http://localhost:8123/ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jowi-network
+
+  # pgAdmin - PostgreSQL Management (Optional)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: jowi-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@jowi.shop
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - '5050:80'
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - jowi-network
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  nats_data:
+    driver: local
+  clickhouse_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  jowi-network:
+    driver: bridge

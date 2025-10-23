@@ -1,0 +1,79 @@
+{
+  "app": {
+    "name": "JOWi Shop",
+    "tagline": "Система управления розничной торговлей"
+  },
+  "actions": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Изменить",
+    "add": "Добавить",
+    "create": "Создать",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "refresh": "Обновить",
+    "close": "Закрыть",
+    "submit": "Отправить",
+    "back": "Назад",
+    "next": "Далее",
+    "confirm": "Подтвердить",
+    "view": "Просмотр"
+  },
+  "status": {
+    "active": "Активный",
+    "inactive": "Неактивный",
+    "draft": "Черновик",
+    "completed": "Завершен",
+    "pending": "Ожидает",
+    "processing": "Обрабатывается",
+    "failed": "Ошибка"
+  },
+  "navigation": {
+    "dashboard": "Панель управления",
+    "sales": "Продажи",
+    "products": "Товары",
+    "inventory": "Склад",
+    "customers": "Клиенты",
+    "reports": "Отчёты",
+    "settings": "Настройки",
+    "pos": "Касса"
+  },
+  "fields": {
+    "name": "Название",
+    "description": "Описание",
+    "email": "Email",
+    "phone": "Телефон",
+    "address": "Адрес",
+    "date": "Дата",
+    "time": "Время",
+    "amount": "Сумма",
+    "quantity": "Количество",
+    "price": "Цена",
+    "total": "Итого",
+    "status": "Статус",
+    "createdAt": "Создано",
+    "updatedAt": "Обновлено"
+  },
+  "messages": {
+    "loading": "Загрузка...",
+    "saving": "Сохранение...",
+    "saved": "Сохранено",
+    "deleted": "Удалено",
+    "error": "Произошла ошибка",
+    "success": "Успешно",
+    "noData": "Нет данных",
+    "confirmDelete": "Вы уверены, что хотите удалить?"
+  },
+  "currency": {
+    "uzs": "сўм"
+  },
+  "units": {
+    "pcs": "шт",
+    "kg": "кг",
+    "liter": "л",
+    "meter": "м"
+  }
+}

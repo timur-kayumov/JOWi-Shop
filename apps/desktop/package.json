@@ -1,0 +1,16 @@
+{
+  "name": "@jowi/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "JOWi Shop POS Desktop Client (Electron)",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "echo 'Electron desktop app - to be implemented with Vite + React'",
+    "build": "echo 'Build desktop app'",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

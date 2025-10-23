@@ -1,0 +1,54 @@
+{
+  "name": "jowi-shop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cloud-based retail management system (POS + ERP) for Uzbekistan market",
+  "keywords": [
+    "pos",
+    "retail",
+    "erp",
+    "uzbekistan",
+    "multi-tenant"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/JOWi-Shop.git"
+  },
+  "license": "UNLICENSED",
+  "author": "JOWi Team",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "type-check": "turbo run type-check",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:generate": "pnpm --filter @jowi/database db:generate",
+    "db:push": "pnpm --filter @jowi/database db:push",
+    "db:migrate": "pnpm --filter @jowi/database db:migrate",
+    "db:studio": "pnpm --filter @jowi/database db:studio",
+    "db:seed": "pnpm --filter @jowi/database db:seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@turbo/gen": "^2.3.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.15.2",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "documents": {
+    "receipt": "Qabul qilish",
+    "transfer": "Ko'chirish",
+    "return": "Qaytarish",
+    "writeoff": "Hisobdan chiqarish",
+    "count": "Inventarizatsiya"
+  },
+  "stock": {
+    "level": "Qoldiq",
+    "available": "Mavjud",
+    "reserved": "Zaxira",
+    "movement": "Harakat",
+    "batch": "Partiya",
+    "lowStock": "Kam qoldiq"
+  },
+  "actions": {
+    "receive": "Qabul qilish",
+    "transfer": "Ko'chirish",
+    "writeOff": "Hisobdan chiqarish",
+    "count": "Inventarizatsiya o'tkazish"
+  },
+  "fields": {
+    "documentNumber": "Hujjat raqami",
+    "documentDate": "Hujjat sanasi",
+    "supplier": "Yetkazib beruvchi",
+    "fromStore": "Qayerdan",
+    "toStore": "Qayerga",
+    "expectedQuantity": "Kutilgan miqdor",
+    "actualQuantity": "Haqiqiy miqdor",
+    "difference": "Farq",
+    "costPrice": "Tannarx",
+    "totalCost": "Umumiy narx"
+  },
+  "messages": {
+    "stockUpdated": "Qoldiqlar yangilandi",
+    "documentCreated": "Hujjat yaratildi",
+    "lowStockWarning": "Mahsulot tugamoqda",
+    "outOfStock": "Mahsulot omborda yo'q"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "validation": {
+    "required": "Обязательное поле",
+    "email": "Неверный формат email",
+    "minLength": "Минимальная длина: {{min}}",
+    "maxLength": "Максимальная длина: {{max}}",
+    "min": "Минимальное значение: {{min}}",
+    "max": "Максимальное значение: {{max}}",
+    "positive": "Значение должно быть положительным",
+    "integer": "Значение должно быть целым числом"
+  },
+  "auth": {
+    "unauthorized": "Требуется авторизация",
+    "forbidden": "Доступ запрещён",
+    "invalidCredentials": "Неверный email или пароль",
+    "sessionExpired": "Сессия истекла"
+  },
+  "pos": {
+    "shiftNotOpen": "Смена не открыта",
+    "shiftAlreadyOpen": "Смена уже открыта",
+    "insufficientStock": "Недостаточно товара на складе",
+    "fiscalError": "Ошибка фискализации",
+    "paymentFailed": "Ошибка оплаты"
+  },
+  "inventory": {
+    "insufficientStock": "Недостаточно товара",
+    "invalidTransfer": "Некорректное перемещение",
+    "documentNotFound": "Документ не найден"
+  },
+  "network": {
+    "offline": "Нет подключения к интернету",
+    "syncFailed": "Ошибка синхронизации",
+    "timeout": "Превышено время ожидания"
+  },
+  "generic": {
+    "notFound": "Не найдено",
+    "serverError": "Ошибка сервера",
+    "unknownError": "Неизвестная ошибка"
+  }
+}

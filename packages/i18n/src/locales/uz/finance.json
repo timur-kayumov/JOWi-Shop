@@ -1,0 +1,35 @@
+{
+  "reports": {
+    "salesByPeriod": "Davr bo'yicha sotuvlar",
+    "salesByProduct": "Mahsulot bo'yicha sotuvlar",
+    "salesByCategory": "Kategoriya bo'yicha sotuvlar",
+    "employeePerformance": "Xodimlar samaradorligi",
+    "shiftReport": "Smena hisoboti",
+    "stockReport": "Ombor hisoboti",
+    "profitReport": "Foyda hisoboti"
+  },
+  "metrics": {
+    "revenue": "Daromad",
+    "profit": "Foyda",
+    "margin": "Marja",
+    "averageCheck": "O'rtacha chek",
+    "transactions": "Tranzaksiyalar",
+    "customers": "Mijozlar"
+  },
+  "periods": {
+    "today": "Bugun",
+    "yesterday": "Kecha",
+    "thisWeek": "Shu hafta",
+    "lastWeek": "O'tgan hafta",
+    "thisMonth": "Shu oy",
+    "lastMonth": "O'tgan oy",
+    "custom": "Boshqa davr"
+  },
+  "cashbook": {
+    "title": "Kassa kitobi",
+    "cashIn": "Kirim",
+    "cashOut": "Chiqim",
+    "reason": "Sabab",
+    "balance": "Balans"
+  }
+}

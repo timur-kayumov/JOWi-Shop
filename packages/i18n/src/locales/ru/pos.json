@@ -1,0 +1,59 @@
+{
+  "shift": {
+    "open": "Открыть смену",
+    "close": "Закрыть смену",
+    "current": "Текущая смена",
+    "number": "Смена №",
+    "openedAt": "Открыта",
+    "closedAt": "Закрыта",
+    "openingCash": "Начальная сумма",
+    "closingCash": "Конечная сумма",
+    "totalSales": "Всего продаж",
+    "cashIn": "Внесения",
+    "cashOut": "Выплаты"
+  },
+  "receipt": {
+    "new": "Новый чек",
+    "number": "Чек №",
+    "items": "Позиции",
+    "addItem": "Добавить товар",
+    "removeItem": "Удалить позицию",
+    "subtotal": "Подытог",
+    "discount": "Скидка",
+    "tax": "НДС",
+    "total": "К оплате",
+    "payment": "Оплата",
+    "change": "Сдача",
+    "complete": "Завершить",
+    "cancel": "Отменить чек",
+    "print": "Печать чека"
+  },
+  "payment": {
+    "method": "Способ оплаты",
+    "cash": "Наличные",
+    "card": "Карта",
+    "transfer": "Перевод",
+    "installment": "Рассрочка",
+    "received": "Получено",
+    "change": "Сдача"
+  },
+  "scanner": {
+    "scan": "Сканировать штрихкод",
+    "notFound": "Товар не найден",
+    "manualEntry": "Ввести вручную"
+  },
+  "customer": {
+    "select": "Выбрать клиента",
+    "loyaltyCard": "Карта лояльности",
+    "points": "Баллы",
+    "scanCard": "Сканировать карту"
+  },
+  "hotkeys": {
+    "newReceipt": "F1 - Новый чек",
+    "search": "F2 - Поиск товара",
+    "customer": "F3 - Клиент",
+    "discount": "F4 - Скидка",
+    "payment": "F9 - Оплата",
+    "cancel": "ESC - Отмена"
+  }
+}

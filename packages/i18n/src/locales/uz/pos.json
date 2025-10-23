@@ -1,0 +1,59 @@
+{
+  "shift": {
+    "open": "Smenani ochish",
+    "close": "Smenani yopish",
+    "current": "Joriy smena",
+    "number": "Smena №",
+    "openedAt": "Ochildi",
+    "closedAt": "Yopildi",
+    "openingCash": "Boshlang'ich summa",
+    "closingCash": "Yakuniy summa",
+    "totalSales": "Jami sotuvlar",
+    "cashIn": "Kirimlar",
+    "cashOut": "Chiqimlar"
+  },
+  "receipt": {
+    "new": "Yangi chek",
+    "number": "Chek №",
+    "items": "Pozitsiyalar",
+    "addItem": "Mahsulot qo'shish",
+    "removeItem": "O'chirish",
+    "subtotal": "Oraliq jami",
+    "discount": "Chegirma",
+    "tax": "QQS",
+    "total": "To'lash kerak",
+    "payment": "To'lov",
+    "change": "Qaytim",
+    "complete": "Tugatish",
+    "cancel": "Bekor qilish",
+    "print": "Chekni chop etish"
+  },
+  "payment": {
+    "method": "To'lov usuli",
+    "cash": "Naqd",
+    "card": "Karta",
+    "transfer": "O'tkazma",
+    "installment": "Bo'lib to'lash",
+    "received": "Qabul qilindi",
+    "change": "Qaytim"
+  },
+  "scanner": {
+    "scan": "Shtrix-kodni skanerlash",
+    "notFound": "Mahsulot topilmadi",
+    "manualEntry": "Qo'lda kiritish"
+  },
+  "customer": {
+    "select": "Mijozni tanlash",
+    "loyaltyCard": "Sodiqlik kartasi",
+    "points": "Ballar",
+    "scanCard": "Kartani skanerlash"
+  },
+  "hotkeys": {
+    "newReceipt": "F1 - Yangi chek",
+    "search": "F2 - Qidirish",
+    "customer": "F3 - Mijoz",
+    "discount": "F4 - Chegirma",
+    "payment": "F9 - To'lov",
+    "cancel": "ESC - Bekor qilish"
+  }
+}
