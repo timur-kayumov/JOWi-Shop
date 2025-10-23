@@ -166,4 +166,5 @@ export const cashOperationSchema = z.object({
 });
 
 // Export all schemas
+export * from './auth';
 export * from './inventory';

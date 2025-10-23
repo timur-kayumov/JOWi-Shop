@@ -20,6 +20,7 @@ model Business {
   taxId     String   @unique
   currency  String   @default("UZS")
   locale    String   @default("ru")
+  metadata  Json     @default("{}")
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,9 +85,10 @@ model Terminal {
 model User {
   id        String   @id @default(uuid())
   tenantId  String   @map("tenant_id")
+  phone     String   @unique
   email     String   @unique
   name      String
-  password  String
+  password  String?
   role      String   // admin, manager, cashier, warehouse
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())

@@ -186,6 +186,16 @@ JOWi Shop is a cloud-based retail management system (POS + ERP) for small and me
 
 ## Development Guidelines
 
+### Local Development Server Management
+- **Port Consistency:** Always use port 3000 for the Next.js web application
+- **Before Starting Dev Servers:** ALWAYS kill existing dev server processes to free up ports
+- **Never Allow Port Drift:** Do not let Next.js auto-select alternative ports (3001, 3002, 3003, etc.)
+- **Process Management:**
+  1. Before running `pnpm dev`, kill any existing dev server processes
+  2. Use `KillShell` to terminate background processes before starting new ones
+  3. Check for port conflicts and resolve them by terminating old processes
+- **Rationale:** Multiple running instances on different ports cause confusion, resource waste, and potential conflicts
+
 ### Code Organization
 - **Monorepo:** Likely structure with shared packages
 - **Shared Types:** Zod schemas shared between frontend and backend

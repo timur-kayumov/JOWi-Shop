@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm add:*)",
+      "Bash(npm install:*)",
+      "Bash(cat:*)",
+      "Bash(test:*)",
+      "Bash(pnpm docker:up:*)",
+      "Bash(timeout 10 bash -c 'until docker ps &gt;/dev/null 2&gt;&1; do sleep 1; done && echo \"\"Docker is ready\"\"')",
+      "Bash(docker:*)",
+      "Bash(pnpm prisma db pull:*)",
+      "Bash(pnpm prisma db push:*)",
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm dev:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_close",
+      "WebSearch",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_type"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
