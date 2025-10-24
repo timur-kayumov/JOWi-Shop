@@ -1,0 +1,84 @@
+'use client';
+
+import * as React from 'react';
+import { cn } from '../lib/utils';
+import { SidebarTrigger, useSidebar } from './sidebar';
+import { Breadcrumbs, BreadcrumbItem } from './breadcrumbs';
+import { SearchBar } from './search-bar';
+import { NotificationBadge } from './notification-badge';
+import { ThemeToggle } from './theme-toggle';
+import { UserMenu, UserMenuProps } from './user-menu';
+
+interface TopBarProps {
+  breadcrumbs?: BreadcrumbItem[];
+  onBreadcrumbNavigate?: (href: string) => void;
+  onSearch?: (query: string) => void;
+  notificationCount?: number;
+  onNotificationsClick?: () => void;
+  user: UserMenuProps['user'];
+  onSettingsClick?: () => void;
+  onProfileClick?: () => void;
+  onLogoutClick?: () => void;
+  className?: string;
+}
+
+export function TopBar({
+  breadcrumbs = [],
+  onBreadcrumbNavigate,
+  onSearch,
+  notificationCount = 0,
+  onNotificationsClick,
+  user,
+  onSettingsClick,
+  onProfileClick,
+  onLogoutClick,
+  className,
+}: TopBarProps) {
+  const { collapsed } = useSidebar();
+
+  return (
+    <header
+      className={cn(
+        'sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4',
+        className
+      )}
+    >
+      {/* Mobile menu trigger */}
+      <SidebarTrigger />
+
+      {/* Breadcrumbs */}
+      {breadcrumbs.length > 0 && (
+        <Breadcrumbs
+          items={breadcrumbs}
+          onNavigate={onBreadcrumbNavigate}
+          className="hidden md:flex"
+        />
+      )}
+
+      {/* Spacer */}
+      <div className="flex-1" />
+
+      {/* Search bar */}
+      <SearchBar
+        onSearch={onSearch}
+        placeholder="Поиск..."
+        className="hidden w-64 md:block lg:w-80"
+      />
+
+      {/* Actions */}
+      <div className="flex items-center gap-2">
+        <NotificationBadge
+          count={notificationCount}
+          onClick={onNotificationsClick}
+        />
+        <ThemeToggle />
+        <UserMenu
+          user={user}
+          onSettingsClick={onSettingsClick}
+          onProfileClick={onProfileClick}
+          onLogoutClick={onLogoutClick}
+        />
+      </div>
+    </header>
+  );
+}

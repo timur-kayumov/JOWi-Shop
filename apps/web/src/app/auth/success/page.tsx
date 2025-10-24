@@ -59,7 +59,7 @@ export default function AuthSuccessPage() {
         {/* Actions */}
         <div className="space-y-3">
           <Button asChild className="w-full">
-            <Link href="/dashboard">Перейти в панель управления</Link>
+            <Link href="/intranet/stores">Перейти в интранет</Link>
           </Button>
           <Button asChild variant="outline" className="w-full">
             <Link href="/login">Войти снова</Link>
