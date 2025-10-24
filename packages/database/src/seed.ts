@@ -44,6 +44,7 @@ async function main() {
       tenantId: business.id,
       email: 'admin@jowi.shop',
       name: 'Admin User',
+      phone: '+998901234567',
       password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYqNw8QD.qC', // password: admin123
       role: 'admin',
     },

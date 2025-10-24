@@ -31,6 +31,53 @@ export const registerSchema = z.object({
   locale: localeSchema.default('ru'),
 });
 
+export const sendOtpSchema = z.object({
+  phone: z.string().min(9).max(20),
+});
+
+export const verifyOtpSchema = z.object({
+  phone: z.string().min(9).max(20),
+  otp: z.string().length(6),
+});
+
+// Registration multi-step schemas
+export const registerStep1Schema = z.object({
+  phone: z.string().min(12, 'Введите корректный номер телефона'),
+  name: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(100),
+  agreedToTerms: z.boolean().refine((val) => val === true, {
+    message: 'Необходимо согласиться с условиями',
+  }),
+});
+
+export const registerStep2Schema = z.object({
+  phone: z.string().min(12),
+  otp: z.string().length(6, 'Код должен содержать 6 цифр'),
+});
+
+export const registerStep3Schema = z.object({
+  businessType: z.enum(['single_brand', 'multi_brand'], {
+    errorMap: () => ({ message: 'Выберите тип бизнеса' }),
+  }),
+  businessName: z.string().min(2, 'Название должно содержать минимум 2 символа').max(200),
+});
+
+// Login multi-step schemas
+export const loginStep1Schema = z.object({
+  phone: z.string().min(12, 'Введите корректный номер телефона'),
+});
+
+export const loginStep2Schema = z.object({
+  phone: z.string().min(12),
+  otp: z.string().length(6, 'Код должен содержать 6 цифр'),
+});
+
+// TypeScript types for the schemas
+export type RegisterStep1Schema = z.infer<typeof registerStep1Schema>;
+export type RegisterStep2Schema = z.infer<typeof registerStep2Schema>;
+export type RegisterStep3Schema = z.infer<typeof registerStep3Schema>;
+export type LoginStep1Schema = z.infer<typeof loginStep1Schema>;
+export type LoginStep2Schema = z.infer<typeof loginStep2Schema>;
+
 // Business
 export const createBusinessSchema = z.object({
   name: z.string().min(2).max(200),
@@ -56,7 +103,7 @@ export const terminalSettingsSchema = z.object({
   printerConfig: z
     .object({
       type: z.enum(['escpos', 'pdf']),
-      width: z.enum([48, 80]),
+      width: z.union([z.literal(48), z.literal(80)]),
       encoding: z.enum(['utf8', 'cp866']),
     })
     .optional(),
@@ -166,5 +213,6 @@ export const cashOperationSchema = z.object({
 });
 
 // Export all schemas
-export * from './auth';
-export * from './inventory';
+// TODO: Add auth and inventory schema modules when needed
+// export * from './auth';
+// export * from './inventory';

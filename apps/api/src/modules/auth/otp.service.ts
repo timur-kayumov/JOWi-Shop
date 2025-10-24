@@ -17,7 +17,7 @@ export class OtpService {
   private readonly MAX_ATTEMPTS = 3;
 
   constructor(private readonly configService: ConfigService) {
-    const redisUrl = this.configService.get<string>('REDIS_URL');
+    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
     this.redis = new Redis(redisUrl);
 
     this.redis.on('connect', () => {

@@ -29,8 +29,8 @@ export class TelegramService {
   private readonly apiUrl: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.apiToken = this.configService.get<string>('TELEGRAM_GATEWAY_API_TOKEN');
-    this.apiUrl = this.configService.get<string>('TELEGRAM_GATEWAY_API_URL');
+    this.apiToken = this.configService.get<string>('TELEGRAM_GATEWAY_API_TOKEN') || '';
+    this.apiUrl = this.configService.get<string>('TELEGRAM_GATEWAY_API_URL') || 'https://gatewayapi.telegram.org';
 
     if (!this.apiToken) {
       this.logger.warn(
@@ -73,7 +73,7 @@ export class TelegramService {
         throw new Error(`Failed to send verification code: ${response.statusText}`);
       }
 
-      const data: SendVerificationMessageResponse = await response.json();
+      const data = (await response.json()) as SendVerificationMessageResponse;
 
       if (!data.success) {
         throw new Error('Telegram Gateway returned success=false');
@@ -85,7 +85,8 @@ export class TelegramService {
 
       return data.request_id;
     } catch (error) {
-      this.logger.error(`Error sending verification code: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error sending verification code: ${err.message}`, err.stack);
       throw error;
     }
   }
@@ -125,7 +126,7 @@ export class TelegramService {
         throw new Error(`Failed to verify code: ${response.statusText}`);
       }
 
-      const data: CheckVerificationStatusResponse = await response.json();
+      const data = (await response.json()) as CheckVerificationStatusResponse;
 
       const isValid = data.verification_status === 'code_valid';
 
@@ -135,7 +136,8 @@ export class TelegramService {
 
       return isValid;
     } catch (error) {
-      this.logger.error(`Error verifying code: ${error.message}`, error.stack);
+      const err = error as Error;
+      this.logger.error(`Error verifying code: ${err.message}`, err.stack);
       throw error;
     }
   }

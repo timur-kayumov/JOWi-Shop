@@ -4,20 +4,37 @@ import {
   BadRequestException,
   ConflictException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import { DatabaseService } from '../database/database.service';
 import { TelegramService } from '../telegram/telegram.service';
 import { OtpService } from './otp.service';
 import { RegisterDto } from './dto/register.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly db: DatabaseService,
     private readonly telegramService: TelegramService,
-    private readonly otpService: OtpService
+    private readonly otpService: OtpService,
+    private readonly jwtService: JwtService
   ) {}
+
+  /**
+   * Generate JWT access token
+   */
+  private generateAccessToken(userId: string, tenantId: string, role: string, email: string): string {
+    const payload: JwtPayload = {
+      sub: userId,
+      tenant_id: tenantId,
+      role,
+      email,
+    };
+    return this.jwtService.sign(payload);
+  }
 
   /**
    * Send OTP code to phone number
@@ -92,38 +109,39 @@ export class AuthService {
   /**
    * Register new user
    */
-  async register(dto: RegisterDto): Promise<{ success: boolean; user: any }> {
-    const { phone, name, businessType, businessName } = dto;
+  async register(dto: RegisterDto): Promise<{ success: boolean; user: any; accessToken: string }> {
+    const { email, name, password, businessName, taxId, locale } = dto;
 
     // Check if user already exists
-    const existingUser = await this.db.client.user.findUnique({
-      where: { phone },
+    const existingUser = await this.db.user.findUnique({
+      where: { email },
     });
 
     if (existingUser) {
-      throw new ConflictException('Пользователь с таким номером уже существует');
+      throw new ConflictException('Пользователь с таким email уже существует');
     }
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create business first
-    const business = await this.db.client.business.create({
+    const business = await this.db.business.create({
       data: {
         name: businessName,
-        taxId: `TEMP-${Date.now()}`, // Temporary taxId, will be updated later
+        taxId: taxId || `TEMP-${Date.now()}`, // Temporary taxId if not provided
         currency: 'UZS',
-        locale: 'ru',
+        locale: locale || 'ru',
         isActive: true,
-        metadata: {
-          businessType,
-        },
       },
     });
 
     // Create user
-    const user = await this.db.client.user.create({
+    const user = await this.db.user.create({
       data: {
-        phone,
+        phone: email.split('@')[0], // Extract phone from email or use email prefix
         name,
-        email: `${phone}@temp.jowi.shop`, // Temporary email
+        email,
+        password: hashedPassword,
         role: 'admin',
         isActive: true,
         tenantId: business.id,
@@ -139,21 +157,24 @@ export class AuthService {
       },
     });
 
-    // TODO: Generate JWT token
+    // Generate JWT token
+    const accessToken = this.generateAccessToken(user.id, user.tenantId, user.role, user.email);
+
     return {
       success: true,
       user,
+      accessToken,
     };
   }
 
   /**
    * Login existing user
    */
-  async login(dto: VerifyOtpDto): Promise<{ success: boolean; user: any }> {
+  async login(dto: VerifyOtpDto): Promise<{ success: boolean; user: any; accessToken: string }> {
     const { phone } = dto;
 
     // Find user by phone
-    const user = await this.db.client.user.findUnique({
+    const user = await this.db.user.findUnique({
       where: { phone },
       select: {
         id: true,
@@ -175,10 +196,13 @@ export class AuthService {
       throw new UnauthorizedException('Аккаунт заблокирован');
     }
 
-    // TODO: Generate JWT token
+    // Generate JWT token
+    const accessToken = this.generateAccessToken(user.id, user.tenantId, user.role, user.email);
+
     return {
       success: true,
       user,
+      accessToken,
     };
   }
 }

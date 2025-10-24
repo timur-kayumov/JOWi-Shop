@@ -182,6 +182,7 @@ The desktop POS client uses:
 - **Sync Pattern:** Outbox/Inbox queues
 - **Conflict Resolution:** Last-write-wins for sales, merge for catalog
 - **Idempotency:** UUID-based operation IDs
+- **Auto-Update:** Automatic updates via electron-updater ensure users always have the latest version
 
 ### Fiscalization
 

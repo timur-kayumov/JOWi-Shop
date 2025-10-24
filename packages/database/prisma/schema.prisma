@@ -24,6 +24,7 @@ model Business {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 
   stores               Store[]
   users                User[]
@@ -44,6 +45,7 @@ model Store {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 
   business   Business    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   terminals  Terminal[]
@@ -68,6 +70,7 @@ model Terminal {
   isActive          Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  deletedAt         DateTime? @map("deleted_at")
 
   store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
   shifts   Shift[]
@@ -93,6 +96,7 @@ model User {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 
   business  Business   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   employee  Employee?
@@ -109,6 +113,7 @@ model Employee {
   pin       String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -132,6 +137,7 @@ model Category {
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? @map("deleted_at")
 
   business Business  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   parent   Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
@@ -154,6 +160,7 @@ model Product {
   hasVariants Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  deletedAt   DateTime? @map("deleted_at")
 
   business Business          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   category Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -178,6 +185,7 @@ model ProductVariant {
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  deletedAt  DateTime? @map("deleted_at")
 
   product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
   stockLevels  StockLevel[]
@@ -241,6 +249,7 @@ model MovementDocument {
   status         String   @default("draft")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  deletedAt      DateTime? @map("deleted_at")
 
   store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
   items MovementItem[]
@@ -345,6 +354,7 @@ model Customer {
   loyaltyCardNumber String?  @unique @map("loyalty_card_number")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  deletedAt         DateTime? @map("deleted_at")
 
   business            Business             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   receipts            Receipt[]
@@ -413,4 +423,26 @@ model CashOperation {
   @@index([tenantId])
   @@index([shiftId])
   @@map("cash_operations")
+}
+
+// ============================================
+// AUDIT LOG
+// ============================================
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  tenantId   String   @map("tenant_id")
+  userId     String?  @map("user_id")
+  action     String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
+  entity     String   // User, Product, Receipt, etc.
+  entityId   String?  @map("entity_id")
+  changes    Json?    // Before/after values for updates
+  metadata   Json?    // Additional context (IP, user agent, etc.)
+  createdAt  DateTime @default(now())
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

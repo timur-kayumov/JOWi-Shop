@@ -39,7 +39,65 @@ JOWi Shop is a cloud-based retail management system (POS + ERP) for small and me
 - **Local Database:** SQLite with Write-Ahead Logging (WAL mode)
 - **Sync Pattern:** Outbox/Inbox queues with idempotent commands
 - **Conflict Resolution:** Last-write-wins for sales transactions, merge rules for catalog data
-- **Auto-update:** Electron auto-updater for desktop client
+- **Auto-update:** Electron auto-updater for desktop client (see detailed requirements below)
+
+### Desktop Application Auto-Update System
+The Windows desktop POS application requires an automatic update mechanism to ensure all users always have the latest version without manual intervention.
+
+**Core Requirements:**
+- **Automatic Update Detection:** Desktop app checks for updates on startup and periodically (every 4-6 hours)
+- **Background Download:** New versions download automatically in the background without interrupting POS operations
+- **User Notification:** When update is ready, show non-intrusive notification with "Install Update" button
+- **Deferred Installation:** Users can continue working and install updates during breaks or shift changes
+- **Mandatory Updates:** Critical security/fiscal compliance updates can be marked as mandatory
+- **Rollback Capability:** Support for rolling back to previous version if update causes issues
+
+**Technical Implementation:**
+- **Update Framework:** Use `electron-updater` (part of electron-builder ecosystem)
+- **Distribution Server:**
+  - **MVP:** GitHub Releases (free, reliable, automatic with electron-builder)
+  - **Production:** Custom S3/CDN server for faster distribution in Uzbekistan
+- **Update Format:** NSIS installer for Windows with delta updates to minimize download size
+- **Code Signing:** All updates must be digitally signed with valid Windows code signing certificate
+- **Update Channels:**
+  - `stable` - Production releases for all users
+  - `beta` - Early access for testing new features (opt-in)
+- **Version Manifest:** Server hosts `latest.yml` file with version info, release notes, and download URLs
+- **Integrity Checks:** SHA-512 checksums verify download integrity before installation
+
+**Update Flow:**
+1. App checks update server on startup and every 4-6 hours
+2. If new version available, download begins in background
+3. Once downloaded and verified, show toast notification: "Обновление готово к установке"
+4. User clicks "Установить обновление" button or defers to later
+5. On install trigger: save current state, close app, run installer, restart app
+6. New version validates database schema compatibility and applies migrations if needed
+7. User continues working with updated version
+
+**Offline Considerations:**
+- If terminal is offline, update check fails silently
+- When connection restored, update check resumes
+- Updates never interrupt active sales transactions
+- Shift must be closed before mandatory updates install
+
+**Error Handling:**
+- If update download fails, retry with exponential backoff
+- If installation fails, automatic rollback to previous version
+- All update events logged to audit log
+- Failed updates reported to central monitoring system
+
+**User Experience:**
+- Minimal disruption to POS operations
+- Clear update progress indication
+- Option to view release notes before installing
+- Estimated downtime shown (typically 30-60 seconds)
+- No user action required for most updates
+
+**Security:**
+- Only signed updates from trusted sources accepted
+- HTTPS-only communication with update server
+- Certificate pinning to prevent MITM attacks
+- Update payload verification before execution
 
 ## Multi-Tenant Architecture
 

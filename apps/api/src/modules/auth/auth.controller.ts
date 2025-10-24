@@ -4,9 +4,11 @@ import { AuthService } from './auth.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { RegisterDto } from './dto/register.dto';
+import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
+@Public() // All auth endpoints are public (no authentication required)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

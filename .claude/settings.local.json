@@ -22,7 +22,14 @@
       "mcp__playwright__browser_console_messages",
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_resize",
-      "mcp__playwright__browser_snapshot"
+      "mcp__playwright__browser_snapshot",
+      "Bash(pnpm:*)",
+      "Bash(set PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=да, мы сейчас всё делаем локально, поэтому проблем не будет)",
+      "Bash($env:PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"да, мы сейчас всё делаем локально, поэтому проблем не будет\")",
+      "Bash(timeout 10 bash -c 'until docker ps &>/dev/null 2>&1; do sleep 1; done && echo \"\"Docker is ready\"\"')",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "mcp__playwright__browser_fill_form"
     ],
     "deny": [],
     "ask": []

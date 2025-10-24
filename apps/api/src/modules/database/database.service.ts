@@ -1,19 +1,21 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { prisma } from '@jowi/database';
+import { PrismaClient } from '@jowi/database';
 
 @Injectable()
-export class DatabaseService implements OnModuleInit, OnModuleDestroy {
-  get client() {
-    return prisma;
+export class DatabaseService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  constructor() {
+    super({
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    });
   }
 
   async onModuleInit() {
-    await prisma.$connect();
+    await this.$connect();
     console.log('✅ Database connected');
   }
 
   async onModuleDestroy() {
-    await prisma.$disconnect();
+    await this.$disconnect();
     console.log('👋 Database disconnected');
   }
 }
