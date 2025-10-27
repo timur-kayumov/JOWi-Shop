@@ -29,7 +29,15 @@
       "Bash(timeout 10 bash -c 'until docker ps &>/dev/null 2>&1; do sleep 1; done && echo \"\"Docker is ready\"\"')",
       "Bash(netstat:*)",
       "Bash(findstr:*)",
-      "mcp__playwright__browser_fill_form"
+      "mcp__playwright__browser_fill_form",
+      "Bash(docker-compose up:*)",
+      "Bash(timeout 5 bash:*)",
+      "Bash(taskkill:*)",
+      "Bash(taskkill /F /PID 20140)",
+      "Bash(Stop-Process -Id 21984 -Force)",
+      "Bash(tskill:*)",
+      "Bash(set PORT=4000)",
+      "Bash(Stop-Process -Id 21956 -Force)"
     ],
     "deny": [],
     "ask": []

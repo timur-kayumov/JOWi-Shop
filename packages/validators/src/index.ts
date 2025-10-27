@@ -93,6 +93,13 @@ export const createStoreSchema = z.object({
   name: z.string().min(2).max(200),
   address: z.string().min(5).max(500),
   phone: z.string().min(9).max(20),
+  country: z.string().min(2).max(100).default('Uzbekistan'),
+  city: z.string().min(2).max(100),
+  logoUrl: z.string().url().optional(),
+  shiftTransitionTime: z
+    .string()
+    .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Время должно быть в формате HH:MM')
+    .default('00:00'),
   isActive: z.boolean().default(true),
 });
 
@@ -183,10 +190,15 @@ export const createReceiptSchema = z.object({
 });
 
 // Customer
+export const genderSchema = z.enum(['male', 'female', 'other']);
+
 export const createCustomerSchema = z.object({
-  name: z.string().min(2).max(100),
-  phone: z.string().min(9).max(20).optional(),
+  firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(100),
+  lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа').max(100),
+  phone: z.string().min(9).max(20),
   email: z.string().email().optional(),
+  gender: genderSchema.optional(),
+  dateOfBirth: z.date().optional(),
   loyaltyCardNumber: z.string().max(50).optional(),
 });
 
@@ -211,6 +223,68 @@ export const cashOperationSchema = z.object({
   amount: z.number().positive(),
   reason: z.string().min(2).max(500),
 });
+
+// Employee
+export const createEmployeeSchema = z.object({
+  firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(100),
+  lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа').max(100),
+  phone: z.string().min(9).max(20),
+  email: z.string().email(),
+  password: z.string().min(8, 'Пароль должен содержать минимум 8 символов'),
+  role: userRoleSchema,
+  storeId: z.string().uuid(),
+  citizenship: z.string().min(2).max(100),
+  passportSeries: z.string().min(1).max(10),
+  passportNumber: z.string().min(1).max(20),
+  pin: z.string().length(4).optional(),
+});
+
+export const updateEmployeeSchema = createEmployeeSchema.partial().omit({ password: true });
+
+// Permissions
+export const permissionResourceSchema = z.enum([
+  'stores',
+  'customers',
+  'employees',
+  'reports',
+  'products',
+  'inventory',
+  'finance',
+  'settings',
+]);
+
+export const permissionActionSchema = z.enum(['view', 'create', 'update', 'delete', 'manage']);
+
+export const createPermissionSchema = z.object({
+  name: z.string().min(3).max(100),
+  resource: permissionResourceSchema,
+  action: permissionActionSchema,
+  description: z.string().max(500).optional(),
+});
+
+export const userPermissionSchema = z.object({
+  userId: z.string().uuid(),
+  permissionId: z.string().uuid(),
+  allowed: z.boolean().default(true),
+});
+
+export const storeAccessSchema = z.object({
+  userId: z.string().uuid(),
+  storeId: z.string().uuid(),
+  permissions: z.record(z.boolean()).default({}),
+});
+
+// Export TypeScript types
+export type CreateStoreSchema = z.infer<typeof createStoreSchema>;
+export type UpdateStoreSchema = z.infer<typeof updateStoreSchema>;
+export type CreateCustomerSchema = z.infer<typeof createCustomerSchema>;
+export type UpdateCustomerSchema = z.infer<typeof updateCustomerSchema>;
+export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>;
+export type UpdateEmployeeSchema = z.infer<typeof updateEmployeeSchema>;
+export type Gender = z.infer<typeof genderSchema>;
+export type UserRole = z.infer<typeof userRoleSchema>;
+export type PermissionResource = z.infer<typeof permissionResourceSchema>;
+export type PermissionAction = z.infer<typeof permissionActionSchema>;
 
 // Export all schemas
 // TODO: Add auth and inventory schema modules when needed

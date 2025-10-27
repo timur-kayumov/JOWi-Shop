@@ -11,6 +11,10 @@ export * from './components/card';
 export * from './components/input';
 export * from './components/phone-input';
 export * from './components/otp-input';
+export * from './components/label';
+export * from './components/textarea';
+export * from './components/select';
+export * from './components/form';
 
 // Layout components
 export * from './components/app-shell';
@@ -30,6 +34,8 @@ export * from './components/theme-toggle';
 
 // Primitives
 export * from './components/dropdown-menu';
+export * from './components/dialog';
+export * from './components/badge';
 
 // Registration components
 export * from './components/step-indicator';

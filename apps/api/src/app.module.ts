@@ -7,6 +7,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { StoresModule } from './modules/stores/stores.module';
 import { DatabaseModule } from './modules/database/database.module';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
@@ -20,6 +21,7 @@ import { TenantGuard } from './common/guards/tenant.guard';
     }),
     DatabaseModule,
     AuthModule,
+    StoresModule,
     ProductsModule,
     InventoryModule,
     SalesModule,

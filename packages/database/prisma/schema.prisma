@@ -15,62 +15,67 @@ datasource db {
 // ============================================
 
 model Business {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  taxId     String   @unique
-  currency  String   @default("UZS")
-  locale    String   @default("ru")
-  metadata  Json     @default("{}")
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  taxId     String    @unique
+  currency  String    @default("UZS")
+  locale    String    @default("ru")
+  metadata  Json      @default("{}")
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
 
-  stores               Store[]
-  users                User[]
-  products             Product[]
-  categories           Category[]
-  customers            Customer[]
-  loyaltyTransactions  LoyaltyTransaction[]
+  stores              Store[]
+  users               User[]
+  products            Product[]
+  categories          Category[]
+  customers           Customer[]
+  loyaltyTransactions LoyaltyTransaction[]
 
   @@map("businesses")
 }
 
 model Store {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  name      String
-  address   String
-  phone     String
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime? @map("deleted_at")
+  id                  String    @id @default(uuid())
+  tenantId            String    @map("tenant_id")
+  name                String
+  address             String
+  phone               String
+  country             String    @default("Uzbekistan")
+  city                String
+  logoUrl             String?   @map("logo_url")
+  shiftTransitionTime String    @default("00:00") @map("shift_transition_time")
+  isActive            Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime? @map("deleted_at")
 
-  business   Business    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  terminals  Terminal[]
-  employees  Employee[]
-  stockLevels StockLevel[]
-  stockBatches StockBatch[]
-  receipts   Receipt[]
+  business          Business           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  terminals         Terminal[]
+  employees         Employee[]
+  stockLevels       StockLevel[]
+  stockBatches      StockBatch[]
+  receipts          Receipt[]
   movementDocuments MovementDocument[]
+  storeAccesses     StoreAccess[]
 
   @@index([tenantId])
   @@map("stores")
 }
 
 model Terminal {
-  id                String   @id @default(uuid())
-  tenantId          String   @map("tenant_id")
-  storeId           String   @map("store_id")
-  name              String
-  deviceId          String   @unique @map("device_id")
-  fiscalProviderId  String?  @map("fiscal_provider_id")
-  settings          Json     @default("{}")
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  deletedAt         DateTime? @map("deleted_at")
+  id               String    @id @default(uuid())
+  tenantId         String    @map("tenant_id")
+  storeId          String    @map("store_id")
+  name             String
+  deviceId         String    @unique @map("device_id")
+  fiscalProviderId String?   @map("fiscal_provider_id")
+  settings         Json      @default("{}")
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime? @map("deleted_at")
 
   store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
   shifts   Shift[]
@@ -86,34 +91,40 @@ model Terminal {
 // ============================================
 
 model User {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  phone     String   @unique
-  email     String   @unique
-  name      String
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
+  phone     String    @unique
+  email     String    @unique
+  firstName String    @map("first_name")
+  lastName  String    @map("last_name")
   password  String?
-  role      String   // admin, manager, cashier, warehouse
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      String // admin, manager, cashier, warehouse
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
 
-  business  Business   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  employee  Employee?
+  business        Business         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  employee        Employee?
+  userPermissions UserPermission[]
+  storeAccesses   StoreAccess[]
 
   @@index([tenantId])
   @@map("users")
 }
 
 model Employee {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
-  userId    String   @unique @map("user_id")
-  storeId   String   @map("store_id")
-  pin       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime? @map("deleted_at")
+  id             String    @id @default(uuid())
+  tenantId       String    @map("tenant_id")
+  userId         String    @unique @map("user_id")
+  storeId        String    @map("store_id")
+  pin            String?
+  citizenship    String
+  passportSeries String    @map("passport_series")
+  passportNumber String    @map("passport_number")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime? @map("deleted_at")
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -130,17 +141,17 @@ model Employee {
 // ============================================
 
 model Category {
-  id        String   @id @default(uuid())
-  tenantId  String   @map("tenant_id")
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
   name      String
-  parentId  String?  @map("parent_id")
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  parentId  String?   @map("parent_id")
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   deletedAt DateTime? @map("deleted_at")
 
-  business Business  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  parent   Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  business Business   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children Category[] @relation("CategoryTree")
   products Product[]
 
@@ -150,20 +161,20 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  tenantId    String   @map("tenant_id")
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
   name        String
   description String?
-  categoryId  String?  @map("category_id")
-  taxRate     Decimal  @default(0) @db.Decimal(5, 2)
-  isActive    Boolean  @default(true)
-  hasVariants Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  categoryId  String?   @map("category_id")
+  taxRate     Decimal   @default(0) @db.Decimal(5, 2)
+  isActive    Boolean   @default(true)
+  hasVariants Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   deletedAt   DateTime? @map("deleted_at")
 
-  business Business          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  category Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  business Business         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  category Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   variants ProductVariant[]
 
   @@index([tenantId])
@@ -172,25 +183,25 @@ model Product {
 }
 
 model ProductVariant {
-  id         String   @id @default(uuid())
-  tenantId   String   @map("tenant_id")
-  productId  String   @map("product_id")
+  id         String    @id @default(uuid())
+  tenantId   String    @map("tenant_id")
+  productId  String    @map("product_id")
   sku        String
   name       String
   barcode    String?
-  price      Decimal  @db.Decimal(15, 0)
-  cost       Decimal? @db.Decimal(15, 0)
-  unit       String   @default("шт")
+  price      Decimal   @db.Decimal(15, 0)
+  cost       Decimal?  @db.Decimal(15, 0)
+  unit       String    @default("шт")
   attributes Json?
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   deletedAt  DateTime? @map("deleted_at")
 
-  product      Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
-  stockLevels  StockLevel[]
-  stockBatches StockBatch[]
-  receiptItems ReceiptItem[]
+  product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockLevels   StockLevel[]
+  stockBatches  StockBatch[]
+  receiptItems  ReceiptItem[]
   movementItems MovementItem[]
 
   @@unique([tenantId, sku])
@@ -240,15 +251,15 @@ model StockBatch {
 }
 
 model MovementDocument {
-  id             String   @id @default(uuid())
-  tenantId       String   @map("tenant_id")
-  storeId        String   @map("store_id")
-  documentNumber String   @map("document_number")
-  type           String   // receipt, transfer, return, writeoff, count
+  id             String    @id @default(uuid())
+  tenantId       String    @map("tenant_id")
+  storeId        String    @map("store_id")
+  documentNumber String    @map("document_number")
+  type           String // receipt, transfer, return, writeoff, count
   notes          String?
-  status         String   @default("draft")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  status         String    @default("draft")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
   deletedAt      DateTime? @map("deleted_at")
 
   store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -261,10 +272,10 @@ model MovementDocument {
 }
 
 model MovementItem {
-  id         String  @id @default(uuid())
-  documentId String  @map("document_id")
-  variantId  String  @map("variant_id")
-  quantity   Decimal @db.Decimal(15, 3)
+  id         String   @id @default(uuid())
+  documentId String   @map("document_id")
+  variantId  String   @map("variant_id")
+  quantity   Decimal  @db.Decimal(15, 3)
   costPrice  Decimal? @db.Decimal(15, 0)
 
   document MovementDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
@@ -295,12 +306,12 @@ model Receipt {
   createdAt      DateTime  @default(now())
   completedAt    DateTime?
 
-  store    Store         @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  terminal Terminal      @relation(fields: [terminalId], references: [id], onDelete: Cascade)
-  customer Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  employee Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  items    ReceiptItem[]
-  payments Payment[]
+  store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  terminal            Terminal             @relation(fields: [terminalId], references: [id], onDelete: Cascade)
+  customer            Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  employee            Employee             @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  items               ReceiptItem[]
+  payments            Payment[]
   loyaltyTransactions LoyaltyTransaction[]
 
   @@unique([tenantId, receiptNumber])
@@ -330,7 +341,7 @@ model ReceiptItem {
 model Payment {
   id        String   @id @default(uuid())
   receiptId String   @map("receipt_id")
-  method    String   // cash, card, transfer, installment
+  method    String // cash, card, transfer, installment
   amount    Decimal  @db.Decimal(15, 0)
   reference String?
   createdAt DateTime @default(now())
@@ -346,14 +357,17 @@ model Payment {
 // ============================================
 
 model Customer {
-  id                String   @id @default(uuid())
-  tenantId          String   @map("tenant_id")
-  name              String
+  id                String    @id @default(uuid())
+  tenantId          String    @map("tenant_id")
+  firstName         String    @map("first_name")
+  lastName          String    @map("last_name")
   phone             String?
   email             String?
-  loyaltyCardNumber String?  @unique @map("loyalty_card_number")
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  gender            String? // male, female, other
+  dateOfBirth       DateTime? @map("date_of_birth")
+  loyaltyCardNumber String?   @unique @map("loyalty_card_number")
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
   deletedAt         DateTime? @map("deleted_at")
 
   business            Business             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -371,13 +385,13 @@ model LoyaltyTransaction {
   customerId String   @map("customer_id")
   receiptId  String?  @map("receipt_id")
   points     Decimal  @db.Decimal(10, 2)
-  type       String   // earn, redeem
+  type       String // earn, redeem
   externalId String?  @map("external_id")
   createdAt  DateTime @default(now())
 
-  business Business  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  customer Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  receipt  Receipt?  @relation(fields: [receiptId], references: [id], onDelete: SetNull)
+  business Business @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  receipt  Receipt? @relation(fields: [receiptId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([customerId])
@@ -389,19 +403,19 @@ model LoyaltyTransaction {
 // ============================================
 
 model Shift {
-  id           String    @id @default(uuid())
-  tenantId     String    @map("tenant_id")
-  terminalId   String    @map("terminal_id")
-  employeeId   String    @map("employee_id")
-  shiftNumber  Int       @map("shift_number")
-  openedAt     DateTime  @default(now())
-  closedAt     DateTime?
-  openingCash  Decimal   @db.Decimal(15, 0)
-  closingCash  Decimal?  @db.Decimal(15, 0)
-  status       String    @default("open") // open, closed
+  id          String    @id @default(uuid())
+  tenantId    String    @map("tenant_id")
+  terminalId  String    @map("terminal_id")
+  employeeId  String    @map("employee_id")
+  shiftNumber Int       @map("shift_number")
+  openedAt    DateTime  @default(now())
+  closedAt    DateTime?
+  openingCash Decimal   @db.Decimal(15, 0)
+  closingCash Decimal?  @db.Decimal(15, 0)
+  status      String    @default("open") // open, closed
 
-  terminal       Terminal         @relation(fields: [terminalId], references: [id], onDelete: Cascade)
-  employee       Employee         @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  terminal       Terminal        @relation(fields: [terminalId], references: [id], onDelete: Cascade)
+  employee       Employee        @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   cashOperations CashOperation[]
 
   @@index([tenantId])
@@ -413,7 +427,7 @@ model CashOperation {
   id        String   @id @default(uuid())
   tenantId  String   @map("tenant_id")
   shiftId   String   @map("shift_id")
-  type      String   // in, out
+  type      String // in, out
   amount    Decimal  @db.Decimal(15, 0)
   reason    String
   createdAt DateTime @default(now())
@@ -430,19 +444,84 @@ model CashOperation {
 // ============================================
 
 model AuditLog {
-  id         String   @id @default(uuid())
-  tenantId   String   @map("tenant_id")
-  userId     String?  @map("user_id")
-  action     String   // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
-  entity     String   // User, Product, Receipt, etc.
-  entityId   String?  @map("entity_id")
-  changes    Json?    // Before/after values for updates
-  metadata   Json?    // Additional context (IP, user agent, etc.)
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  tenantId  String   @map("tenant_id")
+  userId    String?  @map("user_id")
+  action    String // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
+  entity    String // User, Product, Receipt, etc.
+  entityId  String?  @map("entity_id")
+  changes   Json? // Before/after values for updates
+  metadata  Json? // Additional context (IP, user agent, etc.)
+  createdAt DateTime @default(now())
 
   @@index([tenantId])
   @@index([userId])
   @@index([entity, entityId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+// ============================================
+// PERMISSIONS & ACCESS CONTROL
+// ============================================
+
+model Permission {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  resource    String // stores, customers, employees, reports, products, inventory, etc.
+  action      String // view, create, update, delete, manage
+  description String?
+  createdAt   DateTime @default(now())
+
+  rolePermissions RolePermission[]
+  userPermissions UserPermission[]
+
+  @@unique([resource, action])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String   @id @default(uuid())
+  role         String // admin, manager, cashier, warehouse
+  permissionId String   @map("permission_id")
+  createdAt    DateTime @default(now())
+
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([role, permissionId])
+  @@index([role])
+  @@map("role_permissions")
+}
+
+model UserPermission {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  permissionId String   @map("permission_id")
+  allowed      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permissionId])
+  @@index([userId])
+  @@map("user_permissions")
+}
+
+model StoreAccess {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  storeId     String   @map("store_id")
+  permissions Json     @default("{}") // { "view_pos": true, "manage_inventory": true, "view_reports": false }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storeId])
+  @@index([userId])
+  @@index([storeId])
+  @@map("store_accesses")
 }
