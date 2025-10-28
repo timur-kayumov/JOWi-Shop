@@ -39,7 +39,16 @@
     "customers": "Клиенты",
     "reports": "Отчёты",
     "settings": "Настройки",
-    "pos": "Касса"
+    "pos": "Касса",
+    "stores": "Магазины",
+    "employees": "Сотрудники",
+    "intranet": "Интранет"
+  },
+  "user": {
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "language": "Язык",
+    "notifications": "Уведомления"
   },
   "fields": {
     "name": "Название",

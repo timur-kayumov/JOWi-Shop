@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Pencil, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 import {
   Button,
   Input,
@@ -25,6 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
   Badge,
+  DataTable,
+  Column,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -279,70 +281,44 @@ export default function StoresPage() {
         </Dialog>
       </div>
 
-      <div className="rounded-md border">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b bg-muted/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium">Название</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Адрес</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Город</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Телефон</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Статус</th>
-                <th className="px-4 py-3 text-right text-sm font-medium">Действия</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {filteredStores.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                    {search ? 'Ничего не найдено' : 'Нет магазинов'}
-                  </td>
-                </tr>
-              ) : (
-                filteredStores.map((store) => (
-                  <tr key={store.id} className="hover:bg-muted/50">
-                    <td className="px-4 py-3 text-sm font-medium">{store.name}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">{store.address}</td>
-                    <td className="px-4 py-3 text-sm">{store.city}</td>
-                    <td className="px-4 py-3 text-sm">{store.phone}</td>
-                    <td className="px-4 py-3 text-sm">
-                      <Badge variant={store.isActive ? 'success' : 'outline'}>
-                        {store.isActive ? 'Активен' : 'Неактивен'}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => router.push(`/intranet/stores/${store.id}`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(store)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(store.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <DataTable
+        columns={[
+          {
+            key: 'name',
+            label: 'Название',
+            sortable: true,
+            render: (store) => <span className="font-medium">{store.name}</span>,
+          },
+          {
+            key: 'address',
+            label: 'Адрес',
+            sortable: true,
+            className: 'text-muted-foreground',
+          },
+          {
+            key: 'city',
+            label: 'Город',
+            sortable: true,
+          },
+          {
+            key: 'phone',
+            label: 'Телефон',
+          },
+          {
+            key: 'isActive',
+            label: 'Статус',
+            sortable: true,
+            render: (store) => (
+              <Badge variant={store.isActive ? 'success' : 'outline'}>
+                {store.isActive ? 'Активен' : 'Неактивен'}
+              </Badge>
+            ),
+          },
+        ]}
+        data={filteredStores}
+        onRowClick={(store) => router.push(`/intranet/stores/${store.id}`)}
+        emptyMessage={search ? 'Ничего не найдено' : 'Нет магазинов'}
+      />
 
       {filteredStores.length > 0 && (
         <div className="text-sm text-muted-foreground">

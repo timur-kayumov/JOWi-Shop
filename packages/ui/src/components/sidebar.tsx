@@ -65,7 +65,7 @@ export function Sidebar({ children, className, ...props }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 z-50 h-screen border-r bg-background transition-all duration-300',
+          'fixed left-0 top-0 z-50 h-screen border-r bg-card transition-all duration-300',
           // Desktop - always visible
           'hidden lg:block',
           collapsed ? 'lg:w-16' : 'lg:w-64',

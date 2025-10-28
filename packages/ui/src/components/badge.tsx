@@ -15,9 +15,17 @@ const badgeVariants = cva(
           'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'text-foreground',
         success:
-          'border-transparent bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100',
+          'border-transparent bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] hover:bg-[hsl(var(--success))]/80',
+        'success-secondary':
+          'border-transparent bg-[hsl(var(--success-secondary))] text-[hsl(var(--success))] hover:bg-[hsl(var(--success-secondary))]/80',
         warning:
-          'border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100',
+          'border-transparent bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))] hover:bg-[hsl(var(--warning))]/80',
+        'warning-secondary':
+          'border-transparent bg-[hsl(var(--warning-secondary))] text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning-secondary))]/80',
+        info:
+          'border-transparent bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))] hover:bg-[hsl(var(--info))]/80',
+        'info-secondary':
+          'border-transparent bg-[hsl(var(--info-secondary))] text-[hsl(var(--info))] hover:bg-[hsl(var(--info-secondary))]/80',
       },
     },
     defaultVariants: {

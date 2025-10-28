@@ -1,31 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Store, Users, UserCircle, BarChart3 } from 'lucide-react';
-import { AppShell, NavItem } from '@jowi/ui';
-
-const navItems: NavItem[] = [
-  {
-    title: 'Магазины',
-    href: '/intranet/stores',
-    icon: Store,
-  },
-  {
-    title: 'Сотрудники',
-    href: '/intranet/employees',
-    icon: Users,
-  },
-  {
-    title: 'Клиенты',
-    href: '/intranet/customers',
-    icon: UserCircle,
-  },
-  {
-    title: 'Отчёты',
-    href: '/intranet/reports',
-    icon: BarChart3,
-  },
-];
+import { useTranslation } from 'react-i18next';
+import { AppShell, NavItem, type Language } from '@jowi/ui';
 
 // Mock user data - replace with actual auth later
 const mockUser = {
@@ -41,17 +20,55 @@ export default function IntranetLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { t, i18n } = useTranslation('common');
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('ru');
 
-  // Generate breadcrumbs from pathname
+  // Load saved language on mount
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('jowi-language');
+    if (savedLanguage && (savedLanguage === 'ru' || savedLanguage === 'uz')) {
+      setCurrentLanguage(savedLanguage as Language);
+      i18n.changeLanguage(savedLanguage);
+    }
+  }, [i18n]);
+
+  // Navigation items with translations
+  const navItems: NavItem[] = [
+    {
+      title: t('navigation.stores'),
+      href: '/intranet/stores',
+      icon: Store,
+    },
+    {
+      title: t('navigation.employees'),
+      href: '/intranet/employees',
+      icon: Users,
+    },
+    {
+      title: t('navigation.customers'),
+      href: '/intranet/customers',
+      icon: UserCircle,
+    },
+    {
+      title: t('navigation.reports'),
+      href: '/intranet/reports',
+      icon: BarChart3,
+    },
+  ];
+
+  // Generate breadcrumbs from pathname with translations
   const generateBreadcrumbs = () => {
     const paths = pathname.split('/').filter(Boolean);
-    const breadcrumbs = [{ label: 'Интранет', href: '/intranet/stores' }];
+    const breadcrumbs = [{
+      label: t('navigation.intranet'),
+      href: '/intranet/stores'
+    }];
 
     const pathMap: Record<string, string> = {
-      stores: 'Магазины',
-      employees: 'Сотрудники',
-      customers: 'Клиенты',
-      reports: 'Отчёты',
+      stores: t('navigation.stores'),
+      employees: t('navigation.employees'),
+      customers: t('navigation.customers'),
+      reports: t('navigation.reports'),
     };
 
     if (paths.length > 1) {
@@ -99,18 +116,27 @@ export default function IntranetLayout({
     router.push('/login');
   };
 
+  const handleLanguageChange = (language: Language) => {
+    console.log('Language changed to:', language);
+    setCurrentLanguage(language);
+    i18n.changeLanguage(language);
+    localStorage.setItem('jowi-language', language);
+  };
+
   return (
     <AppShell
       navItems={navItems}
       currentPath={pathname}
       breadcrumbs={generateBreadcrumbs()}
       user={mockUser}
+      currentLanguage={currentLanguage}
       notificationCount={3}
       onNavigate={handleNavigate}
       onSearch={handleSearch}
       onNotificationsClick={handleNotifications}
       onSettingsClick={handleSettings}
       onProfileClick={handleProfile}
+      onLanguageChange={handleLanguageChange}
       onLogoutClick={handleLogout}
     >
       {children}

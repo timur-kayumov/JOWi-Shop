@@ -39,7 +39,16 @@
     "customers": "Mijozlar",
     "reports": "Hisobotlar",
     "settings": "Sozlamalar",
-    "pos": "Kassa"
+    "pos": "Kassa",
+    "stores": "Do'konlar",
+    "employees": "Xodimlar",
+    "intranet": "Intranet"
+  },
+  "user": {
+    "profile": "Profil",
+    "logout": "Chiqish",
+    "language": "Til",
+    "notifications": "Bildirishnomalar"
   },
   "fields": {
     "name": "Nomi",

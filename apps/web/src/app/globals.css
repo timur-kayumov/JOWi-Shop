@@ -4,48 +4,98 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    /* Main page background - Neutral/100 (серый фон страницы) */
+    --background: 0 0% 96%;
     --foreground: 222.2 84% 4.9%;
+    /* Card background - white */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
+    /* Primary - Violet/600 from style guide */
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+    /* Secondary - Violet/100 */
+    --secondary: 258 100% 97%;
+    --secondary-foreground: 258 90% 66%;
+    /* Muted - white for inputs on gray background */
+    --muted: 0 0% 100%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Destructive - Rose/600 from style guide */
+    --destructive: 350 89% 60%;
+    --destructive-foreground: 0 0% 100%;
+    /* Destructive secondary - Rose/200 */
+    --destructive-secondary: 351 100% 86%;
+    /* Success - Green/500 */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    /* Success secondary - Green/200 */
+    --success-secondary: 141 79% 85%;
+    /* Warning - Amber/500 */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    /* Warning secondary - Amber/100 */
+    --warning-secondary: 48 96% 89%;
+    /* Info - Sky/500 */
+    --info: 199 89% 48%;
+    --info-foreground: 0 0% 100%;
+    /* Info secondary - Sky/200 */
+    --info-secondary: 204 94% 82%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 258 90% 66%;
     --radius: 0.5rem;
+    /* Table row hover - Neutral/100 */
+    --table-row-hover: 0 0% 96%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Main page background - Neutral/800 (чёрный фон страницы) */
+    --background: 0 0% 15%;
     --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
+    /* Card background - Neutral/900 */
+    --card: 0 0% 9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
+    --popover: 0 0% 9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    /* Primary - Violet/400 for dark mode */
+    --primary: 258 90% 76%;
+    --primary-foreground: 0 0% 9%;
+    /* Secondary - Violet/900 */
+    --secondary: 258 50% 20%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
+    /* Muted - dark for inputs on dark background */
+    --muted: 0 0% 20%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 0 0% 20%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    /* Destructive - Rose/500 for dark mode */
+    --destructive: 350 89% 70%;
+    --destructive-foreground: 222.2 84% 4.9%;
+    /* Destructive secondary - Rose/800 */
+    --destructive-secondary: 350 60% 30%;
+    /* Success - Green/400 */
+    --success: 142 71% 55%;
+    --success-foreground: 222.2 84% 4.9%;
+    /* Success secondary - Green/800 */
+    --success-secondary: 142 50% 25%;
+    /* Warning - Amber/400 */
+    --warning: 38 92% 60%;
+    --warning-foreground: 222.2 84% 4.9%;
+    /* Warning secondary - Amber/800 */
+    --warning-secondary: 38 60% 30%;
+    /* Info - Sky/400 */
+    --info: 199 89% 58%;
+    --info-foreground: 222.2 84% 4.9%;
+    /* Info secondary - Sky/800 */
+    --info-secondary: 199 60% 30%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 258 90% 76%;
+    /* Table row hover - Neutral/800 */
+    --table-row-hover: 0 0% 20%;
   }
 }
 

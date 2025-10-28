@@ -29,6 +29,7 @@ export * from './components/search-bar';
 // User components
 export * from './components/avatar';
 export * from './components/user-menu';
+export type { Language } from './components/user-menu';
 export * from './components/notification-badge';
 export * from './components/theme-toggle';
 
@@ -36,6 +37,8 @@ export * from './components/theme-toggle';
 export * from './components/dropdown-menu';
 export * from './components/dialog';
 export * from './components/badge';
+export * from './components/tabs';
+export * from './components/data-table';
 
 // Registration components
 export * from './components/step-indicator';

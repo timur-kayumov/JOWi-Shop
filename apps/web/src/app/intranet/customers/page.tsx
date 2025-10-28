@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Pencil, Trash2, Filter, User, Eye } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, Filter, User } from 'lucide-react';
 import {
   Button,
   Input,
@@ -25,6 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
   Badge,
+  DataTable,
+  Column,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -407,91 +409,69 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <div className="rounded-md border">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="border-b bg-muted/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-medium">Клиент</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Телефон</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Email</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Пол</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Дата рождения</th>
-                <th className="px-4 py-3 text-left text-sm font-medium">Карта лояльности</th>
-                <th className="px-4 py-3 text-right text-sm font-medium">Действия</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {filteredCustomers.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-sm text-muted-foreground">
-                    {search || genderFilter !== 'all' || birthYearFilter !== 'all'
-                      ? 'Ничего не найдено'
-                      : 'Нет клиентов'}
-                  </td>
-                </tr>
+      <DataTable
+        columns={[
+          {
+            key: 'fullName',
+            label: 'Клиент',
+            sortable: true,
+            render: (customer) => (
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                  <User className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <div className="font-medium">
+                  {customer.firstName} {customer.lastName}
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'phone',
+            label: 'Телефон',
+            sortable: true,
+          },
+          {
+            key: 'email',
+            label: 'Email',
+            sortable: true,
+            render: (customer) => (
+              <span className="text-muted-foreground">{customer.email || '-'}</span>
+            ),
+          },
+          {
+            key: 'gender',
+            label: 'Пол',
+            sortable: true,
+            render: (customer) => (
+              <Badge variant="outline">{getGenderBadge(customer.gender)}</Badge>
+            ),
+          },
+          {
+            key: 'dateOfBirth',
+            label: 'Дата рождения',
+            sortable: true,
+            render: (customer) => formatDate(customer.dateOfBirth),
+          },
+          {
+            key: 'loyaltyCardNumber',
+            label: 'Карта лояльности',
+            render: (customer) =>
+              customer.loyaltyCardNumber ? (
+                <Badge variant="success">{customer.loyaltyCardNumber}</Badge>
               ) : (
-                filteredCustomers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-muted/50">
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                          <User className="h-5 w-5 text-muted-foreground" />
-                        </div>
-                        <div>
-                          <div className="font-medium">
-                            {customer.firstName} {customer.lastName}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm">{customer.phone}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">
-                      {customer.email || '-'}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <Badge variant="outline">{getGenderBadge(customer.gender)}</Badge>
-                    </td>
-                    <td className="px-4 py-3 text-sm">{formatDate(customer.dateOfBirth)}</td>
-                    <td className="px-4 py-3 text-sm">
-                      {customer.loyaltyCardNumber ? (
-                        <Badge variant="success">{customer.loyaltyCardNumber}</Badge>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => router.push(`/intranet/customers/${customer.id}`)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleEdit(customer)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleDelete(customer.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                <span className="text-muted-foreground">-</span>
+              ),
+          },
+        ]}
+        data={filteredCustomers}
+        onRowClick={(customer) => router.push(`/intranet/customers/${customer.id}`)}
+        emptyMessage={
+          search || genderFilter !== 'all' || birthYearFilter !== 'all'
+            ? 'Ничего не найдено'
+            : 'Нет клиентов'
+        }
+      />
 
       {filteredCustomers.length > 0 && (
         <div className="text-sm text-muted-foreground">

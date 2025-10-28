@@ -37,7 +37,12 @@
       "Bash(Stop-Process -Id 21984 -Force)",
       "Bash(tskill:*)",
       "Bash(set PORT=4000)",
-      "Bash(Stop-Process -Id 21956 -Force)"
+      "Bash(Stop-Process -Id 21956 -Force)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_hover",
+      "Bash(timeout 2 bash:*)",
+      "Bash(timeout 1 bash:*)",
+      "mcp__playwright__browser_navigate_back"
     ],
     "deny": [],
     "ask": []

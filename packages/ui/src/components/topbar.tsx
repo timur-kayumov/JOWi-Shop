@@ -7,7 +7,7 @@ import { Breadcrumbs, BreadcrumbItem } from './breadcrumbs';
 import { SearchBar } from './search-bar';
 import { NotificationBadge } from './notification-badge';
 import { ThemeToggle } from './theme-toggle';
-import { UserMenu, UserMenuProps } from './user-menu';
+import { UserMenu, UserMenuProps, Language } from './user-menu';
 
 interface TopBarProps {
   breadcrumbs?: BreadcrumbItem[];
@@ -16,8 +16,10 @@ interface TopBarProps {
   notificationCount?: number;
   onNotificationsClick?: () => void;
   user: UserMenuProps['user'];
+  currentLanguage?: Language;
   onSettingsClick?: () => void;
   onProfileClick?: () => void;
+  onLanguageChange?: (language: Language) => void;
   onLogoutClick?: () => void;
   className?: string;
 }
@@ -29,8 +31,10 @@ export function TopBar({
   notificationCount = 0,
   onNotificationsClick,
   user,
+  currentLanguage,
   onSettingsClick,
   onProfileClick,
+  onLanguageChange,
   onLogoutClick,
   className,
 }: TopBarProps) {
@@ -39,7 +43,7 @@ export function TopBar({
   return (
     <header
       className={cn(
-        'sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-4',
+        'sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4',
         className
       )}
     >
@@ -74,8 +78,10 @@ export function TopBar({
         <ThemeToggle />
         <UserMenu
           user={user}
+          currentLanguage={currentLanguage}
           onSettingsClick={onSettingsClick}
           onProfileClick={onProfileClick}
+          onLanguageChange={onLanguageChange}
           onLogoutClick={onLogoutClick}
         />
       </div>

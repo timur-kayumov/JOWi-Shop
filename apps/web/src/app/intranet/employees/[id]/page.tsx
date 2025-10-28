@@ -1,0 +1,392 @@
+'use client';
+
+import { use, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Save, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Badge,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@jowi/ui';
+
+// Типы прав доступа
+type PermissionLevel = 'none' | 'read' | 'edit';
+
+type StorePermissions = {
+  pos: PermissionLevel;
+  warehouse: PermissionLevel;
+  products: PermissionLevel;
+  storeReports: PermissionLevel;
+};
+
+type IntranetPermissions = {
+  stores: PermissionLevel;
+  employees: PermissionLevel;
+  customers: PermissionLevel;
+  reports: PermissionLevel;
+  // Будущие страницы
+  productsManagement: PermissionLevel;
+  warehouseManagement: PermissionLevel;
+  finance: PermissionLevel;
+};
+
+// Mock данные сотрудников
+const mockEmployees = [
+  {
+    id: '1',
+    firstName: 'Азиз',
+    lastName: 'Каримов',
+    email: 'aziz.karimov@jowi.uz',
+    phone: '+998901234567',
+    role: 'administrator',
+    storeId: '1',
+    storeName: 'Магазин Центральный',
+    isActive: true,
+    storePermissions: {
+      pos: 'edit' as PermissionLevel,
+      warehouse: 'edit' as PermissionLevel,
+      products: 'edit' as PermissionLevel,
+      storeReports: 'read' as PermissionLevel,
+    },
+    intranetPermissions: {
+      stores: 'edit' as PermissionLevel,
+      employees: 'edit' as PermissionLevel,
+      customers: 'edit' as PermissionLevel,
+      reports: 'edit' as PermissionLevel,
+      productsManagement: 'edit' as PermissionLevel,
+      warehouseManagement: 'edit' as PermissionLevel,
+      finance: 'edit' as PermissionLevel,
+    },
+  },
+  {
+    id: '2',
+    firstName: 'Диана',
+    lastName: 'Ахмедова',
+    email: 'diana.ahmed@jowi.uz',
+    phone: '+998907654321',
+    role: 'manager',
+    storeId: '1',
+    storeName: 'Магазин Центральный',
+    isActive: true,
+    storePermissions: {
+      pos: 'edit' as PermissionLevel,
+      warehouse: 'read' as PermissionLevel,
+      products: 'edit' as PermissionLevel,
+      storeReports: 'read' as PermissionLevel,
+    },
+    intranetPermissions: {
+      stores: 'read' as PermissionLevel,
+      employees: 'read' as PermissionLevel,
+      customers: 'edit' as PermissionLevel,
+      reports: 'read' as PermissionLevel,
+      productsManagement: 'none' as PermissionLevel,
+      warehouseManagement: 'none' as PermissionLevel,
+      finance: 'none' as PermissionLevel,
+    },
+  },
+  {
+    id: '3',
+    firstName: 'Шахзод',
+    lastName: 'Усманов',
+    email: 'shahzod.usmanov@jowi.uz',
+    phone: '+998905555555',
+    role: 'cashier',
+    storeId: '2',
+    storeName: 'Магазин Чиланзар',
+    isActive: true,
+    storePermissions: {
+      pos: 'edit' as PermissionLevel,
+      warehouse: 'none' as PermissionLevel,
+      products: 'read' as PermissionLevel,
+      storeReports: 'none' as PermissionLevel,
+    },
+    intranetPermissions: {
+      stores: 'none' as PermissionLevel,
+      employees: 'none' as PermissionLevel,
+      customers: 'read' as PermissionLevel,
+      reports: 'none' as PermissionLevel,
+      productsManagement: 'none' as PermissionLevel,
+      warehouseManagement: 'none' as PermissionLevel,
+      finance: 'none' as PermissionLevel,
+    },
+  },
+  {
+    id: '4',
+    firstName: 'Нодира',
+    lastName: 'Рахимова',
+    email: 'nodira.rahimova@jowi.uz',
+    phone: '+998903333333',
+    role: 'warehouse',
+    storeId: '3',
+    storeName: 'Магазин Юнусабад',
+    isActive: false,
+    storePermissions: {
+      pos: 'none' as PermissionLevel,
+      warehouse: 'edit' as PermissionLevel,
+      products: 'read' as PermissionLevel,
+      storeReports: 'none' as PermissionLevel,
+    },
+    intranetPermissions: {
+      stores: 'none' as PermissionLevel,
+      employees: 'none' as PermissionLevel,
+      customers: 'none' as PermissionLevel,
+      reports: 'none' as PermissionLevel,
+      productsManagement: 'none' as PermissionLevel,
+      warehouseManagement: 'read' as PermissionLevel,
+      finance: 'none' as PermissionLevel,
+    },
+  },
+];
+
+const roleLabels: Record<string, string> = {
+  administrator: 'Администратор',
+  manager: 'Менеджер',
+  cashier: 'Кассир',
+  warehouse: 'Складской работник',
+};
+
+const permissionLabels: Record<PermissionLevel, string> = {
+  none: 'Нет доступа',
+  read: 'Чтение',
+  edit: 'Редактирование',
+};
+
+const storePageLabels: Record<keyof StorePermissions, string> = {
+  pos: 'POS (касса)',
+  warehouse: 'Склад',
+  products: 'Товары',
+  storeReports: 'Отчеты магазина',
+};
+
+const intranetPageLabels: Record<keyof IntranetPermissions, string> = {
+  stores: 'Магазины',
+  employees: 'Сотрудники',
+  customers: 'Клиенты',
+  reports: 'Отчёты',
+  productsManagement: 'Управление товарами',
+  warehouseManagement: 'Складской учёт',
+  finance: 'Финансы',
+};
+
+interface PermissionRowProps {
+  label: string;
+  value: PermissionLevel;
+  onChange: (value: PermissionLevel) => void;
+}
+
+function PermissionRow({ label, value, onChange }: PermissionRowProps) {
+  return (
+    <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/50">
+      <span className="font-medium">{label}</span>
+      <Select value={value} onValueChange={(v) => onChange(v as PermissionLevel)}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="none">
+            <span className="text-muted-foreground">{permissionLabels.none}</span>
+          </SelectItem>
+          <SelectItem value="read">
+            <span className="text-primary">{permissionLabels.read}</span>
+          </SelectItem>
+          <SelectItem value="edit">
+            <span className="text-success">{permissionLabels.edit}</span>
+          </SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+export default function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
+  const { id } = use(params);
+  const employee = mockEmployees.find((e) => e.id === id);
+
+  const [storePermissions, setStorePermissions] = useState<StorePermissions>(
+    employee?.storePermissions || {
+      pos: 'none',
+      warehouse: 'none',
+      products: 'none',
+      storeReports: 'none',
+    }
+  );
+
+  const [intranetPermissions, setIntranetPermissions] = useState<IntranetPermissions>(
+    employee?.intranetPermissions || {
+      stores: 'none',
+      employees: 'none',
+      customers: 'none',
+      reports: 'none',
+      productsManagement: 'none',
+      warehouseManagement: 'none',
+      finance: 'none',
+    }
+  );
+
+  if (!employee) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Назад
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="py-12 text-center">
+            <p className="text-muted-foreground">Сотрудник не найден</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleStorePermissionChange = (key: keyof StorePermissions, value: PermissionLevel) => {
+    setStorePermissions((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleIntranetPermissionChange = (key: keyof IntranetPermissions, value: PermissionLevel) => {
+    setIntranetPermissions((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = () => {
+    // TODO: Сохранение прав доступа на бэкенд
+    alert('Права доступа сохранены!');
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Заголовок и кнопки */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Назад
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold">
+              {employee.firstName} {employee.lastName}
+            </h1>
+            <p className="text-muted-foreground mt-1">{roleLabels[employee.role]}</p>
+          </div>
+        </div>
+        <Button onClick={handleSave}>
+          <Save className="mr-2 h-4 w-4" />
+          Сохранить изменения
+        </Button>
+      </div>
+
+      {/* Информация о сотруднике */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Информация о сотруднике</CardTitle>
+          <CardDescription>Основная информация и статус</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Mail className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium">{employee.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Телефон</p>
+                  <p className="font-medium">{employee.phone}</p>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Магазин</p>
+                  <p className="font-medium">{employee.storeName}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Briefcase className="h-5 w-5 text-muted-foreground" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Статус</p>
+                  <Badge variant={employee.isActive ? 'success' : 'outline'}>
+                    {employee.isActive ? 'Активен' : 'Неактивен'}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Права доступа к страницам магазина */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Права доступа к магазину</CardTitle>
+            <CardDescription>Настройка доступа к функциям магазина</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {(Object.keys(storePageLabels) as Array<keyof StorePermissions>).map((key) => (
+                <PermissionRow
+                  key={key}
+                  label={storePageLabels[key]}
+                  value={storePermissions[key]}
+                  onChange={(value) => handleStorePermissionChange(key, value)}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Права доступа к интранету */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Права доступа к интранету</CardTitle>
+            <CardDescription>Настройка доступа к административным функциям</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {(Object.keys(intranetPageLabels) as Array<keyof IntranetPermissions>).map((key) => (
+                <PermissionRow
+                  key={key}
+                  label={intranetPageLabels[key]}
+                  value={intranetPermissions[key]}
+                  onChange={(value) => handleIntranetPermissionChange(key, value)}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Информация о правах */}
+      <Card className="bg-muted/50">
+        <CardContent className="pt-6">
+          <div className="space-y-2 text-sm">
+            <p className="font-medium">Информация о правах доступа:</p>
+            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+              <li><span className="font-medium text-foreground">Нет доступа</span> - сотрудник не видит эту страницу</li>
+              <li><span className="font-medium text-primary">Чтение</span> - сотрудник может просматривать данные, но не может их изменять</li>
+              <li><span className="font-medium text-success">Редактирование</span> - сотрудник может просматривать и изменять данные (включает право на чтение)</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

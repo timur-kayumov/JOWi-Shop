@@ -6,19 +6,21 @@ import { SidebarProvider, Sidebar, useSidebar } from './sidebar';
 import { SidebarNav, NavItem } from './sidebar-nav';
 import { TopBar } from './topbar';
 import { BreadcrumbItem } from './breadcrumbs';
-import { UserMenuProps } from './user-menu';
+import { UserMenuProps, Language } from './user-menu';
 
 interface AppShellProps {
   navItems: NavItem[];
   currentPath: string;
   breadcrumbs?: BreadcrumbItem[];
   user: UserMenuProps['user'];
+  currentLanguage?: Language;
   notificationCount?: number;
   onNavigate?: (href: string) => void;
   onSearch?: (query: string) => void;
   onNotificationsClick?: () => void;
   onSettingsClick?: () => void;
   onProfileClick?: () => void;
+  onLanguageChange?: (language: Language) => void;
   onLogoutClick?: () => void;
   children: React.ReactNode;
 }
@@ -28,12 +30,14 @@ function AppShellContent({
   currentPath,
   breadcrumbs,
   user,
+  currentLanguage,
   notificationCount,
   onNavigate,
   onSearch,
   onNotificationsClick,
   onSettingsClick,
   onProfileClick,
+  onLanguageChange,
   onLogoutClick,
   children,
 }: AppShellProps) {
@@ -67,8 +71,10 @@ function AppShellContent({
           notificationCount={notificationCount}
           onNotificationsClick={onNotificationsClick}
           user={user}
+          currentLanguage={currentLanguage}
           onSettingsClick={onSettingsClick}
           onProfileClick={onProfileClick}
+          onLanguageChange={onLanguageChange}
           onLogoutClick={onLogoutClick}
         />
 
