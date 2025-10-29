@@ -2,7 +2,9 @@
 
 import { use, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Save, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
+import '../../../../lib/i18n'; // Ensure i18n is initialized
 import {
   Button,
   Card,
@@ -154,36 +156,38 @@ const roleLabels: Record<string, string> = {
   warehouse: 'Складской работник',
 };
 
-const permissionLabels: Record<PermissionLevel, string> = {
-  none: 'Нет доступа',
-  read: 'Чтение',
-  edit: 'Редактирование',
-};
+const getPermissionLabels = (t: any): Record<PermissionLevel, string> => ({
+  none: t('pages.employeeDetail.accessLevels.none'),
+  read: t('pages.employeeDetail.accessLevels.read'),
+  edit: t('pages.employeeDetail.accessLevels.edit'),
+});
 
-const storePageLabels: Record<keyof StorePermissions, string> = {
-  pos: 'POS (касса)',
-  warehouse: 'Склад',
-  products: 'Товары',
-  storeReports: 'Отчеты магазина',
-};
+const getStorePageLabels = (t: any): Record<keyof StorePermissions, string> => ({
+  pos: t('pages.employeeDetail.permissions.pos'),
+  warehouse: t('pages.employeeDetail.permissions.warehouse'),
+  products: t('pages.employeeDetail.permissions.products'),
+  storeReports: t('pages.employeeDetail.permissions.storeReports'),
+});
 
-const intranetPageLabels: Record<keyof IntranetPermissions, string> = {
-  stores: 'Магазины',
-  employees: 'Сотрудники',
-  customers: 'Клиенты',
-  reports: 'Отчёты',
-  productsManagement: 'Управление товарами',
-  warehouseManagement: 'Складской учёт',
-  finance: 'Финансы',
-};
+const getIntranetPageLabels = (t: any): Record<keyof IntranetPermissions, string> => ({
+  stores: t('pages.employeeDetail.permissions.stores'),
+  employees: t('pages.employeeDetail.permissions.employees'),
+  customers: t('pages.employeeDetail.permissions.customers'),
+  reports: t('pages.employeeDetail.permissions.reports'),
+  productsManagement: t('pages.employeeDetail.permissions.productManagement'),
+  warehouseManagement: t('pages.employeeDetail.permissions.warehouseManagement'),
+  finance: t('pages.employeeDetail.permissions.finance'),
+});
 
 interface PermissionRowProps {
   label: string;
   value: PermissionLevel;
   onChange: (value: PermissionLevel) => void;
+  t: any;
 }
 
-function PermissionRow({ label, value, onChange }: PermissionRowProps) {
+function PermissionRow({ label, value, onChange, t }: PermissionRowProps) {
+  const permissionLabels = getPermissionLabels(t);
   return (
     <div className="flex items-center justify-between py-3 px-4 border-b last:border-b-0 hover:bg-muted/50">
       <span className="font-medium">{label}</span>
@@ -209,6 +213,7 @@ function PermissionRow({ label, value, onChange }: PermissionRowProps) {
 
 export default function EmployeeDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const { id } = use(params);
   const employee = mockEmployees.find((e) => e.id === id);
 
@@ -239,12 +244,12 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Назад
+            {t('pages.employeeDetail.back')}
           </Button>
         </div>
         <Card>
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Сотрудник не найден</p>
+            <p className="text-muted-foreground">{t('pages.employeeDetail.notFound')}</p>
           </CardContent>
         </Card>
       </div>
@@ -271,7 +276,7 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
         <div className="flex items-center gap-4">
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Назад
+            {t('pages.employeeDetail.back')}
           </Button>
           <div>
             <h1 className="text-3xl font-bold">
@@ -282,15 +287,15 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
         </div>
         <Button onClick={handleSave}>
           <Save className="mr-2 h-4 w-4" />
-          Сохранить изменения
+          {t('pages.employeeDetail.saveChanges')}
         </Button>
       </div>
 
       {/* Информация о сотруднике */}
       <Card>
         <CardHeader>
-          <CardTitle>Информация о сотруднике</CardTitle>
-          <CardDescription>Основная информация и статус</CardDescription>
+          <CardTitle>{t('pages.employeeDetail.information')}</CardTitle>
+          <CardDescription>{t('pages.employeeDetail.basicInfo')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2">
@@ -298,14 +303,14 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
               <div className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.employees.fields.email')}</p>
                   <p className="font-medium">{employee.email}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Телефон</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.employees.fields.phone')}</p>
                   <p className="font-medium">{employee.phone}</p>
                 </div>
               </div>
@@ -314,16 +319,16 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
               <div className="flex items-center gap-3">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Магазин</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.employees.fields.store')}</p>
                   <p className="font-medium">{employee.storeName}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Briefcase className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="text-sm text-muted-foreground">Статус</p>
+                  <p className="text-sm text-muted-foreground">{t('fields.status')}</p>
                   <Badge variant={employee.isActive ? 'success' : 'outline'}>
-                    {employee.isActive ? 'Активен' : 'Неактивен'}
+                    {employee.isActive ? t('status.active') : t('status.inactive')}
                   </Badge>
                 </div>
               </div>
@@ -336,17 +341,18 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
         {/* Права доступа к страницам магазина */}
         <Card>
           <CardHeader>
-            <CardTitle>Права доступа к магазину</CardTitle>
-            <CardDescription>Настройка доступа к функциям магазина</CardDescription>
+            <CardTitle>{t('pages.employeeDetail.storeAccess')}</CardTitle>
+            <CardDescription>{t('pages.employeeDetail.storeAccessDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {(Object.keys(storePageLabels) as Array<keyof StorePermissions>).map((key) => (
+              {(Object.keys(getStorePageLabels(t)) as Array<keyof StorePermissions>).map((key) => (
                 <PermissionRow
                   key={key}
-                  label={storePageLabels[key]}
+                  label={getStorePageLabels(t)[key]}
                   value={storePermissions[key]}
                   onChange={(value) => handleStorePermissionChange(key, value)}
+                  t={t}
                 />
               ))}
             </div>
@@ -356,17 +362,18 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
         {/* Права доступа к интранету */}
         <Card>
           <CardHeader>
-            <CardTitle>Права доступа к интранету</CardTitle>
-            <CardDescription>Настройка доступа к административным функциям</CardDescription>
+            <CardTitle>{t('pages.employeeDetail.intranetAccess')}</CardTitle>
+            <CardDescription>{t('pages.employeeDetail.intranetAccessDescription')}</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <div className="divide-y">
-              {(Object.keys(intranetPageLabels) as Array<keyof IntranetPermissions>).map((key) => (
+              {(Object.keys(getIntranetPageLabels(t)) as Array<keyof IntranetPermissions>).map((key) => (
                 <PermissionRow
                   key={key}
-                  label={intranetPageLabels[key]}
+                  label={getIntranetPageLabels(t)[key]}
                   value={intranetPermissions[key]}
                   onChange={(value) => handleIntranetPermissionChange(key, value)}
+                  t={t}
                 />
               ))}
             </div>
@@ -378,11 +385,11 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
       <Card className="bg-muted/50">
         <CardContent className="pt-6">
           <div className="space-y-2 text-sm">
-            <p className="font-medium">Информация о правах доступа:</p>
+            <p className="font-medium">{t('pages.employeeDetail.accessLevelInfo', { defaultValue: 'Информация о правах доступа:' })}</p>
             <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-              <li><span className="font-medium text-foreground">Нет доступа</span> - сотрудник не видит эту страницу</li>
-              <li><span className="font-medium text-primary">Чтение</span> - сотрудник может просматривать данные, но не может их изменять</li>
-              <li><span className="font-medium text-success">Редактирование</span> - сотрудник может просматривать и изменять данные (включает право на чтение)</li>
+              <li><span className="font-medium text-foreground">{t('pages.employeeDetail.accessLevels.none')}</span> - {t('pages.employeeDetail.accessLevelDescriptions.none', { defaultValue: 'сотрудник не видит эту страницу' })}</li>
+              <li><span className="font-medium text-primary">{t('pages.employeeDetail.accessLevels.read')}</span> - {t('pages.employeeDetail.accessLevelDescriptions.read', { defaultValue: 'сотрудник может просматривать данные, но не может их изменять' })}</li>
+              <li><span className="font-medium text-success">{t('pages.employeeDetail.accessLevels.edit')}</span> - {t('pages.employeeDetail.accessLevelDescriptions.edit', { defaultValue: 'сотрудник может просматривать и изменять данные (включает право на чтение)' })}</li>
             </ul>
           </div>
         </CardContent>

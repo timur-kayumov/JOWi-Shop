@@ -42,7 +42,13 @@
       "mcp__playwright__browser_hover",
       "Bash(timeout 2 bash:*)",
       "Bash(timeout 1 bash:*)",
-      "mcp__playwright__browser_navigate_back"
+      "mcp__playwright__browser_navigate_back",
+      "mcp__playwright__browser_press_key",
+      "Bash(timeout 10 bash:*)",
+      "mcp__playwright__browser_wait_for",
+      "Bash(curl:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(powershell -Command \"Stop-Process -Id 5948 -Force\")"
     ],
     "deny": [],
     "ask": []

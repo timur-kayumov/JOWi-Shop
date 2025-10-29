@@ -1,8 +1,10 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, MapPin, Phone, Clock, Globe, Building } from 'lucide-react';
 import { Button, Badge } from '@jowi/ui';
+import '../../../../lib/i18n'; // Ensure i18n is initialized
 
 // Mock data for stores with additional details
 const mockStoreData = {
@@ -65,6 +67,7 @@ const mockStoreData = {
 export default function StoreShowPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation('common');
   const storeId = params.id as string;
 
   const store = mockStoreData[storeId as keyof typeof mockStoreData];
@@ -74,10 +77,10 @@ export default function StoreShowPage() {
       <div className="space-y-6">
         <Button variant="ghost" onClick={() => router.push('/intranet/stores')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Назад к списку
+          {t('pages.storeDetail.backToList')}
         </Button>
         <div className="rounded-lg border bg-card p-8 text-center">
-          <p className="text-lg text-muted-foreground">Магазин не найден</p>
+          <p className="text-lg text-muted-foreground">{t('pages.storeDetail.notFound')}</p>
         </div>
       </div>
     );
@@ -98,7 +101,7 @@ export default function StoreShowPage() {
     <div className="space-y-6">
       <Button variant="ghost" onClick={() => router.push('/intranet/stores')}>
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Назад к списку
+        {t('pages.storeDetail.backToList')}
       </Button>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -111,7 +114,7 @@ export default function StoreShowPage() {
               </div>
               <h2 className="text-2xl font-bold text-center">{store.name}</h2>
               <Badge variant={store.isActive ? 'success' : 'outline'} className="mt-2">
-                {store.isActive ? 'Активен' : 'Неактивен'}
+                {store.isActive ? t('status.active') : t('status.inactive')}
               </Badge>
             </div>
 
@@ -134,7 +137,7 @@ export default function StoreShowPage() {
               <div className="flex items-center gap-3 text-sm">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <div className="font-medium">Переход смены</div>
+                  <div className="font-medium">{t('pages.storeDetail.shiftTransition')}</div>
                   <div className="text-muted-foreground">{store.shiftTransitionTime}</div>
                 </div>
               </div>
@@ -147,7 +150,7 @@ export default function StoreShowPage() {
 
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Создан</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.created')}</span>
                 <span className="text-sm font-medium">{formatDate(store.createdAt)}</span>
               </div>
             </div>
@@ -161,7 +164,7 @@ export default function StoreShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Сотрудников</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.storeDetail.employeesCount')}</p>
                   <p className="text-2xl font-bold">{store.stats.employeeCount}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
@@ -173,7 +176,7 @@ export default function StoreShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Касс</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.storeDetail.terminalsCount')}</p>
                   <p className="text-2xl font-bold">{store.stats.terminalCount}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900">
@@ -185,8 +188,8 @@ export default function StoreShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Продажи сегодня</p>
-                  <p className="text-2xl font-bold">{formatCurrency(store.stats.todaySales)} сум</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesToday')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(store.stats.todaySales)} {t('currency.uzs')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                   <Building className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -197,8 +200,8 @@ export default function StoreShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Продажи за месяц</p>
-                  <p className="text-2xl font-bold">{formatCurrency(store.stats.monthSales)} сум</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesThisMonth')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(store.stats.monthSales)} {t('currency.uzs')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900">
                   <Building className="h-6 w-6 text-orange-600 dark:text-orange-400" />
@@ -210,39 +213,39 @@ export default function StoreShowPage() {
           {/* Additional Info */}
           <div className="rounded-lg border bg-card">
             <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">Дополнительная информация</h3>
+              <h3 className="text-lg font-semibold">{t('pages.storeDetail.additionalInfo')}</h3>
             </div>
 
             <div className="p-6 space-y-4">
               <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">Идентификатор</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.storeId')}</span>
                 <span className="text-sm font-medium font-mono">{store.id}</span>
               </div>
 
               <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">Статус</span>
+                <span className="text-sm text-muted-foreground">{t('fields.status')}</span>
                 <Badge variant={store.isActive ? 'success' : 'outline'}>
-                  {store.isActive ? 'Активен' : 'Неактивен'}
+                  {store.isActive ? t('status.active') : t('status.inactive')}
                 </Badge>
               </div>
 
               <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">Время перехода смены</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.shiftTransitionTime')}</span>
                 <span className="text-sm font-medium">{store.shiftTransitionTime}</span>
               </div>
 
               <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">Город</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.city')}</span>
                 <span className="text-sm font-medium">{store.city}</span>
               </div>
 
               <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">Страна</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.country')}</span>
                 <span className="text-sm font-medium">{store.country}</span>
               </div>
 
               <div className="flex items-center justify-between py-3">
-                <span className="text-sm text-muted-foreground">Дата создания</span>
+                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.createdAt')}</span>
                 <span className="text-sm font-medium">{formatDate(store.createdAt)}</span>
               </div>
             </div>
@@ -251,21 +254,21 @@ export default function StoreShowPage() {
           {/* Quick Actions */}
           <div className="rounded-lg border bg-card">
             <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">Быстрые действия</h3>
+              <h3 className="text-lg font-semibold">{t('pages.storeDetail.quickActions')}</h3>
             </div>
 
             <div className="p-6 grid gap-3 md:grid-cols-2">
               <Button variant="outline" className="justify-start">
-                Просмотреть сотрудников
+                {t('pages.storeDetail.viewEmployees')}
               </Button>
               <Button variant="outline" className="justify-start">
-                Просмотреть кассы
+                {t('pages.storeDetail.viewTerminals')}
               </Button>
               <Button variant="outline" className="justify-start">
-                Отчёты по продажам
+                {t('pages.storeDetail.salesReports')}
               </Button>
               <Button variant="outline" className="justify-start">
-                Управление настройками
+                {t('pages.storeDetail.manageSettings')}
               </Button>
             </div>
           </div>

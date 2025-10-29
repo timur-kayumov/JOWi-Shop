@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Search, TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Package, Calendar } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Card,
@@ -94,15 +95,6 @@ const topProductsData = [
     revenue: 3690000,
     category: 'Крупы',
   },
-];
-
-// Mock данные для продаж по категориям
-const salesByCategoryData = [
-  { name: 'Напитки', value: 35, revenue: 45500000 },
-  { name: 'Молочные', value: 25, revenue: 32500000 },
-  { name: 'Хлеб', value: 15, revenue: 19500000 },
-  { name: 'Крупы', value: 12, revenue: 15600000 },
-  { name: 'Прочее', value: 13, revenue: 16900000 },
 ];
 
 const COLORS = ['#007aff', '#34c759', '#ff9500', '#ff3b30', '#af52de'];
@@ -200,11 +192,21 @@ const mockStats = {
 };
 
 export default function ReportsPage() {
+  const { t } = useTranslation('common');
   const [selectedPeriod, setSelectedPeriod] = useState('month');
   const [selectedStore, setSelectedStore] = useState('all');
   const [productSearch, setProductSearch] = useState('');
   const [employeeSearch, setEmployeeSearch] = useState('');
   const [inventorySearch, setInventorySearch] = useState('');
+
+  // Mock данные для продаж по категориям (переведенные)
+  const salesByCategoryData = [
+    { name: t('categories.drinks'), value: 35, revenue: 45500000 },
+    { name: t('categories.dairy'), value: 25, revenue: 32500000 },
+    { name: t('categories.bread'), value: 15, revenue: 19500000 },
+    { name: t('categories.cereals'), value: 12, revenue: 15600000 },
+    { name: t('categories.other'), value: 13, revenue: 16900000 },
+  ];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('ru-RU', {
@@ -229,9 +231,9 @@ export default function ReportsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Отчёты</h1>
+        <h1 className="text-3xl font-bold">{t('pages.reports.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Аналитика и отчётность по всем операциям
+          {t('pages.reports.subtitle')}
         </p>
       </div>
 
@@ -242,12 +244,12 @@ export default function ReportsPage() {
             <SelectValue placeholder="Период" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="today">Сегодня</SelectItem>
-            <SelectItem value="yesterday">Вчера</SelectItem>
-            <SelectItem value="week">Неделя</SelectItem>
-            <SelectItem value="month">Месяц</SelectItem>
-            <SelectItem value="quarter">Квартал</SelectItem>
-            <SelectItem value="year">Год</SelectItem>
+            <SelectItem value="today">{t('pages.reports.period.today')}</SelectItem>
+            <SelectItem value="yesterday">{t('pages.reports.period.yesterday')}</SelectItem>
+            <SelectItem value="week">{t('pages.reports.period.week')}</SelectItem>
+            <SelectItem value="month">{t('pages.reports.period.month')}</SelectItem>
+            <SelectItem value="quarter">{t('pages.reports.period.quarter')}</SelectItem>
+            <SelectItem value="year">{t('pages.reports.period.year')}</SelectItem>
           </SelectContent>
         </Select>
 
@@ -256,7 +258,7 @@ export default function ReportsPage() {
             <SelectValue placeholder="Магазин" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Все магазины</SelectItem>
+            <SelectItem value="all">{t('pages.reports.store.all')}</SelectItem>
             <SelectItem value="1">Магазин Центральный</SelectItem>
             <SelectItem value="2">Магазин Чиланзар</SelectItem>
             <SelectItem value="3">Магазин Юнусабад</SelectItem>
@@ -275,52 +277,52 @@ export default function ReportsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Общая выручка</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages.reports.kpi.totalRevenue')}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(mockStats.totalRevenue)}</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% от предыдущего периода
+              +20.1% {t('pages.reports.kpi.comparedToPrevious')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Количество заказов</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages.reports.kpi.totalOrders')}</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mockStats.totalOrders}</div>
             <p className="text-xs text-muted-foreground">
-              +15.2% от предыдущего периода
+              +15.2% {t('pages.reports.kpi.comparedToPrevious')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Средний чек</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages.reports.kpi.averageCheck')}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{formatCurrency(mockStats.averageCheck)}</div>
             <p className="text-xs text-muted-foreground">
-              +4.3% от предыдущего периода
+              +4.3% {t('pages.reports.kpi.comparedToPrevious')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Топ товар</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('pages.reports.kpi.topProduct')}</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mockStats.topProduct}</div>
             <p className="text-xs text-muted-foreground">
-              234 продажи за период
+              234 {t('pages.reports.kpi.sales')}
             </p>
           </CardContent>
         </Card>
@@ -329,10 +331,10 @@ export default function ReportsPage() {
       {/* Табы с отчётами */}
       <Tabs defaultValue="sales" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="sales">Продажи</TabsTrigger>
-          <TabsTrigger value="products">Топ товаров</TabsTrigger>
-          <TabsTrigger value="employees">Сотрудники</TabsTrigger>
-          <TabsTrigger value="inventory">Склад</TabsTrigger>
+          <TabsTrigger value="sales">{t('pages.reports.tabs.sales')}</TabsTrigger>
+          <TabsTrigger value="products">{t('pages.reports.tabs.products')}</TabsTrigger>
+          <TabsTrigger value="employees">{t('pages.reports.tabs.employees')}</TabsTrigger>
+          <TabsTrigger value="inventory">{t('pages.reports.tabs.inventory')}</TabsTrigger>
         </TabsList>
 
         {/* Отчёт по продажам */}
@@ -340,8 +342,8 @@ export default function ReportsPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>Динамика продаж</CardTitle>
-                <CardDescription>Выручка и количество заказов по дням</CardDescription>
+                <CardTitle>{t('pages.reports.salesTab.dynamicsTitle')}</CardTitle>
+                <CardDescription>{t('pages.reports.salesTab.dynamicsDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -357,7 +359,7 @@ export default function ReportsPage() {
                       type="monotone"
                       dataKey="revenue"
                       stroke="#007aff"
-                      name="Выручка"
+                      name={t('pages.reports.salesTab.revenue')}
                       strokeWidth={2}
                     />
                   </LineChart>
@@ -367,8 +369,8 @@ export default function ReportsPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Продажи по категориям</CardTitle>
-                <CardDescription>Распределение выручки по категориям товаров</CardDescription>
+                <CardTitle>{t('pages.reports.salesTab.categoriesTitle')}</CardTitle>
+                <CardDescription>{t('pages.reports.salesTab.categoriesDescription')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -396,8 +398,8 @@ export default function ReportsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Количество заказов по дням</CardTitle>
-              <CardDescription>Статистика заказов за последние 7 дней</CardDescription>
+              <CardTitle>{t('pages.reports.salesTab.ordersTitle')}</CardTitle>
+              <CardDescription>{t('pages.reports.salesTab.ordersDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -407,7 +409,7 @@ export default function ReportsPage() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="orders" fill="#34c759" name="Заказы" />
+                  <Bar dataKey="orders" fill="#34c759" name={t('pages.reports.salesTab.orders')} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -418,12 +420,12 @@ export default function ReportsPage() {
         <TabsContent value="products" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Самые продаваемые товары</CardTitle>
-              <CardDescription>Топ товаров за выбранный период</CardDescription>
+              <CardTitle>{t('pages.reports.productsTab.title')}</CardTitle>
+              <CardDescription>{t('pages.reports.productsTab.description')}</CardDescription>
               <div className="relative mt-4">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Поиск товара..."
+                  placeholder={t('pages.reports.productsTab.searchPlaceholder')}
                   value={productSearch}
                   onChange={(e) => setProductSearch(e.target.value)}
                   className="pl-9"
@@ -453,7 +455,7 @@ export default function ReportsPage() {
                     </div>
                     <div className="text-right">
                       <div className="font-bold">{formatCurrency(product.revenue)}</div>
-                      <div className="text-sm text-muted-foreground">{product.sold} продаж</div>
+                      <div className="text-sm text-muted-foreground">{product.sold} {t('pages.reports.productsTab.sales')}</div>
                     </div>
                   </div>
                 ))}
@@ -466,12 +468,12 @@ export default function ReportsPage() {
         <TabsContent value="employees" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Эффективность сотрудников</CardTitle>
-              <CardDescription>Статистика продаж по сотрудникам</CardDescription>
+              <CardTitle>{t('pages.reports.employeesTab.title')}</CardTitle>
+              <CardDescription>{t('pages.reports.employeesTab.description')}</CardDescription>
               <div className="relative mt-4">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Поиск сотрудника..."
+                  placeholder={t('pages.reports.employeesTab.searchPlaceholder')}
                   value={employeeSearch}
                   onChange={(e) => setEmployeeSearch(e.target.value)}
                   className="pl-9"
@@ -483,52 +485,52 @@ export default function ReportsPage() {
                 columns={[
                   {
                     key: 'name',
-                    label: 'Сотрудник',
+                    label: t('pages.reports.employeesTab.columns.employee'),
                     sortable: true,
                     render: (employee) => <span className="font-medium">{employee.name}</span>,
                   },
                   {
                     key: 'role',
-                    label: 'Роль',
+                    label: t('pages.reports.employeesTab.columns.role'),
                     sortable: true,
                     className: 'text-muted-foreground',
                   },
                   {
                     key: 'store',
-                    label: 'Магазин',
+                    label: t('pages.reports.employeesTab.columns.store'),
                     sortable: true,
                   },
                   {
                     key: 'sales',
-                    label: 'Продажи',
+                    label: t('pages.reports.employeesTab.columns.sales'),
                     sortable: true,
                     className: 'text-right font-medium',
                   },
                   {
                     key: 'revenue',
-                    label: 'Выручка',
+                    label: t('pages.reports.employeesTab.columns.revenue'),
                     sortable: true,
                     className: 'text-right font-bold',
                     render: (employee) => formatCurrency(employee.revenue),
                   },
                   {
                     key: 'avgCheck',
-                    label: 'Средний чек',
+                    label: t('pages.reports.employeesTab.columns.avgCheck'),
                     sortable: true,
                     className: 'text-right text-muted-foreground',
                     render: (employee) => formatCurrency(employee.avgCheck),
                   },
                 ]}
                 data={filteredEmployees}
-                emptyMessage="Нет данных"
+                emptyMessage={t('pages.reports.noData')}
               />
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Выручка по сотрудникам</CardTitle>
-              <CardDescription>Сравнение выручки сотрудников</CardDescription>
+              <CardTitle>{t('pages.reports.employeesTab.revenueChartTitle')}</CardTitle>
+              <CardDescription>{t('pages.reports.employeesTab.revenueChartDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -538,7 +540,7 @@ export default function ReportsPage() {
                   <YAxis />
                   <Tooltip formatter={(value: number) => formatCurrency(value)} />
                   <Legend />
-                  <Bar dataKey="revenue" fill="#007aff" name="Выручка" />
+                  <Bar dataKey="revenue" fill="#007aff" name={t('pages.reports.employeesTab.columns.revenue')} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -549,12 +551,12 @@ export default function ReportsPage() {
         <TabsContent value="inventory" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Складские остатки</CardTitle>
-              <CardDescription>Текущие остатки товаров на складах</CardDescription>
+              <CardTitle>{t('pages.reports.inventoryTab.title')}</CardTitle>
+              <CardDescription>{t('pages.reports.inventoryTab.description')}</CardDescription>
               <div className="relative mt-4">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Поиск товара..."
+                  placeholder={t('pages.reports.inventoryTab.searchPlaceholder')}
                   value={inventorySearch}
                   onChange={(e) => setInventorySearch(e.target.value)}
                   className="pl-9"
@@ -585,11 +587,11 @@ export default function ReportsPage() {
                         <Badge
                           variant={item.stock < item.minStock ? 'warning' : 'success'}
                         >
-                          {item.stock} шт
+                          {item.stock} {t('pages.reports.inventoryTab.pcs')}
                         </Badge>
                       </div>
                       <div className="text-sm text-muted-foreground mt-1">
-                        Мин: {item.minStock} шт
+                        {t('pages.reports.inventoryTab.min')}: {item.minStock} {t('pages.reports.inventoryTab.pcs')}
                       </div>
                       <div className="text-sm font-medium mt-1">
                         {formatCurrency(item.cost * item.stock)}

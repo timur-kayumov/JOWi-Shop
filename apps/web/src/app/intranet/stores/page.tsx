@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Plus, Search, Pencil, Trash2, Settings } from 'lucide-react';
 import {
   Button,
   Input,
@@ -71,6 +72,7 @@ const mockStores = [
 
 export default function StoresPage() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [stores, setStores] = useState(mockStores);
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
@@ -118,7 +120,7 @@ export default function StoresPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить этот магазин?')) {
+    if (confirm(t('pages.stores.deleteConfirm'))) {
       setStores(stores.filter((s) => s.id !== id));
     }
   };
@@ -129,12 +131,21 @@ export default function StoresPage() {
     setEditingStore(null);
   };
 
+  const getCountryLabel = (country: string) => {
+    const labels: Record<string, string> = {
+      Uzbekistan: t('pages.stores.countries.uzbekistan'),
+      Kazakhstan: t('pages.stores.countries.kazakhstan'),
+      Kyrgyzstan: t('pages.stores.countries.kyrgyzstan'),
+    };
+    return labels[country] || country;
+  };
+
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Магазины</h1>
+        <h1 className="text-3xl font-bold">{t('pages.stores.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Управление магазинами вашего бизнеса
+          {t('pages.stores.subtitle')}
         </p>
       </div>
 
@@ -142,7 +153,7 @@ export default function StoresPage() {
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Поиск по названию..."
+            placeholder={t('pages.stores.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-9"
@@ -153,18 +164,18 @@ export default function StoresPage() {
           <DialogTrigger asChild>
             <Button onClick={() => setEditingStore(null)}>
               <Plus className="mr-2 h-4 w-4" />
-              Добавить магазин
+              {t('pages.stores.addStore')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>
-                {editingStore ? 'Редактировать магазин' : 'Новый магазин'}
+                {editingStore ? t('pages.stores.editStore') : t('pages.stores.newStore')}
               </DialogTitle>
               <DialogDescription>
                 {editingStore
-                  ? 'Внесите изменения в информацию о магазине'
-                  : 'Заполните информацию о новом магазине'}
+                  ? t('pages.stores.editDescription')
+                  : t('pages.stores.newDescription')}
               </DialogDescription>
             </DialogHeader>
 
@@ -175,9 +186,9 @@ export default function StoresPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Название магазина</FormLabel>
+                      <FormLabel>{t('pages.stores.fields.name')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Магазин Центральный" {...field} />
+                        <Input placeholder={t('pages.stores.placeholders.name')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -190,17 +201,17 @@ export default function StoresPage() {
                     name="country"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Страна</FormLabel>
+                        <FormLabel>{t('pages.stores.fields.country')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Выберите страну" />
+                              <SelectValue placeholder={t('pages.stores.placeholders.country')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Uzbekistan">Узбекистан</SelectItem>
-                            <SelectItem value="Kazakhstan">Казахстан</SelectItem>
-                            <SelectItem value="Kyrgyzstan">Кыргызстан</SelectItem>
+                            <SelectItem value="Uzbekistan">{t('pages.stores.countries.uzbekistan')}</SelectItem>
+                            <SelectItem value="Kazakhstan">{t('pages.stores.countries.kazakhstan')}</SelectItem>
+                            <SelectItem value="Kyrgyzstan">{t('pages.stores.countries.kyrgyzstan')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -213,9 +224,9 @@ export default function StoresPage() {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Город</FormLabel>
+                        <FormLabel>{t('pages.stores.fields.city')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ташкент" {...field} />
+                          <Input placeholder={t('pages.stores.placeholders.city')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -228,9 +239,9 @@ export default function StoresPage() {
                   name="address"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Адрес</FormLabel>
+                      <FormLabel>{t('pages.stores.fields.address')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="ул. Амира Темура, 10" {...field} />
+                        <Input placeholder={t('pages.stores.placeholders.address')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -243,9 +254,9 @@ export default function StoresPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Телефон</FormLabel>
+                        <FormLabel>{t('pages.stores.fields.phone')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="+998901234567" {...field} />
+                          <Input placeholder={t('pages.stores.placeholders.phone')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -257,9 +268,9 @@ export default function StoresPage() {
                     name="shiftTransitionTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Время перехода кассы</FormLabel>
+                        <FormLabel>{t('pages.stores.fields.shiftTransitionTime')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="00:00" {...field} />
+                          <Input placeholder={t('pages.stores.placeholders.shiftTransitionTime')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -269,10 +280,10 @@ export default function StoresPage() {
 
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={handleDialogClose}>
-                    Отмена
+                    {t('actions.cancel')}
                   </Button>
                   <Button type="submit">
-                    {editingStore ? 'Сохранить изменения' : 'Создать магазин'}
+                    {editingStore ? t('actions.save') : t('pages.stores.addStore')}
                   </Button>
                 </DialogFooter>
               </form>
@@ -285,44 +296,72 @@ export default function StoresPage() {
         columns={[
           {
             key: 'name',
-            label: 'Название',
+            label: t('pages.stores.fields.name'),
             sortable: true,
             render: (store) => <span className="font-medium">{store.name}</span>,
           },
           {
             key: 'address',
-            label: 'Адрес',
+            label: t('pages.stores.fields.address'),
             sortable: true,
             className: 'text-muted-foreground',
           },
           {
             key: 'city',
-            label: 'Город',
+            label: t('pages.stores.fields.city'),
             sortable: true,
           },
           {
             key: 'phone',
-            label: 'Телефон',
+            label: t('pages.stores.fields.phone'),
           },
           {
             key: 'isActive',
-            label: 'Статус',
+            label: t('fields.status'),
             sortable: true,
             render: (store) => (
               <Badge variant={store.isActive ? 'success' : 'outline'}>
-                {store.isActive ? 'Активен' : 'Неактивен'}
+                {store.isActive ? t('status.active') : t('status.inactive')}
               </Badge>
+            ),
+          },
+          {
+            key: 'actions',
+            label: '',
+            render: (store) => (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/intranet/stores/${store.id}`);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/store/${store.id}`);
+                  }}
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </div>
             ),
           },
         ]}
         data={filteredStores}
-        onRowClick={(store) => router.push(`/intranet/stores/${store.id}`)}
-        emptyMessage={search ? 'Ничего не найдено' : 'Нет магазинов'}
+        onRowClick={(store) => router.push(`/store/${store.id}`)}
+        emptyMessage={search ? t('pages.stores.notFound') : t('pages.stores.noStores')}
       />
 
       {filteredStores.length > 0 && (
         <div className="text-sm text-muted-foreground">
-          Показано {filteredStores.length} из {stores.length} магазинов
+          {t('pages.stores.showing', { count: filteredStores.length, total: stores.length })}
         </div>
       )}
     </div>

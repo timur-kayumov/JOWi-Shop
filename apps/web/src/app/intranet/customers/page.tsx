@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2, Filter, User } from 'lucide-react';
 import {
   Button,
@@ -82,6 +83,7 @@ const mockCustomers = [
 
 export default function CustomersPage() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [customers, setCustomers] = useState(mockCustomers);
   const [search, setSearch] = useState('');
   const [genderFilter, setGenderFilter] = useState<string>('all');
@@ -166,7 +168,7 @@ export default function CustomersPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить этого клиента?')) {
+    if (confirm(t('pages.customers.deleteConfirm'))) {
       setCustomers(customers.filter((c) => c.id !== id));
     }
   };
@@ -184,9 +186,9 @@ export default function CustomersPage() {
 
   const getGenderBadge = (gender: string) => {
     const labels = {
-      male: 'Мужской',
-      female: 'Женский',
-      other: 'Другой',
+      male: t('pages.customers.gender.male'),
+      female: t('pages.customers.gender.female'),
+      other: t('pages.customers.gender.other'),
     };
     return labels[gender as keyof typeof labels] || gender;
   };
@@ -194,9 +196,9 @@ export default function CustomersPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Клиенты</h1>
+        <h1 className="text-3xl font-bold">{t('pages.customers.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          База клиентов и программа лояльности
+          {t('pages.customers.subtitle')}
         </p>
       </div>
 
@@ -205,7 +207,7 @@ export default function CustomersPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Поиск по имени, фамилии или телефону..."
+              placeholder={t('pages.customers.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -216,18 +218,18 @@ export default function CustomersPage() {
             <DialogTrigger asChild>
               <Button onClick={() => setEditingCustomer(null)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Добавить клиента
+                {t('pages.customers.addCustomer')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle>
-                  {editingCustomer ? 'Редактировать клиента' : 'Новый клиент'}
+                  {editingCustomer ? t('pages.customers.editCustomer') : t('pages.customers.newCustomer')}
                 </DialogTitle>
                 <DialogDescription>
                   {editingCustomer
-                    ? 'Внесите изменения в информацию о клиенте'
-                    : 'Заполните информацию о новом клиенте'}
+                    ? t('pages.customers.editDescription')
+                    : t('pages.customers.newDescription')}
                 </DialogDescription>
               </DialogHeader>
 
@@ -239,9 +241,9 @@ export default function CustomersPage() {
                       name="firstName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Имя</FormLabel>
+                          <FormLabel>{t('pages.customers.fields.firstName')}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Алишер" {...field} />
+                            <Input placeholder={t('pages.customers.placeholders.firstName')} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -253,9 +255,9 @@ export default function CustomersPage() {
                       name="lastName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Фамилия</FormLabel>
+                          <FormLabel>{t('pages.customers.fields.lastName')}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Усманов" {...field} />
+                            <Input placeholder={t('pages.customers.placeholders.lastName')} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -268,9 +270,9 @@ export default function CustomersPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Телефон</FormLabel>
+                        <FormLabel>{t('pages.customers.fields.phone')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="+998901234567" {...field} />
+                          <Input placeholder={t('pages.customers.placeholders.phone')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -282,9 +284,9 @@ export default function CustomersPage() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email (необязательно)</FormLabel>
+                        <FormLabel>{t('pages.customers.fields.emailOptional')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="email@example.com" {...field} />
+                          <Input placeholder={t('pages.customers.placeholders.email')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -297,17 +299,17 @@ export default function CustomersPage() {
                       name="gender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Пол (необязательно)</FormLabel>
+                          <FormLabel>{t('pages.customers.fields.genderOptional')}</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Выберите пол" />
+                                <SelectValue placeholder={t('pages.customers.placeholders.selectGender')} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="male">Мужской</SelectItem>
-                              <SelectItem value="female">Женский</SelectItem>
-                              <SelectItem value="other">Другой</SelectItem>
+                              <SelectItem value="male">{t('pages.customers.gender.male')}</SelectItem>
+                              <SelectItem value="female">{t('pages.customers.gender.female')}</SelectItem>
+                              <SelectItem value="other">{t('pages.customers.gender.other')}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -320,7 +322,7 @@ export default function CustomersPage() {
                       name="dateOfBirth"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Дата рождения (необязательно)</FormLabel>
+                          <FormLabel>{t('pages.customers.fields.dateOfBirthOptional')}</FormLabel>
                           <FormControl>
                             <Input
                               type="date"
@@ -343,9 +345,9 @@ export default function CustomersPage() {
                     name="loyaltyCardNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Номер карты лояльности (необязательно)</FormLabel>
+                        <FormLabel>{t('pages.customers.fields.loyaltyCardNumber')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="LC001234" {...field} />
+                          <Input placeholder={t('pages.customers.placeholders.loyaltyCardNumber')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -354,10 +356,10 @@ export default function CustomersPage() {
 
                   <DialogFooter>
                     <Button type="button" variant="outline" onClick={handleDialogClose}>
-                      Отмена
+                      {t('actions.cancel')}
                     </Button>
                     <Button type="submit">
-                      {editingCustomer ? 'Сохранить изменения' : 'Создать клиента'}
+                      {editingCustomer ? t('actions.save') : t('actions.create')}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -373,10 +375,10 @@ export default function CustomersPage() {
               <SelectValue placeholder="Пол" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все</SelectItem>
-              <SelectItem value="male">Мужской</SelectItem>
-              <SelectItem value="female">Женский</SelectItem>
-              <SelectItem value="other">Другой</SelectItem>
+              <SelectItem value="all">{t('pages.customers.gender.all')}</SelectItem>
+              <SelectItem value="male">{t('pages.customers.gender.male')}</SelectItem>
+              <SelectItem value="female">{t('pages.customers.gender.female')}</SelectItem>
+              <SelectItem value="other">{t('pages.customers.gender.other')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -385,12 +387,12 @@ export default function CustomersPage() {
               <SelectValue placeholder="Год рождения" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все</SelectItem>
-              <SelectItem value="2000+">2000 и позже</SelectItem>
-              <SelectItem value="1990-1999">1990-1999</SelectItem>
-              <SelectItem value="1980-1989">1980-1989</SelectItem>
-              <SelectItem value="1970-1979">1970-1979</SelectItem>
-              <SelectItem value="<1970">Ранее 1970</SelectItem>
+              <SelectItem value="all">{t('pages.customers.birthYear.all')}</SelectItem>
+              <SelectItem value="2000+">{t('pages.customers.birthYear.2000plus')}</SelectItem>
+              <SelectItem value="1990-1999">{t('pages.customers.birthYear.1990-1999')}</SelectItem>
+              <SelectItem value="1980-1989">{t('pages.customers.birthYear.1980-1989')}</SelectItem>
+              <SelectItem value="1970-1979">{t('pages.customers.birthYear.1970-1979')}</SelectItem>
+              <SelectItem value="<1970">{t('pages.customers.birthYear.before1970')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -403,7 +405,7 @@ export default function CustomersPage() {
                 setBirthYearFilter('all');
               }}
             >
-              Сбросить фильтры
+              {t('pages.customers.resetFilters')}
             </Button>
           )}
         </div>
@@ -413,7 +415,7 @@ export default function CustomersPage() {
         columns={[
           {
             key: 'fullName',
-            label: 'Клиент',
+            label: t('pages.customers.fields.client'),
             sortable: true,
             render: (customer) => (
               <div className="flex items-center gap-3">
@@ -428,12 +430,12 @@ export default function CustomersPage() {
           },
           {
             key: 'phone',
-            label: 'Телефон',
+            label: t('pages.customers.fields.phone'),
             sortable: true,
           },
           {
             key: 'email',
-            label: 'Email',
+            label: t('pages.customers.fields.email'),
             sortable: true,
             render: (customer) => (
               <span className="text-muted-foreground">{customer.email || '-'}</span>
@@ -441,7 +443,7 @@ export default function CustomersPage() {
           },
           {
             key: 'gender',
-            label: 'Пол',
+            label: t('pages.customers.fields.gender'),
             sortable: true,
             render: (customer) => (
               <Badge variant="outline">{getGenderBadge(customer.gender)}</Badge>
@@ -449,13 +451,13 @@ export default function CustomersPage() {
           },
           {
             key: 'dateOfBirth',
-            label: 'Дата рождения',
+            label: t('pages.customers.fields.dateOfBirth'),
             sortable: true,
             render: (customer) => formatDate(customer.dateOfBirth),
           },
           {
             key: 'loyaltyCardNumber',
-            label: 'Карта лояльности',
+            label: t('pages.customers.fields.loyaltyCard'),
             render: (customer) =>
               customer.loyaltyCardNumber ? (
                 <Badge variant="success">{customer.loyaltyCardNumber}</Badge>
@@ -468,14 +470,14 @@ export default function CustomersPage() {
         onRowClick={(customer) => router.push(`/intranet/customers/${customer.id}`)}
         emptyMessage={
           search || genderFilter !== 'all' || birthYearFilter !== 'all'
-            ? 'Ничего не найдено'
-            : 'Нет клиентов'
+            ? t('pages.customers.notFound')
+            : t('pages.customers.noCustomers')
         }
       />
 
       {filteredCustomers.length > 0 && (
         <div className="text-sm text-muted-foreground">
-          Показано {filteredCustomers.length} из {customers.length} клиентов
+          {t('pages.customers.showing', { count: filteredCustomers.length, total: customers.length })}
         </div>
       )}
     </div>

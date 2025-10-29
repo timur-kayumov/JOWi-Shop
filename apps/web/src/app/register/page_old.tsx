@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTranslation } from 'react-i18next';
 import {
   PhoneInput,
   OTPInput,
@@ -27,12 +26,11 @@ export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
-  const { t } = useTranslation('auth');
 
   const steps = [
-    { label: t('register.steps.phone'), description: t('register.step1.subtitle') },
-    { label: t('register.steps.verification'), description: t('register.step2.subtitle') },
-    { label: t('register.steps.business'), description: t('register.step3.subtitle') },
+    { label: 'Телефон', description: 'Введите данные' },
+    { label: 'Подтверждение', description: 'Код из SMS' },
+    { label: 'Бизнес', description: 'О вашем бизнесе' },
   ];
 
   return (
@@ -40,9 +38,9 @@ export default function RegisterPage() {
       <Card className="w-full max-w-2xl p-8">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">{t('register.title')}</h1>
+          <h1 className="text-3xl font-bold">Регистрация</h1>
           <p className="mt-2 text-muted-foreground">
-            {t('register.subtitle')}
+            Создайте аккаунт для управления вашим бизнесом
           </p>
         </div>
 
@@ -80,9 +78,9 @@ export default function RegisterPage() {
 
         {/* Footer */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          {t('register.hasAccount')}{' '}
+          Уже есть аккаунт?{' '}
           <Link href="/login" className="font-medium text-primary hover:underline">
-            {t('register.loginLink')}
+            Войти
           </Link>
         </div>
       </Card>
@@ -92,7 +90,6 @@ export default function RegisterPage() {
 
 // Step 1: Phone + Name + Agreement
 function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
-  const { t } = useTranslation('auth');
   const {
     register,
     handleSubmit,
@@ -120,34 +117,34 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step1.title')}</h2>
+        <h2 className="text-xl font-semibold">Добро пожаловать!</h2>
         <p className="text-sm text-muted-foreground">
-          {t('register.step1.subtitle')}
+          Введите ваши данные для регистрации
         </p>
       </div>
 
       <div>
         <label htmlFor="phone" className="mb-2 block text-sm font-medium">
-          {t('register.step1.phoneLabel')}
+          Номер телефона
         </label>
         <PhoneInput
           id="phone"
           value={phone}
           onChange={(value) => setValue('phone', value)}
           error={errors.phone?.message}
-          placeholder={t('register.step1.phonePlaceholder')}
+          placeholder="+998 (XX) XXX-XX-XX"
           disabled={isSubmitting}
         />
       </div>
 
       <div>
         <label htmlFor="name" className="mb-2 block text-sm font-medium">
-          {t('register.step1.nameLabel')}
+          Ваше имя
         </label>
         <Input
           id="name"
           {...register('name')}
-          placeholder={t('register.step1.namePlaceholder')}
+          placeholder="Введите ваше имя"
           disabled={isSubmitting}
         />
         {errors.name && (
@@ -164,13 +161,13 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
           disabled={isSubmitting}
         />
         <label htmlFor="terms" className="text-sm text-muted-foreground">
-          {t('register.step1.termsLabel')}{' '}
+          Я согласен с{' '}
           <Link href="/terms" className="text-primary hover:underline">
-            {t('register.step1.termsLink')}
+            условиями использования
           </Link>{' '}
-          {t('register.step1.andText')}{' '}
+          и{' '}
           <Link href="/privacy" className="text-primary hover:underline">
-            {t('register.step1.privacyLink')}
+            политикой конфиденциальности
           </Link>
         </label>
       </div>
@@ -179,7 +176,7 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
       )}
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? t('loading.sendingCode') : t('register.step1.nextButton')}
+        {isSubmitting ? 'Отправка...' : 'Продолжить'}
       </Button>
     </form>
   );
@@ -195,7 +192,6 @@ function Step2({
   onNext: () => void;
   onBack: () => void;
 }) {
-  const { t } = useTranslation(['auth', 'common']);
   const {
     handleSubmit,
     formState: { isSubmitting },
@@ -228,9 +224,9 @@ function Step2({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step2.title')}</h2>
+        <h2 className="text-xl font-semibold">Подтвердите номер</h2>
         <p className="text-sm text-muted-foreground">
-          {t('register.step2.subtitle')}{' '}
+          Введите код из SMS, отправленного на{' '}
           <span className="font-medium text-foreground">
             +{phone.slice(0, 3)} ({phone.slice(3, 5)}) {phone.slice(5, 8)}-
             {phone.slice(8, 10)}-{phone.slice(10)}
@@ -240,7 +236,7 @@ function Step2({
 
       <div>
         <label htmlFor="otp" className="mb-4 block text-center text-sm font-medium">
-          {t('register.step2.codeLabel')}
+          Код подтверждения
         </label>
         <OTPInput
           value={otp}
@@ -250,26 +246,26 @@ function Step2({
       </div>
 
       <div className="text-center text-sm text-muted-foreground">
-        {t('register.step2.resendText')}{' '}
+        Не получили код?{' '}
         {resendTimer > 0 ? (
-          <span>{t('register.step2.resendTimer', { seconds: resendTimer })}</span>
+          <span>Повторная отправка через {resendTimer} сек</span>
         ) : (
           <button
             type="button"
             onClick={handleResend}
             className="font-medium text-primary hover:underline"
           >
-            {t('register.step2.resendButton')}
+            Отправить повторно
           </button>
         )}
       </div>
 
       <div className="flex gap-4">
         <Button type="button" variant="outline" onClick={onBack} className="flex-1">
-          {t('actions.back', { ns: 'common' })}
+          Назад
         </Button>
         <Button type="submit" className="flex-1" disabled={isSubmitting || otp.length !== 6}>
-          {isSubmitting ? t('loading.verifyingCode') : t('register.step2.verifyButton')}
+          {isSubmitting ? 'Проверка...' : 'Подтвердить'}
         </Button>
       </div>
     </form>
@@ -286,7 +282,6 @@ function Step3({
   name: string;
   onBack: () => void;
 }) {
-  const { t } = useTranslation(['auth', 'common']);
   const {
     register,
     handleSubmit,
@@ -320,20 +315,20 @@ function Step3({
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step3.title')}</h2>
+        <h2 className="text-xl font-semibold">Расскажите о вашем бизнесе</h2>
         <p className="text-sm text-muted-foreground">
-          {t('register.step3.subtitle')}
+          Эта информация поможет настроить систему под вас
         </p>
       </div>
 
       <div>
         <label className="mb-4 block text-sm font-medium">
-          {t('register.step3.businessTypeLabel')}
+          Какой у вас тип бизнеса?
         </label>
         <div className="space-y-3">
           <BusinessTypeCard
-            title={t('register.step3.singleBrand.title')}
-            description={t('register.step3.singleBrand.description')}
+            title="Сеть магазинов с одинаковым названием"
+            description="Все ваши магазины работают под одним брендом"
             value="single_brand"
             selected={businessType === 'single_brand'}
             onSelect={(value) => setValue('businessType', value as any)}
@@ -349,8 +344,8 @@ function Step3({
             }
           />
           <BusinessTypeCard
-            title={t('register.step3.multiBrand.title')}
-            description={t('register.step3.multiBrand.description')}
+            title="Сеть магазинов с разным названием"
+            description="У вас несколько разных брендов или франшиз"
             value="multi_brand"
             selected={businessType === 'multi_brand'}
             onSelect={(value) => setValue('businessType', value as any)}
@@ -373,12 +368,12 @@ function Step3({
 
       <div>
         <label htmlFor="businessName" className="mb-2 block text-sm font-medium">
-          {t('register.step3.businessNameLabel')}
+          Название бизнеса
         </label>
         <Input
           id="businessName"
           {...register('businessName')}
-          placeholder={t('register.step3.businessNamePlaceholder')}
+          placeholder="Введите название вашего бизнеса"
           disabled={isSubmitting}
         />
         {errors.businessName && (
@@ -388,10 +383,10 @@ function Step3({
 
       <div className="flex gap-4">
         <Button type="button" variant="outline" onClick={onBack} className="flex-1">
-          {t('actions.back', { ns: 'common' })}
+          Назад
         </Button>
         <Button type="submit" className="flex-1" disabled={isSubmitting}>
-          {isSubmitting ? t('loading.creatingAccount') : t('register.step3.createButton')}
+          {isSubmitting ? 'Создание аккаунта...' : 'Создать аккаунт'}
         </Button>
       </div>
     </form>

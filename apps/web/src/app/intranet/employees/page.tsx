@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2, Mail, Phone } from 'lucide-react';
 import {
   Button,
@@ -103,11 +104,14 @@ const mockEmployees = [
   },
 ];
 
-const roleLabels = {
-  administrator: 'Администратор',
-  manager: 'Менеджер',
-  cashier: 'Кассир',
-  warehouse: 'Складской работник',
+const getRoleLabel = (role: string, t: any) => {
+  const roleMap: Record<string, string> = {
+    administrator: t('pages.employees.roles.administrator'),
+    manager: t('pages.employees.roles.manager'),
+    cashier: t('pages.employees.roles.cashier'),
+    warehouse: t('pages.employees.roles.warehouse'),
+  };
+  return roleMap[role] || role;
 };
 
 const roleColors = {
@@ -119,6 +123,7 @@ const roleColors = {
 
 export default function EmployeesPage() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [employees, setEmployees] = useState(mockEmployees);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
@@ -188,7 +193,7 @@ export default function EmployeesPage() {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Вы уверены, что хотите удалить этого сотрудника?')) {
+    if (confirm(t('pages.employees.deleteConfirm'))) {
       setEmployees(employees.filter((e) => e.id !== id));
     }
   };
@@ -202,9 +207,9 @@ export default function EmployeesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Сотрудники</h1>
+        <h1 className="text-3xl font-bold">{t('pages.employees.title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Управление сотрудниками и их правами доступа
+          {t('pages.employees.subtitle')}
         </p>
       </div>
 
@@ -213,7 +218,7 @@ export default function EmployeesPage() {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Поиск по имени или email..."
+              placeholder={t('pages.employees.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -225,11 +230,11 @@ export default function EmployeesPage() {
               <SelectValue placeholder="Все роли" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все роли</SelectItem>
-              <SelectItem value="administrator">Администратор</SelectItem>
-              <SelectItem value="manager">Менеджер</SelectItem>
-              <SelectItem value="cashier">Кассир</SelectItem>
-              <SelectItem value="warehouse">Складской работник</SelectItem>
+              <SelectItem value="all">{t('pages.employees.allRoles')}</SelectItem>
+              <SelectItem value="administrator">{t('pages.employees.roles.administrator')}</SelectItem>
+              <SelectItem value="manager">{t('pages.employees.roles.manager')}</SelectItem>
+              <SelectItem value="cashier">{t('pages.employees.roles.cashier')}</SelectItem>
+              <SelectItem value="warehouse">{t('pages.employees.roles.warehouse')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -238,18 +243,18 @@ export default function EmployeesPage() {
           <DialogTrigger asChild>
             <Button onClick={() => setEditingEmployee(null)}>
               <Plus className="mr-2 h-4 w-4" />
-              Добавить сотрудника
+              {t('pages.employees.addEmployee')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>
-                {editingEmployee ? 'Редактировать сотрудника' : 'Новый сотрудник'}
+                {editingEmployee ? t('pages.employees.editEmployee') : t('pages.employees.newEmployee')}
               </DialogTitle>
               <DialogDescription>
                 {editingEmployee
-                  ? 'Внесите изменения в информацию о сотруднике'
-                  : 'Заполните информацию о новом сотруднике'}
+                  ? t('pages.employees.editDescription')
+                  : t('pages.employees.newDescription')}
               </DialogDescription>
             </DialogHeader>
 
@@ -261,9 +266,9 @@ export default function EmployeesPage() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Имя</FormLabel>
+                        <FormLabel>{t('pages.employees.fields.firstName')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Азиз" {...field} />
+                          <Input placeholder={t('pages.employees.placeholders.firstName')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -275,9 +280,9 @@ export default function EmployeesPage() {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Фамилия</FormLabel>
+                        <FormLabel>{t('pages.employees.fields.lastName')}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Каримов" {...field} />
+                          <Input placeholder={t('pages.employees.placeholders.lastName')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -290,9 +295,9 @@ export default function EmployeesPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('pages.employees.fields.email')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="aziz.karimov@jowi.uz" type="email" {...field} />
+                        <Input placeholder={t('pages.employees.placeholders.email')} type="email" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -304,9 +309,9 @@ export default function EmployeesPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Телефон</FormLabel>
+                      <FormLabel>{t('pages.employees.fields.phone')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="+998901234567" {...field} />
+                        <Input placeholder={t('pages.employees.placeholders.phone')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -319,18 +324,18 @@ export default function EmployeesPage() {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Роль</FormLabel>
+                        <FormLabel>{t('pages.employees.fields.role')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Выберите роль" />
+                              <SelectValue placeholder={t('pages.employees.placeholders.selectRole')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="administrator">Администратор</SelectItem>
-                            <SelectItem value="manager">Менеджер</SelectItem>
-                            <SelectItem value="cashier">Кассир</SelectItem>
-                            <SelectItem value="warehouse">Складской работник</SelectItem>
+                            <SelectItem value="administrator">{t('pages.employees.roles.administrator')}</SelectItem>
+                            <SelectItem value="manager">{t('pages.employees.roles.manager')}</SelectItem>
+                            <SelectItem value="cashier">{t('pages.employees.roles.cashier')}</SelectItem>
+                            <SelectItem value="warehouse">{t('pages.employees.roles.warehouse')}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -343,11 +348,11 @@ export default function EmployeesPage() {
                     name="storeId"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Магазин</FormLabel>
+                        <FormLabel>{t('pages.employees.fields.store')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Выберите магазин" />
+                              <SelectValue placeholder={t('pages.employees.placeholders.selectStore')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -366,10 +371,10 @@ export default function EmployeesPage() {
 
                 <DialogFooter>
                   <Button type="button" variant="outline" onClick={handleDialogClose}>
-                    Отмена
+                    {t('actions.cancel')}
                   </Button>
                   <Button type="submit">
-                    {editingEmployee ? 'Сохранить изменения' : 'Создать сотрудника'}
+                    {editingEmployee ? t('actions.save') : t('actions.create')}
                   </Button>
                 </DialogFooter>
               </form>
@@ -382,7 +387,7 @@ export default function EmployeesPage() {
         columns={[
           {
             key: 'fullName',
-            label: 'Сотрудник',
+            label: t('pages.employees.fields.employee'),
             sortable: true,
             render: (employee) => (
               <div className="font-medium">
@@ -392,7 +397,7 @@ export default function EmployeesPage() {
           },
           {
             key: 'email',
-            label: 'Контакты',
+            label: t('pages.employees.fields.contacts'),
             render: (employee) => (
               <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1">
@@ -408,38 +413,38 @@ export default function EmployeesPage() {
           },
           {
             key: 'role',
-            label: 'Роль',
+            label: t('pages.employees.fields.role'),
             sortable: true,
             render: (employee) => (
               <Badge variant={roleColors[employee.role]}>
-                {roleLabels[employee.role]}
+                {getRoleLabel(employee.role, t)}
               </Badge>
             ),
           },
           {
             key: 'storeName',
-            label: 'Магазин',
+            label: t('pages.employees.fields.store'),
             sortable: true,
           },
           {
             key: 'isActive',
-            label: 'Статус',
+            label: t('fields.status'),
             sortable: true,
             render: (employee) => (
               <Badge variant={employee.isActive ? 'success' : 'outline'}>
-                {employee.isActive ? 'Активен' : 'Неактивен'}
+                {employee.isActive ? t('status.active') : t('status.inactive')}
               </Badge>
             ),
           },
         ]}
         data={filteredEmployees}
         onRowClick={(employee) => router.push(`/intranet/employees/${employee.id}`)}
-        emptyMessage={search || roleFilter !== 'all' ? 'Ничего не найдено' : 'Нет сотрудников'}
+        emptyMessage={search || roleFilter !== 'all' ? t('pages.employees.notFound') : t('pages.employees.noEmployees')}
       />
 
       {filteredEmployees.length > 0 && (
         <div className="text-sm text-muted-foreground">
-          Показано {filteredEmployees.length} из {employees.length} сотрудников
+          {t('pages.employees.showing', { count: filteredEmployees.length, total: employees.length })}
         </div>
       )}
     </div>

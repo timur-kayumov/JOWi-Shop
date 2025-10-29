@@ -44,6 +44,41 @@
     "employees": "Xodimlar",
     "intranet": "Intranet"
   },
+  "storeNavigation": {
+    "dashboard": "Boshqaruv paneli",
+    "orders": "Buyurtmalar",
+    "products": "Mahsulotlar",
+    "inventory": "Ombor",
+    "reports": "Hisobotlar",
+    "settings": "Sozlamalar",
+    "currentStore": "Joriy do'kon"
+  },
+  "storePages": {
+    "dashboard": {
+      "title": "Do'kon boshqaruv paneli",
+      "description": "Asosiy ma'lumot va do'kon statistikasi"
+    },
+    "orders": {
+      "title": "Buyurtmalar",
+      "description": "Do'kon buyurtmalari va cheklar boshqaruvi"
+    },
+    "products": {
+      "title": "Mahsulotlar",
+      "description": "Mahsulotlar katalogi va assortiment boshqaruvi"
+    },
+    "inventory": {
+      "title": "Ombor",
+      "description": "Mahsulot qoldiqlari va ombor operatsiyalari"
+    },
+    "reports": {
+      "title": "Do'kon hisobotlari",
+      "description": "Do'kon bo'yicha tahlil va hisobotlar"
+    },
+    "settings": {
+      "title": "Do'kon sozlamalari",
+      "description": "Do'kon konfiguratsiyasi va parametrlari"
+    }
+  },
   "user": {
     "profile": "Profil",
     "logout": "Chiqish",
@@ -84,5 +119,292 @@
     "kg": "kg",
     "liter": "l",
     "meter": "m"
+  },
+  "pages": {
+    "employees": {
+      "title": "Xodimlar",
+      "subtitle": "Xodimlarni va ularning huquqlarini boshqarish",
+      "addEmployee": "Xodim qo'shish",
+      "editEmployee": "Xodimni tahrirlash",
+      "newEmployee": "Yangi xodim",
+      "editDescription": "Xodim ma'lumotlarini o'zgartiring",
+      "newDescription": "Yangi xodim ma'lumotlarini kiriting",
+      "searchPlaceholder": "Ism yoki email bo'yicha qidirish...",
+      "allRoles": "Barcha lavozimlar",
+      "showing": "{{total}}dan {{count}} ta ko'rsatilmoqda",
+      "notFound": "Hech narsa topilmadi",
+      "noEmployees": "Xodimlar yo'q",
+      "deleteConfirm": "Ushbu xodimni o'chirishga ishonchingiz komilmi?",
+      "fields": {
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "email": "Email",
+        "phone": "Telefon",
+        "role": "Lavozim",
+        "store": "Do'kon",
+        "employee": "Xodim",
+        "contacts": "Kontaktlar"
+      },
+      "roles": {
+        "administrator": "Administrator",
+        "manager": "Menejer",
+        "cashier": "Kassir",
+        "warehouse": "Omborchi"
+      },
+      "placeholders": {
+        "firstName": "Aziz",
+        "lastName": "Karimov",
+        "email": "aziz.karimov@jowi.uz",
+        "phone": "+998901234567",
+        "selectRole": "Lavozimni tanlang",
+        "selectStore": "Do'konni tanlang"
+      }
+    },
+    "stores": {
+      "title": "Do'konlar",
+      "subtitle": "Biznesingiz do'konlarini boshqarish",
+      "addStore": "Do'kon qo'shish",
+      "editStore": "Do'konni tahrirlash",
+      "newStore": "Yangi do'kon",
+      "editDescription": "Do'kon ma'lumotlarini o'zgartiring",
+      "newDescription": "Yangi do'kon ma'lumotlarini kiriting",
+      "searchPlaceholder": "Nom bo'yicha qidirish...",
+      "showing": "{{total}}dan {{count}} ta ko'rsatilmoqda",
+      "notFound": "Hech narsa topilmadi",
+      "noStores": "Do'konlar yo'q",
+      "deleteConfirm": "Ushbu do'konni o'chirishga ishonchingiz komilmi?",
+      "fields": {
+        "name": "Do'kon nomi",
+        "country": "Mamlakat",
+        "city": "Shahar",
+        "address": "Manzil",
+        "phone": "Telefon",
+        "shiftTransitionTime": "Kassa almashtirish vaqti"
+      },
+      "placeholders": {
+        "name": "Markaziy do'kon",
+        "country": "Mamlakatni tanlang",
+        "city": "Toshkent",
+        "address": "Amir Temur ko'chasi, 10",
+        "phone": "+998901234567",
+        "shiftTransitionTime": "00:00"
+      },
+      "countries": {
+        "uzbekistan": "O'zbekiston",
+        "kazakhstan": "Qozog'iston",
+        "kyrgyzstan": "Qirg'iziston"
+      }
+    },
+    "customers": {
+      "title": "Mijozlar",
+      "subtitle": "Mijozlar bazasi va sodiqlik dasturi",
+      "addCustomer": "Mijoz qo'shish",
+      "editCustomer": "Mijozni tahrirlash",
+      "newCustomer": "Yangi mijoz",
+      "editDescription": "Mijoz ma'lumotlarini o'zgartiring",
+      "newDescription": "Yangi mijoz ma'lumotlarini kiriting",
+      "searchPlaceholder": "Ism, familiya yoki telefon bo'yicha qidirish...",
+      "showing": "{{total}}dan {{count}} ta ko'rsatilmoqda",
+      "notFound": "Hech narsa topilmadi",
+      "noCustomers": "Mijozlar yo'q",
+      "deleteConfirm": "Ushbu mijozni o'chirishga ishonchingiz komilmi?",
+      "resetFilters": "Filtrlarni tozalash",
+      "fields": {
+        "client": "Mijoz",
+        "firstName": "Ism",
+        "lastName": "Familiya",
+        "phone": "Telefon",
+        "email": "Email",
+        "emailOptional": "Email (majburiy emas)",
+        "gender": "Jins",
+        "genderOptional": "Jins (majburiy emas)",
+        "dateOfBirth": "Tug'ilgan sana",
+        "dateOfBirthOptional": "Tug'ilgan sana (majburiy emas)",
+        "loyaltyCardNumber": "Sodiqlik kartasi raqami (majburiy emas)",
+        "loyaltyCard": "Sodiqlik kartasi"
+      },
+      "placeholders": {
+        "firstName": "Alisher",
+        "lastName": "Usmanov",
+        "phone": "+998901234567",
+        "email": "email@example.com",
+        "selectGender": "Jinsni tanlang",
+        "loyaltyCardNumber": "LC001234"
+      },
+      "gender": {
+        "all": "Barchasi",
+        "male": "Erkak",
+        "female": "Ayol",
+        "other": "Boshqa"
+      },
+      "birthYear": {
+        "label": "Tug'ilgan yil",
+        "all": "Barchasi",
+        "2000plus": "2000 va undan keyin",
+        "1990-1999": "1990-1999",
+        "1980-1989": "1980-1989",
+        "1970-1979": "1970-1979",
+        "before1970": "1970 gacha"
+      }
+    },
+    "reports": {
+      "title": "Hisobotlar",
+      "subtitle": "Barcha operatsiyalar bo'yicha tahlil va hisobotlar",
+      "period": {
+        "label": "Davr",
+        "today": "Bugun",
+        "yesterday": "Kecha",
+        "week": "Hafta",
+        "month": "Oy",
+        "quarter": "Chorak",
+        "year": "Yil"
+      },
+      "store": {
+        "all": "Barcha do'konlar"
+      },
+      "kpi": {
+        "totalRevenue": "Umumiy daromad",
+        "totalOrders": "Buyurtmalar soni",
+        "averageCheck": "O'rtacha chek",
+        "topProduct": "Top mahsulot",
+        "sales": "davrda sotildi",
+        "comparedToPrevious": "oldingi davrga nisbatan"
+      },
+      "tabs": {
+        "sales": "Sotuvlar",
+        "products": "Top mahsulotlar",
+        "employees": "Xodimlar",
+        "inventory": "Ombor"
+      },
+      "salesTab": {
+        "dynamicsTitle": "Sotuvlar dinamikasi",
+        "dynamicsDescription": "Kunlar bo'yicha daromad va buyurtmalar soni",
+        "categoriesTitle": "Kategoriyalar bo'yicha sotuvlar",
+        "categoriesDescription": "Mahsulot kategoriyalari bo'yicha daromad taqsimoti",
+        "ordersTitle": "Kunlar bo'yicha buyurtmalar soni",
+        "ordersDescription": "Oxirgi 7 kun uchun buyurtmalar statistikasi",
+        "revenue": "Daromad",
+        "orders": "Buyurtmalar"
+      },
+      "productsTab": {
+        "title": "Eng ko'p sotiladigan mahsulotlar",
+        "description": "Tanlangan davr uchun top mahsulotlar",
+        "searchPlaceholder": "Mahsulot qidirish...",
+        "sales": "sotildi"
+      },
+      "employeesTab": {
+        "title": "Xodimlar samaradorligi",
+        "description": "Xodimlar bo'yicha sotuv statistikasi",
+        "searchPlaceholder": "Xodim qidirish...",
+        "revenueChartTitle": "Xodimlar bo'yicha daromad",
+        "revenueChartDescription": "Xodimlar daromadini solishtirish",
+        "columns": {
+          "employee": "Xodim",
+          "role": "Lavozim",
+          "store": "Do'kon",
+          "sales": "Sotuvlar",
+          "revenue": "Daromad",
+          "avgCheck": "O'rtacha chek"
+        }
+      },
+      "inventoryTab": {
+        "title": "Ombor qoldiqlari",
+        "description": "Omborlardagi mahsulotlarning joriy qoldiqlari",
+        "searchPlaceholder": "Mahsulot qidirish...",
+        "min": "Min",
+        "pcs": "dona"
+      },
+      "noData": "Ma'lumot yo'q"
+    },
+    "authSuccess": {
+      "title": "Ro'yxatdan o'tish muvaffaqiyatli!",
+      "subtitle": "Hisobingiz yaratildi",
+      "message": "JOWi Shop'ga xush kelibsiz! Endi siz chakana savdo boshqaruv tizimingizni sozlashni boshlashingiz mumkin.",
+      "goToIntranet": "Intranetga o'tish",
+      "loginAgain": "Qayta kirish",
+      "note": "Eslatma:",
+      "noteText": "Bu test sahifasi. Ishlab chiqarishda bu yerda haqiqiy foydalanuvchi ma'lumotlari va dashboardga yo'naltirish bo'ladi.",
+      "userInfo": {
+        "phone": "Telefon:",
+        "name": "Ism:",
+        "business": "Biznes:",
+        "testUser": "Test foydalanuvchi",
+        "testBusiness": "Test biznes"
+      }
+    },
+    "customerDetail": {
+      "backToList": "Ro'yxatga qaytish",
+      "notFound": "Mijoz topilmadi",
+      "totalPurchases": "Jami xaridlar",
+      "totalAmount": "Umumiy summa",
+      "purchaseHistory": "Xarid tarixi",
+      "noPurchaseHistory": "Xarid tarixi yo'q",
+      "receipt": "Chek",
+      "total": "Jami:",
+      "customerSince": "Mijoz"
+    },
+    "employeeDetail": {
+      "back": "Orqaga",
+      "notFound": "Xodim topilmadi",
+      "saveChanges": "O'zgarishlarni saqlash",
+      "information": "Xodim haqida ma'lumot",
+      "basicInfo": "Asosiy ma'lumot va holat",
+      "storeAccess": "Do'konga kirish huquqlari",
+      "storeAccessDescription": "Do'kon funksiyalariga kirishni sozlash",
+      "intranetAccess": "Intranetga kirish huquqlari",
+      "intranetAccessDescription": "Ma'muriy funksiyalarga kirishni sozlash",
+      "permissions": {
+        "pos": "POS (kassa)",
+        "warehouse": "Ombor",
+        "products": "Mahsulotlar",
+        "storeReports": "Do'kon hisobotlari",
+        "stores": "Do'konlar",
+        "employees": "Xodimlar",
+        "customers": "Mijozlar",
+        "reports": "Hisobotlar",
+        "productManagement": "Mahsulotlarni boshqarish",
+        "warehouseManagement": "Ombor hisobi",
+        "finance": "Moliya"
+      },
+      "accessLevels": {
+        "none": "Kirish yo'q",
+        "read": "O'qish",
+        "edit": "Tahrirlash"
+      }
+    },
+    "storeDetail": {
+      "backToList": "Ro'yxatga qaytish",
+      "notFound": "Do'kon topilmadi",
+      "shiftTransition": "Smena o'tishi",
+      "created": "Yaratilgan",
+      "employeesCount": "Xodimlar",
+      "terminalsCount": "Kassalar",
+      "salesToday": "Bugungi sotuvlar",
+      "salesThisMonth": "Oylik sotuvlar",
+      "additionalInfo": "Qo'shimcha ma'lumot",
+      "storeId": "Identifikator",
+      "shiftTransitionTime": "Smena o'tish vaqti",
+      "city": "Shahar",
+      "country": "Mamlakat",
+      "createdAt": "Yaratilgan sana",
+      "quickActions": "Tezkor harakatlar",
+      "viewEmployees": "Xodimlarni ko'rish",
+      "viewTerminals": "Kassalarni ko'rish",
+      "salesReports": "Sotuv hisobotlari",
+      "manageSettings": "Sozlamalarni boshqarish"
+    }
+  },
+  "paymentMethods": {
+    "cash": "Naqd",
+    "card": "Karta",
+    "transfer": "O'tkazma",
+    "installment": "Bo'lib to'lash"
+  },
+  "categories": {
+    "drinks": "Ichimliklar",
+    "dairy": "Sut mahsulotlari",
+    "bread": "Non",
+    "cereals": "Donlar",
+    "other": "Boshqa"
   }
 }

@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Mail, Phone, Calendar, CreditCard, ShoppingBag, User } from 'lucide-react';
 import { Button, Badge } from '@jowi/ui';
+import '../../../../lib/i18n'; // Ensure i18n is initialized
 
 // Mock data for a single customer with purchase history
 const mockCustomerData = {
@@ -76,6 +78,7 @@ const mockCustomerData = {
 export default function CustomerShowPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation('common');
   const customerId = params.id as string;
 
   const customer = mockCustomerData[customerId as keyof typeof mockCustomerData];
@@ -85,10 +88,10 @@ export default function CustomerShowPage() {
       <div className="space-y-6">
         <Button variant="ghost" onClick={() => router.push('/intranet/customers')}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Назад к списку
+          {t('pages.customerDetail.backToList')}
         </Button>
         <div className="rounded-lg border bg-card p-8 text-center">
-          <p className="text-lg text-muted-foreground">Клиент не найден</p>
+          <p className="text-lg text-muted-foreground">{t('pages.customerDetail.notFound')}</p>
         </div>
       </div>
     );
@@ -114,19 +117,19 @@ export default function CustomerShowPage() {
 
   const getPaymentMethodLabel = (method: string) => {
     const labels: Record<string, string> = {
-      cash: 'Наличные',
-      card: 'Карта',
-      transfer: 'Перевод',
-      installment: 'Рассрочка',
+      cash: t('paymentMethods.cash'),
+      card: t('paymentMethods.card'),
+      transfer: t('paymentMethods.transfer'),
+      installment: t('paymentMethods.installment'),
     };
     return labels[method] || method;
   };
 
   const getGenderLabel = (gender: string) => {
     const labels: Record<string, string> = {
-      male: 'Мужской',
-      female: 'Женский',
-      other: 'Другой',
+      male: t('pages.customers.gender.male'),
+      female: t('pages.customers.gender.female'),
+      other: t('pages.customers.gender.other'),
     };
     return labels[gender] || gender;
   };
@@ -138,7 +141,7 @@ export default function CustomerShowPage() {
     <div className="space-y-6">
       <Button variant="ghost" onClick={() => router.push('/intranet/customers')}>
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Назад к списку
+        {t('pages.customerDetail.backToList')}
       </Button>
 
       <div className="grid gap-6 md:grid-cols-3">
@@ -187,7 +190,7 @@ export default function CustomerShowPage() {
 
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Клиент с</span>
+                <span className="text-sm text-muted-foreground">{t('pages.customerDetail.customerSince')}</span>
                 <span className="text-sm font-medium">{formatDate(customer.createdAt)}</span>
               </div>
             </div>
@@ -201,7 +204,7 @@ export default function CustomerShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Всего покупок</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.customerDetail.totalPurchases')}</p>
                   <p className="text-2xl font-bold">{purchaseCount}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900">
@@ -213,8 +216,8 @@ export default function CustomerShowPage() {
             <div className="rounded-lg border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Общая сумма</p>
-                  <p className="text-2xl font-bold">{formatCurrency(totalPurchases)} сум</p>
+                  <p className="text-sm text-muted-foreground">{t('pages.customerDetail.totalAmount')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalPurchases)} {t('currency.uzs')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                   <CreditCard className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -226,20 +229,20 @@ export default function CustomerShowPage() {
           {/* Purchase History */}
           <div className="rounded-lg border bg-card">
             <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">История покупок</h3>
+              <h3 className="text-lg font-semibold">{t('pages.customerDetail.purchaseHistory')}</h3>
             </div>
 
             <div className="divide-y">
               {customer.receipts.length === 0 ? (
                 <div className="p-8 text-center text-sm text-muted-foreground">
-                  Нет истории покупок
+                  {t('pages.customerDetail.noPurchaseHistory')}
                 </div>
               ) : (
                 customer.receipts.map((receipt) => (
                   <div key={receipt.id} className="p-6 hover:bg-muted/50">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <p className="font-semibold">Чек #{receipt.id}</p>
+                        <p className="font-semibold">{t('pages.customerDetail.receipt')} #{receipt.id}</p>
                         <p className="text-sm text-muted-foreground">
                           {formatDateTime(receipt.createdAt)}
                         </p>
@@ -256,16 +259,16 @@ export default function CustomerShowPage() {
                             {item.name} × {item.quantity}
                           </span>
                           <span className="font-medium">
-                            {formatCurrency(item.price * item.quantity)} сум
+                            {formatCurrency(item.price * item.quantity)} {t('currency.uzs')}
                           </span>
                         </div>
                       ))}
                     </div>
 
                     <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">Итого:</span>
+                      <span className="font-semibold">{t('pages.customerDetail.total')}</span>
                       <span className="text-lg font-bold">
-                        {formatCurrency(receipt.totalAmount)} сум
+                        {formatCurrency(receipt.totalAmount)} {t('currency.uzs')}
                       </span>
                     </div>
                   </div>

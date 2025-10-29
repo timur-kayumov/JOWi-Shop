@@ -47,9 +47,10 @@ export function SidebarProvider({
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
+  sidebarHeader?: React.ReactNode;
 }
 
-export function Sidebar({ children, className, ...props }: SidebarProps) {
+export function Sidebar({ children, className, sidebarHeader, ...props }: SidebarProps) {
   const { collapsed, setCollapsed, mobileOpen, setMobileOpen } = useSidebar();
 
   return (
@@ -104,6 +105,11 @@ export function Sidebar({ children, className, ...props }: SidebarProps) {
             <X className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Sidebar Header (e.g., store selector) */}
+        {sidebarHeader && !collapsed && (
+          <div className="border-b p-3">{sidebarHeader}</div>
+        )}
 
         {/* Content */}
         <div className="flex flex-col gap-2 p-2">{children}</div>

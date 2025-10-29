@@ -44,6 +44,41 @@
     "employees": "Сотрудники",
     "intranet": "Интранет"
   },
+  "storeNavigation": {
+    "dashboard": "Панель управления",
+    "orders": "Заказы",
+    "products": "Товары",
+    "inventory": "Склад",
+    "reports": "Отчёты",
+    "settings": "Настройки",
+    "currentStore": "Текущий магазин"
+  },
+  "storePages": {
+    "dashboard": {
+      "title": "Панель управления магазином",
+      "description": "Основная информация и статистика магазина"
+    },
+    "orders": {
+      "title": "Заказы",
+      "description": "Управление заказами и чеками магазина"
+    },
+    "products": {
+      "title": "Товары",
+      "description": "Каталог товаров и управление ассортиментом"
+    },
+    "inventory": {
+      "title": "Склад",
+      "description": "Остатки товаров и складские операции"
+    },
+    "reports": {
+      "title": "Отчёты магазина",
+      "description": "Аналитика и отчётность по магазину"
+    },
+    "settings": {
+      "title": "Настройки магазина",
+      "description": "Конфигурация и параметры магазина"
+    }
+  },
   "user": {
     "profile": "Профиль",
     "logout": "Выйти",
@@ -84,5 +119,292 @@
     "kg": "кг",
     "liter": "л",
     "meter": "м"
+  },
+  "pages": {
+    "employees": {
+      "title": "Сотрудники",
+      "subtitle": "Управление сотрудниками и их правами доступа",
+      "addEmployee": "Добавить сотрудника",
+      "editEmployee": "Редактировать сотрудника",
+      "newEmployee": "Новый сотрудник",
+      "editDescription": "Внесите изменения в информацию о сотруднике",
+      "newDescription": "Заполните информацию о новом сотруднике",
+      "searchPlaceholder": "Поиск по имени или email...",
+      "allRoles": "Все роли",
+      "showing": "Показано {{count}} из {{total}} сотрудников",
+      "notFound": "Ничего не найдено",
+      "noEmployees": "Нет сотрудников",
+      "deleteConfirm": "Вы уверены, что хотите удалить этого сотрудника?",
+      "fields": {
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "email": "Email",
+        "phone": "Телефон",
+        "role": "Роль",
+        "store": "Магазин",
+        "employee": "Сотрудник",
+        "contacts": "Контакты"
+      },
+      "roles": {
+        "administrator": "Администратор",
+        "manager": "Менеджер",
+        "cashier": "Кассир",
+        "warehouse": "Складской работник"
+      },
+      "placeholders": {
+        "firstName": "Азиз",
+        "lastName": "Каримов",
+        "email": "aziz.karimov@jowi.uz",
+        "phone": "+998901234567",
+        "selectRole": "Выберите роль",
+        "selectStore": "Выберите магазин"
+      }
+    },
+    "stores": {
+      "title": "Магазины",
+      "subtitle": "Управление магазинами вашего бизнеса",
+      "addStore": "Добавить магазин",
+      "editStore": "Редактировать магазин",
+      "newStore": "Новый магазин",
+      "editDescription": "Внесите изменения в информацию о магазине",
+      "newDescription": "Заполните информацию о новом магазине",
+      "searchPlaceholder": "Поиск по названию...",
+      "showing": "Показано {{count}} из {{total}} магазинов",
+      "notFound": "Ничего не найдено",
+      "noStores": "Нет магазинов",
+      "deleteConfirm": "Вы уверены, что хотите удалить этот магазин?",
+      "fields": {
+        "name": "Название магазина",
+        "country": "Страна",
+        "city": "Город",
+        "address": "Адрес",
+        "phone": "Телефон",
+        "shiftTransitionTime": "Время перехода кассы"
+      },
+      "placeholders": {
+        "name": "Магазин Центральный",
+        "country": "Выберите страну",
+        "city": "Ташкент",
+        "address": "ул. Амира Темура, 10",
+        "phone": "+998901234567",
+        "shiftTransitionTime": "00:00"
+      },
+      "countries": {
+        "uzbekistan": "Узбекистан",
+        "kazakhstan": "Казахстан",
+        "kyrgyzstan": "Кыргызстан"
+      }
+    },
+    "customers": {
+      "title": "Клиенты",
+      "subtitle": "База клиентов и программа лояльности",
+      "addCustomer": "Добавить клиента",
+      "editCustomer": "Редактировать клиента",
+      "newCustomer": "Новый клиент",
+      "editDescription": "Внесите изменения в информацию о клиенте",
+      "newDescription": "Заполните информацию о новом клиенте",
+      "searchPlaceholder": "Поиск по имени, фамилии или телефону...",
+      "showing": "Показано {{count}} из {{total}} клиентов",
+      "notFound": "Ничего не найдено",
+      "noCustomers": "Нет клиентов",
+      "deleteConfirm": "Вы уверены, что хотите удалить этого клиента?",
+      "resetFilters": "Сбросить фильтры",
+      "fields": {
+        "client": "Клиент",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "phone": "Телефон",
+        "email": "Email",
+        "emailOptional": "Email (необязательно)",
+        "gender": "Пол",
+        "genderOptional": "Пол (необязательно)",
+        "dateOfBirth": "Дата рождения",
+        "dateOfBirthOptional": "Дата рождения (необязательно)",
+        "loyaltyCardNumber": "Номер карты лояльности (необязательно)",
+        "loyaltyCard": "Карта лояльности"
+      },
+      "placeholders": {
+        "firstName": "Алишер",
+        "lastName": "Усманов",
+        "phone": "+998901234567",
+        "email": "email@example.com",
+        "selectGender": "Выберите пол",
+        "loyaltyCardNumber": "LC001234"
+      },
+      "gender": {
+        "all": "Все",
+        "male": "Мужской",
+        "female": "Женский",
+        "other": "Другой"
+      },
+      "birthYear": {
+        "label": "Год рождения",
+        "all": "Все",
+        "2000plus": "2000 и позже",
+        "1990-1999": "1990-1999",
+        "1980-1989": "1980-1989",
+        "1970-1979": "1970-1979",
+        "before1970": "Ранее 1970"
+      }
+    },
+    "reports": {
+      "title": "Отчёты",
+      "subtitle": "Аналитика и отчётность по всем операциям",
+      "period": {
+        "label": "Период",
+        "today": "Сегодня",
+        "yesterday": "Вчера",
+        "week": "Неделя",
+        "month": "Месяц",
+        "quarter": "Квартал",
+        "year": "Год"
+      },
+      "store": {
+        "all": "Все магазины"
+      },
+      "kpi": {
+        "totalRevenue": "Общая выручка",
+        "totalOrders": "Количество заказов",
+        "averageCheck": "Средний чек",
+        "topProduct": "Топ товар",
+        "sales": "продажи за период",
+        "comparedToPrevious": "от предыдущего периода"
+      },
+      "tabs": {
+        "sales": "Продажи",
+        "products": "Топ товаров",
+        "employees": "Сотрудники",
+        "inventory": "Склад"
+      },
+      "salesTab": {
+        "dynamicsTitle": "Динамика продаж",
+        "dynamicsDescription": "Выручка и количество заказов по дням",
+        "categoriesTitle": "Продажи по категориям",
+        "categoriesDescription": "Распределение выручки по категориям товаров",
+        "ordersTitle": "Количество заказов по дням",
+        "ordersDescription": "Статистика заказов за последние 7 дней",
+        "revenue": "Выручка",
+        "orders": "Заказы"
+      },
+      "productsTab": {
+        "title": "Самые продаваемые товары",
+        "description": "Топ товаров за выбранный период",
+        "searchPlaceholder": "Поиск товара...",
+        "sales": "продаж"
+      },
+      "employeesTab": {
+        "title": "Эффективность сотрудников",
+        "description": "Статистика продаж по сотрудникам",
+        "searchPlaceholder": "Поиск сотрудника...",
+        "revenueChartTitle": "Выручка по сотрудникам",
+        "revenueChartDescription": "Сравнение выручки сотрудников",
+        "columns": {
+          "employee": "Сотрудник",
+          "role": "Роль",
+          "store": "Магазин",
+          "sales": "Продажи",
+          "revenue": "Выручка",
+          "avgCheck": "Средний чек"
+        }
+      },
+      "inventoryTab": {
+        "title": "Складские остатки",
+        "description": "Текущие остатки товаров на складах",
+        "searchPlaceholder": "Поиск товара...",
+        "min": "Мин",
+        "pcs": "шт"
+      },
+      "noData": "Нет данных"
+    },
+    "authSuccess": {
+      "title": "Регистрация успешна!",
+      "subtitle": "Ваш аккаунт был создан",
+      "message": "Добро пожаловать в JOWi Shop! Теперь вы можете начать настройку вашей системы управления розничной торговлей.",
+      "goToIntranet": "Перейти в интранет",
+      "loginAgain": "Войти снова",
+      "note": "Примечание:",
+      "noteText": "Это тестовая страница. В продакшене здесь будет реальная информация пользователя и редирект в dashboard.",
+      "userInfo": {
+        "phone": "Телефон:",
+        "name": "Имя:",
+        "business": "Бизнес:",
+        "testUser": "Тестовый пользователь",
+        "testBusiness": "Тестовый бизнес"
+      }
+    },
+    "customerDetail": {
+      "backToList": "Назад к списку",
+      "notFound": "Клиент не найден",
+      "totalPurchases": "Всего покупок",
+      "totalAmount": "Общая сумма",
+      "purchaseHistory": "История покупок",
+      "noPurchaseHistory": "Нет истории покупок",
+      "receipt": "Чек",
+      "total": "Итого:",
+      "customerSince": "Клиент с"
+    },
+    "employeeDetail": {
+      "back": "Назад",
+      "notFound": "Сотрудник не найден",
+      "saveChanges": "Сохранить изменения",
+      "information": "Информация о сотруднике",
+      "basicInfo": "Основная информация и статус",
+      "storeAccess": "Права доступа к магазину",
+      "storeAccessDescription": "Настройка доступа к функциям магазина",
+      "intranetAccess": "Права доступа к интранету",
+      "intranetAccessDescription": "Настройка доступа к административным функциям",
+      "permissions": {
+        "pos": "POS (касса)",
+        "warehouse": "Склад",
+        "products": "Товары",
+        "storeReports": "Отчеты магазина",
+        "stores": "Магазины",
+        "employees": "Сотрудники",
+        "customers": "Клиенты",
+        "reports": "Отчёты",
+        "productManagement": "Управление товарами",
+        "warehouseManagement": "Складской учёт",
+        "finance": "Финансы"
+      },
+      "accessLevels": {
+        "none": "Нет доступа",
+        "read": "Чтение",
+        "edit": "Редактирование"
+      }
+    },
+    "storeDetail": {
+      "backToList": "Назад к списку",
+      "notFound": "Магазин не найден",
+      "shiftTransition": "Переход смены",
+      "created": "Создан",
+      "employeesCount": "Сотрудников",
+      "terminalsCount": "Касс",
+      "salesToday": "Продажи сегодня",
+      "salesThisMonth": "Продажи за месяц",
+      "additionalInfo": "Дополнительная информация",
+      "storeId": "Идентификатор",
+      "shiftTransitionTime": "Время перехода смены",
+      "city": "Город",
+      "country": "Страна",
+      "createdAt": "Дата создания",
+      "quickActions": "Быстрые действия",
+      "viewEmployees": "Просмотреть сотрудников",
+      "viewTerminals": "Просмотреть кассы",
+      "salesReports": "Отчёты по продажам",
+      "manageSettings": "Управление настройками"
+    }
+  },
+  "paymentMethods": {
+    "cash": "Наличные",
+    "card": "Карта",
+    "transfer": "Перевод",
+    "installment": "Рассрочка"
+  },
+  "categories": {
+    "drinks": "Напитки",
+    "dairy": "Молочные",
+    "bread": "Хлеб",
+    "cereals": "Крупы",
+    "other": "Прочее"
   }
 }

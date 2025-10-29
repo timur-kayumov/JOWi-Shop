@@ -1,9 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { Button, Card } from '@jowi/ui';
 
 export default function AuthSuccessPage() {
+  const { t } = useTranslation('common');
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md p-8 text-center">
@@ -28,49 +31,47 @@ export default function AuthSuccessPage() {
 
         {/* Title */}
         <h1 className="mb-2 text-2xl font-bold text-foreground">
-          Регистрация успешна!
+          {t('pages.authSuccess.title')}
         </h1>
-        <p className="mb-4 text-muted-foreground">Ваш аккаунт был создан</p>
+        <p className="mb-4 text-muted-foreground">{t('pages.authSuccess.subtitle')}</p>
 
         {/* Message */}
         <div className="mb-8 rounded-lg bg-muted/50 p-4">
           <p className="text-sm text-muted-foreground">
-            Добро пожаловать в JOWi Shop! Теперь вы можете начать настройку вашей
-            системы управления розничной торговлей.
+            {t('pages.authSuccess.message')}
           </p>
         </div>
 
         {/* User Info (Mock) */}
         <div className="mb-6 space-y-2 text-left">
           <div className="flex justify-between rounded-md bg-muted/30 p-3">
-            <span className="text-sm text-muted-foreground">Телефон:</span>
+            <span className="text-sm text-muted-foreground">{t('pages.authSuccess.userInfo.phone')}</span>
             <span className="text-sm font-medium">+998 90 123-45-67</span>
           </div>
           <div className="flex justify-between rounded-md bg-muted/30 p-3">
-            <span className="text-sm text-muted-foreground">Имя:</span>
-            <span className="text-sm font-medium">Тестовый пользователь</span>
+            <span className="text-sm text-muted-foreground">{t('pages.authSuccess.userInfo.name')}</span>
+            <span className="text-sm font-medium">{t('pages.authSuccess.userInfo.testUser')}</span>
           </div>
           <div className="flex justify-between rounded-md bg-muted/30 p-3">
-            <span className="text-sm text-muted-foreground">Бизнес:</span>
-            <span className="text-sm font-medium">Тестовый бизнес</span>
+            <span className="text-sm text-muted-foreground">{t('pages.authSuccess.userInfo.business')}</span>
+            <span className="text-sm font-medium">{t('pages.authSuccess.userInfo.testBusiness')}</span>
           </div>
         </div>
 
         {/* Actions */}
         <div className="space-y-3">
           <Button asChild className="w-full">
-            <Link href="/intranet/stores">Перейти в интранет</Link>
+            <Link href="/intranet/stores">{t('pages.authSuccess.goToIntranet')}</Link>
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Войти снова</Link>
+            <Link href="/login">{t('pages.authSuccess.loginAgain')}</Link>
           </Button>
         </div>
 
         {/* Footer Note */}
         <div className="mt-6 text-xs text-muted-foreground">
           <p>
-            <strong>Примечание:</strong> Это тестовая страница. В продакшене здесь
-            будет реальная информация пользователя и редирект в dashboard.
+            <strong>{t('pages.authSuccess.note')}</strong> {t('pages.authSuccess.noteText')}
           </p>
         </div>
       </Card>
