@@ -131,11 +131,15 @@ export const createTerminalSchema = z.object({
 export const updateTerminalSchema = createTerminalSchema.partial();
 
 // Product
+export const productSourceTypeSchema = z.enum(['manual', 'nomenclature']);
+
 export const createProductSchema = z.object({
-  name: z.string().min(1).max(200),
+  name: z.string().min(1, 'Название обязательно').max(200),
   description: z.string().max(1000).optional(),
-  categoryId: z.string().uuid().optional(),
-  taxRate: z.number().min(0).max(100),
+  categoryId: z.string().uuid('Выберите категорию'),
+  taxRate: z.number().min(0).max(100).default(0),
+  imageUrl: z.string().url().optional(),
+  sourceType: productSourceTypeSchema.default('manual'),
   isActive: z.boolean().default(true),
   hasVariants: z.boolean().default(false),
 });
@@ -145,12 +149,13 @@ export const updateProductSchema = createProductSchema.partial();
 // Product Variant
 export const createVariantSchema = z.object({
   productId: z.string().uuid(),
-  sku: z.string().min(1).max(50),
-  name: z.string().min(1).max(200),
+  sku: z.string().min(1, 'SKU обязателен').max(50),
+  name: z.string().min(1, 'Название обязательно').max(200),
   barcode: z.string().max(100).optional(),
-  price: z.number().positive(),
-  cost: z.number().positive().optional(),
+  price: z.number().positive('Цена должна быть положительной'),
+  cost: z.number().positive('Себестоимость должна быть положительной').optional(),
   unit: z.string().min(1).max(20).default('шт'),
+  imageUrl: z.string().url().optional(),
   attributes: z.record(z.string()).optional(),
   isActive: z.boolean().default(true),
 });
@@ -277,6 +282,13 @@ export const storeAccessSchema = z.object({
 // Export TypeScript types
 export type CreateStoreSchema = z.infer<typeof createStoreSchema>;
 export type UpdateStoreSchema = z.infer<typeof updateStoreSchema>;
+export type CreateProductSchema = z.infer<typeof createProductSchema>;
+export type UpdateProductSchema = z.infer<typeof updateProductSchema>;
+export type CreateVariantSchema = z.infer<typeof createVariantSchema>;
+export type UpdateVariantSchema = z.infer<typeof updateVariantSchema>;
+export type ProductSourceType = z.infer<typeof productSourceTypeSchema>;
+export type CreateCategorySchema = z.infer<typeof createCategorySchema>;
+export type UpdateCategorySchema = z.infer<typeof updateCategorySchema>;
 export type CreateCustomerSchema = z.infer<typeof createCustomerSchema>;
 export type UpdateCustomerSchema = z.infer<typeof updateCustomerSchema>;
 export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>;

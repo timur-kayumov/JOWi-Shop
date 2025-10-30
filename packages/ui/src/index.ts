@@ -15,6 +15,7 @@ export * from './components/label';
 export * from './components/textarea';
 export * from './components/select';
 export * from './components/form';
+export * from './components/image-upload';
 
 // Layout components
 export * from './components/app-shell';

@@ -48,7 +48,10 @@
       "mcp__playwright__browser_wait_for",
       "Bash(curl:*)",
       "Bash(timeout /t 10 /nobreak)",
-      "Bash(powershell -Command \"Stop-Process -Id 5948 -Force\")"
+      "Bash(powershell -Command \"Stop-Process -Id 5948 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 4088 -Force\")",
+      "Bash(powershell -Command \"Stop-Process -Id 21304 -Force\")",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
