@@ -100,7 +100,7 @@ export class CustomersService {
     };
   }
 
-  async findOne(tenantId: string, id: string) {
+  async findOne(tenantId: string, id: string): Promise<any> {
     const customer = await this.db.customer.findFirst({
       where: {
         id,

@@ -63,7 +63,7 @@ export class CustomersController {
   @ApiOperation({ summary: 'Get customer by ID with purchase history' })
   @ApiResponse({ status: 200, description: 'Customer retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Customer not found' })
-  findOne(@TenantId() tenantId: string, @Param('id') id: string) {
+  findOne(@TenantId() tenantId: string, @Param('id') id: string): Promise<any> {
     return this.customersService.findOne(tenantId, id);
   }
 

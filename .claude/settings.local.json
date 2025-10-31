@@ -64,7 +64,12 @@
       "Bash(powershell -Command:*)",
       "mcp__playwright__browser_handle_dialog",
       "Bash(git checkout:*)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "WebFetch(domain:codepen.io)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(nul)",
+      "Bash(tasklist:*)"
     ],
     "deny": [],
     "ask": []

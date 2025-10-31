@@ -124,6 +124,11 @@ export class AuthService {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Split name into firstName and lastName
+    const nameParts = name.split(' ');
+    const firstName = nameParts[0] || name;
+    const lastName = nameParts.slice(1).join(' ') || '';
+
     // Create business first
     const business = await this.db.business.create({
       data: {
@@ -139,7 +144,8 @@ export class AuthService {
     const user = await this.db.user.create({
       data: {
         phone: email.split('@')[0], // Extract phone from email or use email prefix
-        name,
+        firstName,
+        lastName,
         email,
         password: hashedPassword,
         role: 'admin',
@@ -149,7 +155,8 @@ export class AuthService {
       select: {
         id: true,
         phone: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         role: true,
         tenantId: true,
@@ -179,7 +186,8 @@ export class AuthService {
       select: {
         id: true,
         phone: true,
-        name: true,
+        firstName: true,
+        lastName: true,
         email: true,
         role: true,
         tenantId: true,

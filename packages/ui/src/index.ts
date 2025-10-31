@@ -42,6 +42,7 @@ export * from './components/dialog';
 export * from './components/badge';
 export * from './components/tabs';
 export * from './components/data-table';
+export * from './components/loader';
 
 // Registration components
 export * from './components/step-indicator';

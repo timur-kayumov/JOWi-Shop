@@ -142,6 +142,7 @@ export default function StoreProductsPage() {
     {
       key: 'name',
       label: t('pages.products.fields.product'),
+      sortable: true,
       render: (product) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
@@ -165,10 +166,12 @@ export default function StoreProductsPage() {
     {
       key: 'category',
       label: t('pages.products.fields.category'),
+      sortable: true,
     },
     {
       key: 'price',
       label: t('pages.products.fields.price'),
+      sortable: true,
       render: (product) => (
         <span>{formatCurrency(product.price)} {t('currency.uzs')}</span>
       ),
@@ -176,6 +179,7 @@ export default function StoreProductsPage() {
     {
       key: 'cost',
       label: t('pages.products.fields.cost'),
+      sortable: true,
       render: (product) => (
         <span>{formatCurrency(product.cost)} {t('currency.uzs')}</span>
       ),
@@ -183,6 +187,7 @@ export default function StoreProductsPage() {
     {
       key: 'stock',
       label: t('pages.products.stock'),
+      sortable: true,
       render: (product) => (
         <span className={product.stock < 50 ? 'text-destructive font-medium' : ''}>
           {product.stock} {t('units.pcs')}
@@ -190,8 +195,9 @@ export default function StoreProductsPage() {
       ),
     },
     {
-      key: 'status',
+      key: 'isActive',
       label: t('fields.status'),
+      sortable: true,
       render: (product) => (
         <Badge variant={product.isActive ? 'success' : 'secondary'}>
           {product.isActive ? t('status.active') : t('status.inactive')}
