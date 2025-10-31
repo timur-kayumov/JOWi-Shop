@@ -56,7 +56,45 @@
   "storePages": {
     "dashboard": {
       "title": "Do'kon boshqaruv paneli",
-      "description": "Asosiy ma'lumot va do'kon statistikasi"
+      "description": "Asosiy ma'lumot va do'kon statistikasi",
+      "kpi": {
+        "todayRevenue": "Bugungi daromad",
+        "receiptsCount": "Cheklar soni",
+        "averageCheck": "O'rtacha chek",
+        "lowStockProducts": "Mahsulotlar tugamoqda"
+      },
+      "charts": {
+        "hourlyRevenueTitle": "Soatlik savdo",
+        "hourlyRevenueDescription": "Kun davomida daromad",
+        "topProductsTitle": "Top-5 mahsulotlar",
+        "topProductsDescription": "Bugun eng ko'p sotilgan mahsulotlar",
+        "categoriesTitle": "Kategoriyalar bo'yicha savdo",
+        "categoriesDescription": "Kategoriyalar bo'yicha daromad taqsimoti",
+        "revenue": "Daromad",
+        "sales": "Sotuvlar"
+      },
+      "recentReceipts": {
+        "title": "Oxirgi cheklar",
+        "viewAll": "Barcha cheklar",
+        "receipt": "Chek",
+        "time": "Vaqt",
+        "cashier": "Kassir",
+        "amount": "Summa",
+        "noReceipts": "Cheklar yo'q"
+      },
+      "lowStock": {
+        "title": "Kam qoldiqli mahsulotlar",
+        "viewAll": "Barcha mahsulotlar",
+        "product": "Mahsulot",
+        "stock": "Qoldiq",
+        "min": "Min",
+        "noProducts": "Kam qoldiqli mahsulotlar yo'q"
+      },
+      "trends": {
+        "up": "Kechagidan yuqori",
+        "down": "Kechagidan past",
+        "same": "O'zgarishsiz"
+      }
     },
     "orders": {
       "title": "Buyurtmalar",
@@ -84,6 +122,50 @@
     "logout": "Chiqish",
     "language": "Til",
     "notifications": "Bildirishnomalar"
+  },
+  "notifications": {
+    "title": "Bildirishnomalar",
+    "markAllAsRead": "Hammasini o'qilgan qilish",
+    "clearAll": "Hammasini tozalash",
+    "all": "Hammasi",
+    "unread": "O'qilmagan",
+    "noNotifications": "Bildirishnomalar yo'q",
+    "noUnread": "O'qilmagan bildirishnomalar yo'q",
+    "justNow": "Hozir",
+    "minutesAgo": "daqiqa oldin",
+    "hoursAgo": "soat oldin",
+    "daysAgo": "kun oldin",
+    "store": "Do'kon",
+    "testNotifications": {
+      "lowStock": {
+        "title": "Kam qoldiq",
+        "message": "Coca-Cola 0.5l tugamoqda. 5 dona qolgan"
+      },
+      "shiftClosed": {
+        "title": "Smena yopildi",
+        "message": "№45 smena yopildi. Daromad: 5 420 000 so'm"
+      },
+      "fiscalError": {
+        "title": "Fiskalizatsiya xatosi",
+        "message": "R-10150 chekni fiskalizatsiya qilib bo'lmadi. Ulanishni tekshiring"
+      },
+      "newDelivery": {
+        "title": "Mahsulot keldi",
+        "message": "№12345 hujjat qabul qilindi, 150 pozitsiya"
+      },
+      "newEmployee": {
+        "title": "Yangi xodim",
+        "message": "Yangi xodim qo'shildi: Nigora Usmanova"
+      },
+      "criticalStock": {
+        "title": "Kritik qoldiq",
+        "message": "12 mahsulot minimal darajadan past. To'ldirish kerak"
+      },
+      "syncComplete": {
+        "title": "Sinxronizatsiya tugadi",
+        "message": "45 mahsulot va 12 chek yangilandi"
+      }
+    }
   },
   "fields": {
     "name": "Nomi",
@@ -359,7 +441,17 @@
       "unsavedProductsWarning": "Siz mahsulotlar ro'yxatini ma'lumotlar bazasiga saqlamadingiz",
       "unsavedProductsDescription": "Sizda saqlanmagan mahsulotlar bor. Chiqishga ishonchingiz komilmi?",
       "exitAnyway": "Baribir chiqish",
-      "saveAndExit": "Saqlash va chiqish"
+      "saveAndExit": "Saqlash va chiqish",
+      "nomenclature": "Nomenklatura",
+      "selectedProducts": "Tanlangan mahsulotlar",
+      "searchNomenclature": "Nomenklaturada qidirish...",
+      "addFromList": "Ro'yxatdan qo'shish",
+      "alreadyInStore": "Allaqachon katalogda",
+      "nomenclatureInfo": "Nomenklaturadan ma'lumot",
+      "editableFields": "Tahrir qilinadigan maydonlar",
+      "noProductsSelected": "Tanlangan mahsulotlar yo'q",
+      "selectFromNomenclature": "Nomenklaturadan mahsulotlarni tanlang",
+      "readonlyField": "Bu maydon nomenklaturadan to'ldirilgan va o'zgartirilishi mumkin emas"
     },
     "reports": {
       "title": "Hisobotlar",

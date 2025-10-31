@@ -37,7 +37,21 @@ export function SidebarNav({
     <nav className="flex flex-col gap-1">
       {items.map((item) => {
         const Icon = item.icon;
-        const isActive = currentPath === item.href || currentPath.startsWith(item.href + '/');
+        // Check if this item is active
+        // For exact match or when current path starts with item href followed by '/'
+        // But exclude cases where a longer matching item exists
+        const isExactMatch = currentPath === item.href;
+        const isPrefixMatch = currentPath.startsWith(item.href + '/');
+
+        // Find if there's a longer matching item
+        const hasLongerMatch = items.some(
+          (otherItem) =>
+            otherItem.href !== item.href &&
+            otherItem.href.startsWith(item.href) &&
+            (currentPath === otherItem.href || currentPath.startsWith(otherItem.href + '/'))
+        );
+
+        const isActive = isExactMatch || (isPrefixMatch && !hasLongerMatch);
 
         return (
           <a

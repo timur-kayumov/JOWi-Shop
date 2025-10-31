@@ -15,6 +15,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Card,
 } from '@jowi/ui';
 
 // Mock data
@@ -216,37 +217,39 @@ export default function StoreProductsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          {t('pages.products.title')}
-        </h1>
-        <p className="text-muted-foreground">{t('pages.products.subtitle')}</p>
-      </div>
-
-      {/* Actions and Filters */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-2 flex-1 min-w-[300px]">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t('pages.products.searchPlaceholder')}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
+      <Card className="p-6">
+        <div className="space-y-6">
+          {/* Header */}
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('pages.products.title')}
+            </h1>
+            <p className="text-muted-foreground">{t('pages.products.subtitle')}</p>
           </div>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">
-                {t('pages.products.categories.all')}
-              </SelectItem>
+          {/* Actions and Filters */}
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-2 flex-1 min-w-[300px]">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('pages.products.searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {t('pages.products.categories.all')}
+                  </SelectItem>
               {mockCategories.map((cat) => (
                 <SelectItem key={cat.id} value={cat.name}>
                   {cat.name}
@@ -280,12 +283,14 @@ export default function StoreProductsPage() {
             </Button>
           )}
 
-          <Button onClick={() => router.push(`/store/${storeId}/products/new`)}>
-            <Plus className="h-4 w-4 mr-2" />
-            {t('pages.products.addProduct')}
-          </Button>
+              <Button onClick={() => router.push(`/store/${storeId}/products/new`)}>
+                <Plus className="h-4 w-4 mr-2" />
+                {t('pages.products.addProduct')}
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      </Card>
 
       {/* Products count */}
       <div className="text-sm text-muted-foreground">

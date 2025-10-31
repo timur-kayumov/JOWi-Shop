@@ -14,6 +14,7 @@ interface TopBarProps {
   onBreadcrumbNavigate?: (href: string) => void;
   onSearch?: (query: string) => void;
   notificationCount?: number;
+  notificationComponent?: React.ReactNode;
   onNotificationsClick?: () => void;
   user: UserMenuProps['user'];
   currentLanguage?: Language;
@@ -29,6 +30,7 @@ export function TopBar({
   onBreadcrumbNavigate,
   onSearch,
   notificationCount = 0,
+  notificationComponent,
   onNotificationsClick,
   user,
   currentLanguage,
@@ -71,10 +73,12 @@ export function TopBar({
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <NotificationBadge
-          count={notificationCount}
-          onClick={onNotificationsClick}
-        />
+        {notificationComponent || (
+          <NotificationBadge
+            count={notificationCount}
+            onClick={onNotificationsClick}
+          />
+        )}
         <ThemeToggle />
         <UserMenu
           user={user}

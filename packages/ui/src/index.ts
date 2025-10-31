@@ -32,6 +32,8 @@ export * from './components/avatar';
 export * from './components/user-menu';
 export type { Language } from './components/user-menu';
 export * from './components/notification-badge';
+export * from './components/notification-panel';
+export type { Notification } from './components/notification-panel';
 export * from './components/theme-toggle';
 
 // Primitives

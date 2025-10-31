@@ -113,7 +113,7 @@ const ImageUpload = React.forwardRef<HTMLDivElement, ImageUploadProps>(
 
         {value ? (
           // Image preview
-          <div className="relative w-full aspect-square rounded-lg overflow-hidden border-2 border-muted group">
+          <div className="relative w-full h-32 rounded-lg overflow-hidden border-2 border-muted group">
             <img
               src={value}
               alt="Preview"
@@ -128,7 +128,7 @@ const ImageUpload = React.forwardRef<HTMLDivElement, ImageUploadProps>(
                   onClick={handleRemove}
                   className="rounded-full"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
             )}
@@ -141,7 +141,7 @@ const ImageUpload = React.forwardRef<HTMLDivElement, ImageUploadProps>(
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             className={cn(
-              'w-full aspect-square rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer',
+              'w-full h-32 rounded-lg border-2 border-dashed transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer',
               isDragging && 'border-primary bg-primary/5',
               !isDragging && 'border-muted hover:border-primary/50 hover:bg-muted/50',
               disabled && 'opacity-50 cursor-not-allowed hover:border-muted hover:bg-transparent',
@@ -150,19 +150,19 @@ const ImageUpload = React.forwardRef<HTMLDivElement, ImageUploadProps>(
           >
             {isDragging ? (
               <>
-                <Upload className="h-10 w-10 text-primary" />
-                <p className="text-sm text-primary font-medium">
+                <Upload className="h-6 w-6 text-primary" />
+                <p className="text-xs text-primary font-medium">
                   Отпустите для загрузки
                 </p>
               </>
             ) : (
               <>
-                <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                <ImageIcon className="h-6 w-6 text-muted-foreground" />
                 <div className="text-center px-4">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     Нажмите или перетащите изображение
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground mt-0.5">
                     PNG, JPG до {maxSize}MB
                   </p>
                 </div>

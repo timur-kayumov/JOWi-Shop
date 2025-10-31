@@ -16,6 +16,7 @@ interface AppShellProps {
   currentLanguage?: Language;
   notificationCount?: number;
   sidebarHeader?: React.ReactNode;
+  notificationComponent?: React.ReactNode;
   onNavigate?: (href: string) => void;
   onSearch?: (query: string) => void;
   onNotificationsClick?: () => void;
@@ -34,6 +35,7 @@ function AppShellContent({
   currentLanguage,
   notificationCount,
   sidebarHeader,
+  notificationComponent,
   onNavigate,
   onSearch,
   onNotificationsClick,
@@ -71,6 +73,7 @@ function AppShellContent({
           onBreadcrumbNavigate={onNavigate}
           onSearch={onSearch}
           notificationCount={notificationCount}
+          notificationComponent={notificationComponent}
           onNotificationsClick={onNotificationsClick}
           user={user}
           currentLanguage={currentLanguage}

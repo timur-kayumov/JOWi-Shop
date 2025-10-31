@@ -51,7 +51,20 @@
       "Bash(powershell -Command \"Stop-Process -Id 5948 -Force\")",
       "Bash(powershell -Command \"Stop-Process -Id 4088 -Force\")",
       "Bash(powershell -Command \"Stop-Process -Id 21304 -Force\")",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(wmic process:*)",
+      "Bash(timeout:*)",
+      "Bash(lsof:*)",
+      "mcp__playwright__browser_network_requests",
+      "mcp__ide__getDiagnostics",
+      "Bash(if not exist \".claude\\commands\" mkdir \".claude\\commands\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\Users\\timur\\Documents\\GitHub\\JOWi-Shop\\apps'' -Directory | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path ''C:\\Users\\timur\\Documents\\GitHub\\JOWi-Shop\\packages'' -Directory | Select-Object Name\")",
+      "Bash(powershell -Command:*)",
+      "mcp__playwright__browser_handle_dialog",
+      "Bash(git checkout:*)",
+      "Bash(git restore:*)"
     ],
     "deny": [],
     "ask": []

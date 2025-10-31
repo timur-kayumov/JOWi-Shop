@@ -56,7 +56,45 @@
   "storePages": {
     "dashboard": {
       "title": "Панель управления магазином",
-      "description": "Основная информация и статистика магазина"
+      "description": "Основная информация и статистика магазина",
+      "kpi": {
+        "todayRevenue": "Выручка за сегодня",
+        "receiptsCount": "Количество чеков",
+        "averageCheck": "Средний чек",
+        "lowStockProducts": "Товары заканчиваются"
+      },
+      "charts": {
+        "hourlyRevenueTitle": "Продажи по часам",
+        "hourlyRevenueDescription": "Выручка в течение дня",
+        "topProductsTitle": "Топ-5 товаров",
+        "topProductsDescription": "Самые продаваемые товары за сегодня",
+        "categoriesTitle": "Продажи по категориям",
+        "categoriesDescription": "Распределение выручки по категориям",
+        "revenue": "Выручка",
+        "sales": "Продажи"
+      },
+      "recentReceipts": {
+        "title": "Последние чеки",
+        "viewAll": "Все чеки",
+        "receipt": "Чек",
+        "time": "Время",
+        "cashier": "Кассир",
+        "amount": "Сумма",
+        "noReceipts": "Нет чеков"
+      },
+      "lowStock": {
+        "title": "Товары с низким остатком",
+        "viewAll": "Все товары",
+        "product": "Товар",
+        "stock": "Остаток",
+        "min": "Мин",
+        "noProducts": "Нет товаров с низким остатком"
+      },
+      "trends": {
+        "up": "Выше вчера",
+        "down": "Ниже вчера",
+        "same": "Без изменений"
+      }
     },
     "orders": {
       "title": "Заказы",
@@ -84,6 +122,50 @@
     "logout": "Выйти",
     "language": "Язык",
     "notifications": "Уведомления"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "markAllAsRead": "Прочитать все",
+    "clearAll": "Очистить все",
+    "all": "Все",
+    "unread": "Непрочитанные",
+    "noNotifications": "Нет уведомлений",
+    "noUnread": "Нет непрочитанных уведомлений",
+    "justNow": "Только что",
+    "minutesAgo": "мин назад",
+    "hoursAgo": "ч назад",
+    "daysAgo": "д назад",
+    "store": "Магазин",
+    "testNotifications": {
+      "lowStock": {
+        "title": "Низкий остаток товара",
+        "message": "Coca-Cola 0.5л заканчивается. Осталось 5 шт"
+      },
+      "shiftClosed": {
+        "title": "Смена закрыта",
+        "message": "Смена №45 успешно закрыта. Выручка: 5 420 000 сўм"
+      },
+      "fiscalError": {
+        "title": "Ошибка фискализации",
+        "message": "Не удалось фискализовать чек R-10150. Проверьте подключение"
+      },
+      "newDelivery": {
+        "title": "Поступление товара",
+        "message": "Получена накладная №12345 на 150 позиций"
+      },
+      "newEmployee": {
+        "title": "Новый сотрудник",
+        "message": "Добавлен новый сотрудник: Нигора Усманова"
+      },
+      "criticalStock": {
+        "title": "Критический остаток",
+        "message": "12 товаров ниже минимального уровня. Требуется пополнение"
+      },
+      "syncComplete": {
+        "title": "Синхронизация завершена",
+        "message": "Обновлено 45 товаров и 12 чеков"
+      }
+    }
   },
   "fields": {
     "name": "Название",
@@ -359,7 +441,17 @@
       "unsavedProductsWarning": "Вы не сохранили список товаров в базу данных",
       "unsavedProductsDescription": "У вас есть несохранённые товары. Вы уверены, что хотите выйти?",
       "exitAnyway": "Всё равно выйти",
-      "saveAndExit": "Сохранить и выйти"
+      "saveAndExit": "Сохранить и выйти",
+      "nomenclature": "Номенклатура",
+      "selectedProducts": "Выбранные товары",
+      "searchNomenclature": "Поиск в номенклатуре...",
+      "addFromList": "Добавить из списка",
+      "alreadyInStore": "Уже в каталоге",
+      "nomenclatureInfo": "Информация из номенклатуры",
+      "editableFields": "Редактируемые поля",
+      "noProductsSelected": "Нет выбранных товаров",
+      "selectFromNomenclature": "Выберите товары из номенклатуры",
+      "readonlyField": "Это поле заполнено из номенклатуры и не может быть изменено"
     },
     "reports": {
       "title": "Отчёты",

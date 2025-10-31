@@ -18,8 +18,8 @@
     /* Secondary - Violet/100 */
     --secondary: 258 100% 97%;
     --secondary-foreground: 258 90% 66%;
-    /* Muted - white for inputs on gray background */
-    --muted: 0 0% 100%;
+    /* Muted - light gray for inputs */
+    --muted: 0 0% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;

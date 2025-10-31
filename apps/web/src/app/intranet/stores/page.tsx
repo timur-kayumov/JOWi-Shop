@@ -28,6 +28,7 @@ import {
   Badge,
   DataTable,
   Column,
+  Card,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -142,31 +143,33 @@ export default function StoresPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{t('pages.stores.title')}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t('pages.stores.subtitle')}
-        </p>
-      </div>
+      <Card className="p-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">{t('pages.stores.title')}</h1>
+            <p className="text-muted-foreground mt-2">
+              {t('pages.stores.subtitle')}
+            </p>
+          </div>
 
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('pages.stores.searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+          <div className="flex items-center justify-between gap-4">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={t('pages.stores.searchPlaceholder')}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingStore(null)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t('pages.stores.addStore')}
-            </Button>
-          </DialogTrigger>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setEditingStore(null)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('pages.stores.addStore')}
+                </Button>
+              </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>
@@ -290,7 +293,9 @@ export default function StoresPage() {
             </Form>
           </DialogContent>
         </Dialog>
-      </div>
+          </div>
+        </div>
+      </Card>
 
       <DataTable
         columns={[

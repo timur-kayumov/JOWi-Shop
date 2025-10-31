@@ -9,22 +9,25 @@ JOWi Shop is a cloud-based SaaS platform combining point-of-sale, inventory mana
 ## Features
 
 - **Multi-Tenancy:** SaaS architecture with Business → Store → Terminal hierarchy
-- **Offline POS:** Desktop Electron app with local SQLite database
+- **Offline POS:** Flutter mobile app for Android tablets with Isar local database
 - **Fiscalization:** Integration with Uzbekistan online cash registers
 - **Inventory:** FIFO costing, movement documents, cycle counting
 - **Sales:** Receipt management, multiple payment methods, discounts
 - **CRM:** Customer management with JOWi Club loyalty integration
 - **Reports:** Sales analytics, employee performance, stock reports
 - **i18n:** Russian and Uzbek language support
+- **Hardware Support:** Thermal printers, barcode scanners, fiscal devices
 
 ## Tech Stack
 
 ### Frontend
 - **Web Admin:** Next.js 15 + React 19 + TypeScript
-- **Desktop POS:** Electron + React + Vite (planned)
-- **UI Library:** Tailwind CSS + shadcn/ui + Radix primitives
-- **Forms:** React Hook Form + Zod validation
-- **Tables:** TanStack Table
+- **Mobile POS:** Flutter + Dart (Android 11+, tablets 10"+)
+- **Web UI Library:** Tailwind CSS + shadcn/ui + Radix primitives
+- **Mobile UI:** Material Design 3 with custom theming
+- **Web Forms:** React Hook Form + Zod validation
+- **Mobile Forms:** flutter_form_builder + form_builder_validators
+- **Tables:** TanStack Table (web), DataTable widgets (mobile)
 
 ### Backend
 - **API:** NestJS + TypeScript
@@ -35,11 +38,21 @@ JOWi Shop is a cloud-based SaaS platform combining point-of-sale, inventory mana
 - **Analytics:** ClickHouse (via CDC pipeline)
 
 ### Shared Packages
-- `@jowi/ui` - Shared UI components
+- `@jowi/ui` - Shared UI components (for web admin)
 - `@jowi/database` - Prisma schema and client
-- `@jowi/validators` - Zod validation schemas
-- `@jowi/i18n` - Internationalization (RU/UZ)
-- `@jowi/types` - Shared TypeScript types
+- `@jowi/validators` - Zod validation schemas (API-side)
+- `@jowi/i18n` - Internationalization for web (RU/UZ)
+- `@jowi/types` - Shared TypeScript types (reference for Dart models)
+
+### Mobile POS Stack
+- **Local Database:** Isar (high-performance NoSQL for 50k-200k products)
+- **State Management:** Riverpod (flutter_riverpod)
+- **HTTP Client:** dio + retrofit
+- **Background Sync:** WorkManager + isolates
+- **Barcode Scanner:** mobile_scanner (camera) + USB OTG (keyboard wedge)
+- **Thermal Printer:** esc_pos_bluetooth / esc_pos_printer
+- **i18n:** easy_localization (RU/UZ)
+- **Platform Channels:** Kotlin/Java for fiscal device integration
 
 ## Project Structure
 
@@ -48,12 +61,12 @@ JOWi-Shop/
 ├── apps/
 │   ├── web/              # Next.js admin panel
 │   ├── api/              # NestJS backend
-│   └── desktop/          # Electron POS (planned)
+│   └── mobile/           # Flutter POS (Android)
 ├── packages/
-│   ├── ui/               # Shared UI components
+│   ├── ui/               # Shared UI components (web)
 │   ├── database/         # Prisma schema
 │   ├── validators/       # Zod schemas
-│   ├── i18n/            # Translations
+│   ├── i18n/            # Translations (web)
 │   └── types/           # TypeScript types
 ├── docker/              # Docker configs
 ├── PRD/                 # Product requirements
@@ -64,10 +77,17 @@ JOWi-Shop/
 
 ### Prerequisites
 
+**For Backend & Web Admin:**
 - **Node.js** 20+
 - **pnpm** 9+
 - **Docker** and Docker Compose
 - **PostgreSQL** 15+ (via Docker)
+
+**For Mobile POS (optional, only if developing Flutter app):**
+- **Flutter SDK** 3.16+
+- **Dart** 3.0+
+- **Android Studio** with Android SDK (API 30+)
+- **Android device/emulator** running Android 11+ (for testing)
 
 ### Installation
 
@@ -127,6 +147,11 @@ pnpm dev
 # Web admin
 cd apps/web
 pnpm dev
+
+# Flutter POS (Android)
+cd apps/mobile
+flutter pub get
+flutter run
 ```
 
 ### Access Points
@@ -175,14 +200,21 @@ After running `pnpm db:seed`:
 
 Every database table includes a `tenant_id` column with RLS policies enforcing data isolation at the database level. JWT tokens include `tenant_id` claims for API authorization.
 
-### Offline-First POS
+### Offline-First POS (Flutter/Android)
 
-The desktop POS client uses:
-- **Local Database:** SQLite with WAL mode
-- **Sync Pattern:** Outbox/Inbox queues
+The mobile POS client uses:
+- **Platform:** Flutter for Android 11+ tablets (10"+ screens)
+- **Local Database:** Isar (high-performance NoSQL) for 50k-200k products
+- **Sync Pattern:** Outbox/Inbox queues with WorkManager background sync
 - **Conflict Resolution:** Last-write-wins for sales, merge for catalog
 - **Idempotency:** UUID-based operation IDs
-- **Auto-Update:** Automatic updates via electron-updater ensure users always have the latest version
+- **Auto-Update:** Google Play Store (production) or manual APK distribution (MVP)
+- **Performance Optimization:**
+  - Lazy loading and virtualization for large catalogs
+  - Debounced search (300ms)
+  - Indexed queries on barcode, name, category
+  - In-memory cache for popular products
+  - Background sync in isolates (non-blocking)
 
 ### Fiscalization
 
@@ -190,6 +222,9 @@ All sales must be fiscalized through certified online cash registers:
 - **Abstraction:** `FiscalProvider` interface
 - **Queue System:** Retry queue with error logging
 - **Operations:** `openShift()`, `registerSale()`, `refund()`, `closeShift()`
+- **Flutter Integration:**
+  - **Option A (MVP):** REST API to fiscal-gateway service
+  - **Option B (Future):** Direct connection via Platform Channels (Kotlin/Java SDK)
 
 ## Deployment
 
@@ -214,6 +249,70 @@ pnpm build
 ```bash
 docker-compose -f docker-compose.prod.yml up -d
 ```
+
+## Flutter POS Development
+
+### Setup Flutter Environment
+
+1. **Install Flutter SDK:**
+   ```bash
+   # Windows (using chocolatey)
+   choco install flutter
+
+   # Or download from https://flutter.dev/docs/get-started/install
+   ```
+
+2. **Install Android Studio:**
+   - Download from https://developer.android.com/studio
+   - Install Android SDK (API 30 or higher)
+   - Create Android emulator or connect physical device
+
+3. **Verify installation:**
+   ```bash
+   flutter doctor
+   ```
+
+### Flutter POS Commands
+
+```bash
+cd apps/mobile
+
+# Get dependencies
+flutter pub get
+
+# Run on emulator/device
+flutter run
+
+# Build APK for testing
+flutter build apk --debug
+
+# Build release APK
+flutter build apk --release
+
+# Build App Bundle for Play Store
+flutter build appbundle --release
+
+# Run tests
+flutter test
+
+# Analyze code
+flutter analyze
+```
+
+### Hardware Testing
+
+The Flutter POS app requires testing with real hardware:
+
+**Supported Hardware:**
+- **Thermal Printers:** Bluetooth (esc_pos_bluetooth), Network (esc_pos_printer), USB (via OTG)
+- **Barcode Scanners:** USB OTG (keyboard wedge), Camera (mobile_scanner)
+- **Fiscal Devices:** REST API (fiscal-gateway) or direct via Platform Channels
+
+**Recommended Test Device:**
+- Samsung Tab A8 10.5" or similar
+- Android 11 (API 30) or higher
+- 4GB RAM minimum
+- USB OTG adapter for hardware peripherals
 
 ## Contributing
 

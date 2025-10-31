@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
 import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AppShell, NavItem, type Language } from '@jowi/ui';
 import {
+  AppShell,
+  NavItem,
+  type Language,
+  type Notification,
+  NotificationPanel,
   Select,
   SelectContent,
   SelectItem,
@@ -27,6 +31,73 @@ const mockStores = [
   { id: '3', name: 'Магазин "Юнусабад"' },
 ];
 
+// Mock notifications data - replace with actual API later
+const createMockNotifications = (t: any): Notification[] => [
+  {
+    id: '1',
+    type: 'warning',
+    title: t('notifications.testNotifications.lowStock.title'),
+    message: t('notifications.testNotifications.lowStock.message'),
+    timestamp: new Date(Date.now() - 15 * 60000), // 15 minutes ago
+    isRead: false,
+    icon: 'package',
+  },
+  {
+    id: '2',
+    type: 'success',
+    title: t('notifications.testNotifications.shiftClosed.title'),
+    message: t('notifications.testNotifications.shiftClosed.message'),
+    timestamp: new Date(Date.now() - 45 * 60000), // 45 minutes ago
+    isRead: false,
+    icon: 'money',
+  },
+  {
+    id: '3',
+    type: 'error',
+    title: t('notifications.testNotifications.fiscalError.title'),
+    message: t('notifications.testNotifications.fiscalError.message'),
+    timestamp: new Date(Date.now() - 2 * 3600000), // 2 hours ago
+    isRead: false,
+    icon: 'alert',
+  },
+  {
+    id: '4',
+    type: 'info',
+    title: t('notifications.testNotifications.newDelivery.title'),
+    message: t('notifications.testNotifications.newDelivery.message'),
+    timestamp: new Date(Date.now() - 4 * 3600000), // 4 hours ago
+    isRead: true,
+    icon: 'package',
+  },
+  {
+    id: '5',
+    type: 'info',
+    title: t('notifications.testNotifications.newEmployee.title'),
+    message: t('notifications.testNotifications.newEmployee.message'),
+    timestamp: new Date(Date.now() - 24 * 3600000), // 1 day ago
+    isRead: true,
+    icon: 'user',
+  },
+  {
+    id: '6',
+    type: 'error',
+    title: t('notifications.testNotifications.criticalStock.title'),
+    message: t('notifications.testNotifications.criticalStock.message'),
+    timestamp: new Date(Date.now() - 48 * 3600000), // 2 days ago
+    isRead: true,
+    icon: 'package',
+  },
+  {
+    id: '7',
+    type: 'success',
+    title: t('notifications.testNotifications.syncComplete.title'),
+    message: t('notifications.testNotifications.syncComplete.message'),
+    timestamp: new Date(Date.now() - 72 * 3600000), // 3 days ago
+    isRead: true,
+    icon: 'settings',
+  },
+];
+
 export default function StoreLayout({
   children,
 }: {
@@ -38,6 +109,7 @@ export default function StoreLayout({
   const { t, i18n } = useTranslation('common');
   const [currentLanguage, setCurrentLanguage] = useState<Language>('ru');
   const [selectedStoreId, setSelectedStoreId] = useState<string>(params.id as string);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   // Load saved language on mount
   useEffect(() => {
@@ -54,6 +126,11 @@ export default function StoreLayout({
       setSelectedStoreId(params.id as string);
     }
   }, [params.id]);
+
+  // Initialize notifications
+  useEffect(() => {
+    setNotifications(createMockNotifications(t));
+  }, [t]);
 
   // Navigation items for store admin
   const navItems: NavItem[] = [
@@ -136,9 +213,26 @@ export default function StoreLayout({
     // TODO: Implement search functionality
   };
 
-  const handleNotifications = () => {
-    console.log('Open notifications');
-    // TODO: Implement notifications panel
+  const handleNotificationClick = (notification: Notification) => {
+    console.log('Notification clicked:', notification);
+    // Navigate to relevant page if actionUrl exists
+    if (notification.actionUrl) {
+      router.push(notification.actionUrl);
+    }
+  };
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(prev =>
+      prev.map(n => n.id === id ? { ...n, isRead: true } : n)
+    );
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+  };
+
+  const handleClearAll = () => {
+    setNotifications([]);
   };
 
   const handleSettings = () => {
@@ -196,6 +290,17 @@ export default function StoreLayout({
     </div>
   );
 
+  // Custom notification component
+  const notificationComponent = (
+    <NotificationPanel
+      notifications={notifications}
+      onNotificationClick={handleNotificationClick}
+      onMarkAsRead={handleMarkAsRead}
+      onMarkAllAsRead={handleMarkAllAsRead}
+      onClearAll={handleClearAll}
+    />
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <AppShell
@@ -204,11 +309,11 @@ export default function StoreLayout({
         breadcrumbs={generateBreadcrumbs()}
         user={mockUser}
         currentLanguage={currentLanguage}
-        notificationCount={3}
+        notificationCount={notifications.filter(n => !n.isRead).length}
         sidebarHeader={storeSelector}
+        notificationComponent={notificationComponent}
         onNavigate={handleNavigate}
         onSearch={handleSearch}
-        onNotificationsClick={handleNotifications}
         onSettingsClick={handleSettings}
         onProfileClick={handleProfile}
         onLanguageChange={handleLanguageChange}

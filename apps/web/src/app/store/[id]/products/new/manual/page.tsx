@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Plus, Trash2, Check, Clock } from 'lucide-react';
@@ -82,6 +82,8 @@ export default function ManualProductPage() {
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
 
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const form = useForm<ManualProductSchema>({
     resolver: zodResolver(manualProductSchema),
     mode: 'onChange',
@@ -100,7 +102,7 @@ export default function ManualProductPage() {
   };
 
   // Auto-save current form data to products array
-  const autoSaveCurrentProduct = () => {
+  const autoSaveCurrentProduct = useCallback(() => {
     if (!selectedProductId) return;
 
     const formData = form.getValues();
@@ -113,12 +115,27 @@ export default function ManualProductPage() {
           : p
       )
     );
-  };
+  }, [selectedProductId, form]);
 
   // Add new product to the list (at the top)
   const handleAddProduct = () => {
-    // Auto-save current product first
-    autoSaveCurrentProduct();
+    // Clear any pending debounced saves
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Auto-save current product first (synchronously)
+    if (selectedProductId) {
+      const formData = form.getValues();
+      const isComplete = checkProductComplete(formData);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === selectedProductId
+            ? { ...formData, id: p.id, isComplete }
+            : p
+        )
+      );
+    }
 
     const newProduct: ProductDraft = {
       ...defaultProduct,
@@ -136,8 +153,23 @@ export default function ManualProductPage() {
   const handleSelectProduct = (productId: string) => {
     if (selectedProductId === productId) return;
 
-    // Auto-save current product before switching
-    autoSaveCurrentProduct();
+    // Clear any pending debounced saves
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+
+    // Auto-save current product before switching (synchronously)
+    if (selectedProductId) {
+      const formData = form.getValues();
+      const isComplete = checkProductComplete(formData);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === selectedProductId
+            ? { ...formData, id: p.id, isComplete }
+            : p
+        )
+      );
+    }
 
     const product = products.find((p) => p.id === productId);
     if (product) {
@@ -168,11 +200,31 @@ export default function ManualProductPage() {
 
   // Save all products to database
   const handleSaveAll = async () => {
-    // Auto-save current product first
-    autoSaveCurrentProduct();
+    // Clear any pending debounced saves
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
 
-    // Wait for state update
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    // Auto-save current product first (synchronously)
+    if (selectedProductId) {
+      const formData = form.getValues();
+      const isComplete = checkProductComplete(formData);
+
+      // Create a temporary variable to hold updated products
+      let updatedProducts: ProductDraft[] = [];
+
+      setProducts((prev) => {
+        updatedProducts = prev.map((p) =>
+          p.id === selectedProductId
+            ? { ...formData, id: p.id, isComplete }
+            : p
+        );
+        return updatedProducts;
+      });
+
+      // Wait for state update
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
 
     // In production, this would call the API
     console.log('Saving products:', products);
@@ -203,13 +255,27 @@ export default function ManualProductPage() {
     }
   };
 
-  // Auto-save on form change
+  // Auto-save on form change with debounce
   useEffect(() => {
     const subscription = form.watch(() => {
-      autoSaveCurrentProduct();
+      // Clear previous timeout
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      // Set new timeout for debounced save
+      saveTimeoutRef.current = setTimeout(() => {
+        autoSaveCurrentProduct();
+      }, 300); // 300ms debounce
     });
-    return () => subscription.unsubscribe();
-  }, [selectedProductId]);
+
+    return () => {
+      subscription.unsubscribe();
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [form, autoSaveCurrentProduct]);
 
   // Prevent accidental page close
   useEffect(() => {
@@ -262,8 +328,8 @@ export default function ManualProductPage() {
                 </div>
               ) : (
                 <div className="flex-1 overflow-y-auto space-y-2">
-                  {/* Reverse array for bottom-to-top display */}
-                  {[...products].reverse().map((product, idx) => {
+                  {/* Display newest products at top with correct numbering */}
+                  {products.map((product, idx) => {
                     const number = products.length - idx;
                     const displayName = product.name || `${t('pages.products.newProduct')} #${number}`;
                     const isSelected = selectedProductId === product.id;
@@ -345,6 +411,7 @@ export default function ManualProductPage() {
                               <Input
                                 {...field}
                                 placeholder={t('pages.products.placeholders.name')}
+                                className="bg-muted"
                               />
                             </FormControl>
                             <FormMessage />
@@ -360,7 +427,7 @@ export default function ManualProductPage() {
                             <FormLabel>{t('pages.products.fields.category')}</FormLabel>
                             <Select onValueChange={field.onChange} value={field.value}>
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-muted">
                                   <SelectValue
                                     placeholder={t(
                                       'pages.products.placeholders.selectCategory'
@@ -389,7 +456,7 @@ export default function ManualProductPage() {
                             <FormLabel>{t('pages.products.fields.taxRate')}</FormLabel>
                             <Select onValueChange={field.onChange} value={field.value}>
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-muted">
                                   <SelectValue />
                                 </SelectTrigger>
                               </FormControl>
@@ -428,6 +495,7 @@ export default function ManualProductPage() {
                               <Input
                                 {...field}
                                 placeholder={t('pages.products.placeholders.sku')}
+                                className="bg-muted"
                               />
                             </FormControl>
                             <FormMessage />
@@ -447,6 +515,7 @@ export default function ManualProductPage() {
                               <Input
                                 {...field}
                                 placeholder={t('pages.products.placeholders.barcode')}
+                                className="bg-muted"
                               />
                             </FormControl>
                             <FormMessage />
@@ -465,6 +534,7 @@ export default function ManualProductPage() {
                                 {...field}
                                 type="number"
                                 placeholder={t('pages.products.placeholders.price')}
+                                className="bg-muted"
                               />
                             </FormControl>
                             <FormMessage />
@@ -483,6 +553,7 @@ export default function ManualProductPage() {
                                 {...field}
                                 type="number"
                                 placeholder={t('pages.products.placeholders.cost')}
+                                className="bg-muted"
                               />
                             </FormControl>
                             <FormMessage />
@@ -498,7 +569,7 @@ export default function ManualProductPage() {
                             <FormLabel>{t('pages.products.fields.unit')}</FormLabel>
                             <Select onValueChange={field.onChange} value={field.value}>
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-muted">
                                   <SelectValue />
                                 </SelectTrigger>
                               </FormControl>

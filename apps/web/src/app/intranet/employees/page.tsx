@@ -28,6 +28,7 @@ import {
   Badge,
   DataTable,
   Column,
+  Card,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -206,46 +207,48 @@ export default function EmployeesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{t('pages.employees.title')}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t('pages.employees.subtitle')}
-        </p>
-      </div>
-
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-4 flex-1">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t('pages.employees.searchPlaceholder')}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
+      <Card className="p-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">{t('pages.employees.title')}</h1>
+            <p className="text-muted-foreground mt-2">
+              {t('pages.employees.subtitle')}
+            </p>
           </div>
 
-          <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Все роли" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('pages.employees.allRoles')}</SelectItem>
-              <SelectItem value="administrator">{t('pages.employees.roles.administrator')}</SelectItem>
-              <SelectItem value="manager">{t('pages.employees.roles.manager')}</SelectItem>
-              <SelectItem value="cashier">{t('pages.employees.roles.cashier')}</SelectItem>
-              <SelectItem value="warehouse">{t('pages.employees.roles.warehouse')}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder={t('pages.employees.searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
 
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => setEditingEmployee(null)}>
-              <Plus className="mr-2 h-4 w-4" />
-              {t('pages.employees.addEmployee')}
-            </Button>
-          </DialogTrigger>
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Все роли" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('pages.employees.allRoles')}</SelectItem>
+                  <SelectItem value="administrator">{t('pages.employees.roles.administrator')}</SelectItem>
+                  <SelectItem value="manager">{t('pages.employees.roles.manager')}</SelectItem>
+                  <SelectItem value="cashier">{t('pages.employees.roles.cashier')}</SelectItem>
+                  <SelectItem value="warehouse">{t('pages.employees.roles.warehouse')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setEditingEmployee(null)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('pages.employees.addEmployee')}
+                </Button>
+              </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>
@@ -381,7 +384,9 @@ export default function EmployeesPage() {
             </Form>
           </DialogContent>
         </Dialog>
-      </div>
+          </div>
+        </div>
+      </Card>
 
       <DataTable
         columns={[

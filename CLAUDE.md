@@ -14,14 +14,22 @@ JOWi Shop is a cloud-based retail management system (POS + ERP) for small and me
 ## Planned Technology Stack
 
 ### Frontend
-- **Desktop POS Client:** Electron + React + Vite (offline-first Windows application)
+- **Mobile POS Client:** Flutter (offline-first Android application for tablets)
+  - **Framework:** Flutter SDK 3.16+
+  - **Language:** Dart 3.0+
+  - **State Management:** Riverpod (flutter_riverpod)
+  - **UI:** Material Design 3 with custom theming
+  - **Forms:** flutter_form_builder + form_builder_validators
+  - **i18n:** easy_localization (RU/UZ)
+  - **Target Devices:** Android tablets 10"+ (Samsung Tab A8 and similar)
+  - **Minimum Requirements:** Android 11 (API 30), 4GB RAM
 - **Web Admin Panel:** Next.js (App Router) + React
-- **Shared UI Library:** `@jowi/ui` package using Tailwind CSS + shadcn/ui + Radix primitives
-- **Forms:** React Hook Form + Zod validation
-- **Tables:** TanStack Table with server-side pagination and virtualization
-- **Icons:** lucide-react (sizes: 16px, 20px, 24px only)
-- **Charts:** Recharts (Bar, Line, Pie charts only)
-- **i18n:** i18next with namespaces: `common`, `pos`, `inventory`, `finance`
+- **Shared UI Library:** `@jowi/ui` package using Tailwind CSS + shadcn/ui + Radix primitives (for web admin only)
+- **Forms (Web):** React Hook Form + Zod validation
+- **Tables (Web):** TanStack Table with server-side pagination and virtualization
+- **Icons (Web):** lucide-react (sizes: 16px, 20px, 24px only)
+- **Charts (Web):** Recharts (Bar, Line, Pie charts only)
+- **i18n (Web):** i18next with namespaces: `common`, `pos`, `inventory`, `finance`
 
 ### Backend
 - **Framework:** NestJS with tRPC-style contracts
@@ -35,69 +43,112 @@ JOWi Shop is a cloud-based retail management system (POS + ERP) for small and me
 - **Authentication:** Auth.js or Clerk with JWT (tenant_id in claims), 2FA support
 - **Observability:** OpenTelemetry + Grafana/Loki/Tempo
 
-### POS Offline Architecture
-- **Local Database:** SQLite with Write-Ahead Logging (WAL mode)
+### POS Offline Architecture (Flutter/Android)
+- **Local Database:** Isar (high-performance NoSQL) or drift (type-safe SQL) with automatic indexing
+  - **Recommendation:** Isar for catalogs 50k-200k products (10x faster than sqflite)
+  - **Alternative:** drift for complex relational queries (similar to Prisma)
 - **Sync Pattern:** Outbox/Inbox queues with idempotent commands
+- **Background Sync:** WorkManager for reliable background synchronization
 - **Conflict Resolution:** Last-write-wins for sales transactions, merge rules for catalog data
-- **Auto-update:** Electron auto-updater for desktop client (see detailed requirements below)
+- **Auto-update:** Google Play Store (recommended) or manual APK distribution with in-app update checks
+- **Performance Optimization:**
+  - Lazy loading and pagination for large product catalogs
+  - Virtual scrolling (infinite scroll with cached items)
+  - Debounced search (300ms delay)
+  - Indexed search on barcode, name, category
+  - In-memory cache for frequently accessed products
 
-### Desktop Application Auto-Update System
-The Windows desktop POS application requires an automatic update mechanism to ensure all users always have the latest version without manual intervention.
+### Mobile Application Auto-Update System (Flutter/Android)
+The Android POS application requires an automatic update mechanism to ensure all users always have the latest version without manual intervention.
 
 **Core Requirements:**
-- **Automatic Update Detection:** Desktop app checks for updates on startup and periodically (every 4-6 hours)
+- **Automatic Update Detection:** App checks for updates on startup and periodically (every 4-6 hours)
 - **Background Download:** New versions download automatically in the background without interrupting POS operations
 - **User Notification:** When update is ready, show non-intrusive notification with "Install Update" button
 - **Deferred Installation:** Users can continue working and install updates during breaks or shift changes
 - **Mandatory Updates:** Critical security/fiscal compliance updates can be marked as mandatory
-- **Rollback Capability:** Support for rolling back to previous version if update causes issues
+- **Rollback Capability:** Support for uninstalling and reverting to previous version if update causes issues
 
 **Technical Implementation:**
-- **Update Framework:** Use `electron-updater` (part of electron-builder ecosystem)
-- **Distribution Server:**
-  - **MVP:** GitHub Releases (free, reliable, automatic with electron-builder)
-  - **Production:** Custom S3/CDN server for faster distribution in Uzbekistan
-- **Update Format:** NSIS installer for Windows with delta updates to minimize download size
-- **Code Signing:** All updates must be digitally signed with valid Windows code signing certificate
+
+**Option A: Google Play Store (Recommended for Production)**
+- **Distribution:** Google Play Store internal/alpha/beta/production tracks
+- **Update Framework:** Native Android auto-update (no custom code needed)
+- **User Experience:** Seamless background updates, managed by Play Store
+- **Testing:** Internal testing track for team, closed beta for pilot stores
+- **Rollback:** Play Store version rollback feature
+- **Code Signing:** Automatic via Play Store
+
+**Option B: Manual APK Distribution (for MVP/Testing)**
+- **Distribution Server:** Custom S3/CDN server or Firebase App Distribution
+- **Update Framework:** `flutter_downloader` + `package_info_plus` for version checking
+- **Version Manifest:** Server hosts JSON manifest with version info, release notes, download URLs
+- **Update Format:** APK with SHA-256 checksums
+- **Code Signing:** Android keystore signing required
 - **Update Channels:**
   - `stable` - Production releases for all users
   - `beta` - Early access for testing new features (opt-in)
-- **Version Manifest:** Server hosts `latest.yml` file with version info, release notes, and download URLs
-- **Integrity Checks:** SHA-512 checksums verify download integrity before installation
 
-**Update Flow:**
+**Update Flow (Manual APK):**
 1. App checks update server on startup and every 4-6 hours
-2. If new version available, download begins in background
-3. Once downloaded and verified, show toast notification: "Обновление готово к установке"
-4. User clicks "Установить обновление" button or defers to later
-5. On install trigger: save current state, close app, run installer, restart app
-6. New version validates database schema compatibility and applies migrations if needed
-7. User continues working with updated version
+2. Compare current version with latest version from server
+3. If new version available, download APK in background
+4. Once downloaded and verified, show toast notification: "Обновление готово к установке"
+5. User clicks "Установить обновление" button or defers to later
+6. On install trigger: save current state, request INSTALL_PACKAGES permission, launch installer
+7. After installation, app restarts automatically
+8. New version validates database schema compatibility and applies migrations if needed
 
 **Offline Considerations:**
-- If terminal is offline, update check fails silently
+- If tablet is offline, update check fails silently
 - When connection restored, update check resumes
 - Updates never interrupt active sales transactions
 - Shift must be closed before mandatory updates install
 
 **Error Handling:**
-- If update download fails, retry with exponential backoff
-- If installation fails, automatic rollback to previous version
-- All update events logged to audit log
+- If update download fails, retry with exponential backoff (max 3 retries)
+- If installation fails, show error message and keep current version
+- All update events logged to local database and synced to server
 - Failed updates reported to central monitoring system
 
 **User Experience:**
 - Minimal disruption to POS operations
-- Clear update progress indication
+- Clear update progress indication with percentage
 - Option to view release notes before installing
-- Estimated downtime shown (typically 30-60 seconds)
-- No user action required for most updates
+- Estimated installation time shown (typically 30-60 seconds)
+- No user action required for Play Store updates
 
 **Security:**
-- Only signed updates from trusted sources accepted
+- Only signed APKs from trusted sources accepted
 - HTTPS-only communication with update server
-- Certificate pinning to prevent MITM attacks
-- Update payload verification before execution
+- Certificate pinning to prevent MITM attacks (for manual APK distribution)
+- SHA-256 checksum verification before installation
+- Android package signature verification
+
+**Permissions Required:**
+```xml
+<!-- For manual APK updates -->
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+```
+
+---
+
+### Archived: Electron Auto-Update Documentation
+<details>
+<summary>Click to view original Electron auto-update architecture (archived for reference)</summary>
+
+The Windows desktop POS application (originally planned with Electron) required:
+- **Update Framework:** `electron-updater` (part of electron-builder ecosystem)
+- **Distribution:** GitHub Releases (MVP) or S3/CDN (production)
+- **Update Format:** NSIS installer for Windows with delta updates
+- **Code Signing:** Windows code signing certificate
+- **Update Channels:** `stable` and `beta`
+- **Version Manifest:** `latest.yml` file with version info
+
+This approach was replaced with Flutter/Android to reduce hardware costs and improve mobility.
+</details>
 
 ## Multi-Tenant Architecture
 
@@ -132,12 +183,29 @@ The Windows desktop POS application requires an automatic update mechanism to en
 - **Auto-recovery:** Automatic reconnection after network failures
 - **Receipt Format:** ESC/POS templates, 48-character monospace width, QR codes mandatory
 - **Reports:** Support for X-reports (shift summary) and Z-reports (shift close)
-- **Service:** Separate `fiscal-gateway` microservice handles fiscal device communication
+
+**Flutter/Android Implementation:**
+- **Option A: Direct Connection (Preferred):** Android tablet connects directly to fiscal device via USB/Bluetooth/Network
+  - Use **Platform Channels** (MethodChannel) to communicate with native Android SDK
+  - Kotlin/Java code wraps vendor-provided fiscal device SDK
+  - USB connection via USB OTG cable
+  - Network connection via WiFi (fiscal device has IP address)
+  - Bluetooth connection for portable fiscal printers
+- **Option B: REST API Proxy:** Flutter app calls `fiscal-gateway` microservice via HTTP
+  - Fiscal-gateway runs on separate Windows machine/server
+  - Fiscal-gateway handles direct communication with fiscal device
+  - Suitable if Android SDK is unavailable from vendor
+- **Recommended:** Start with Option B (REST proxy) for MVP, migrate to Option A when vendor SDKs available
 
 ### Product Marking
 - **System:** AslBelgisi (Uzbekistan national digital marking)
 - **Capability:** Scan DataMatrix codes, integrate with marking API (optional in MVP)
 - **Classifiers:** Support for TASNIФ and IKPU classification codes
+- **Flutter Implementation:**
+  - Use `mobile_scanner` package for camera-based DataMatrix scanning
+  - Parse DataMatrix code to extract GTIN, serial number, crypto tail
+  - Send to AslBelgisi API for validation
+  - Store marking status in local database
 
 ## POS Design Principles
 
@@ -151,13 +219,14 @@ The Windows desktop POS application requires an automatic update mechanism to en
 
 ## UI/UX Standards (Design System)
 
-### Color & Typography
+### Web Admin Design System (Next.js)
+**Color & Typography:**
 - **Tokens:** CSS variables for theming (support light/dark modes)
 - **Fonts:** System fonts only
 - **Grid:** 1200-1440px containers, 8pt spacing system
 - **Accessibility:** WCAG compliant, focus rings enabled, contrast ratio ≥4.5:1
 
-### Standard Components (from `@jowi/ui`)
+**Standard Components (from `@jowi/ui`):**
 - AppShell, Sidebar, Topbar
 - DataTable (with filters, sorting, export to CSV)
 - Form, Input, Select, DatePicker
@@ -165,21 +234,68 @@ The Windows desktop POS application requires an automatic update mechanism to en
 - Tabs, Wizard
 - KPI Cards, Chart primitives
 
-### Loading States
+**Loading States:**
 - Standardized empty, loading, error states
 - Shared skeleton loaders and spinners
 - Never show raw error messages to end users
 
-### Forms
+**Forms:**
 - React Hook Form + Zod validation
 - Shared `FormField` and `FormDialog` components
 - Error messages from translation files
 
-### i18n
+**i18n:**
 - All text from translation dictionaries (no hardcoded strings)
 - Date format: DD.MM.YYYY for RU/UZ locales
 - Number format: UZS with thousand separators, no decimal places
 - i18next namespaces keep translations organized
+
+### Mobile POS Design System (Flutter)
+**Theme & Typography:**
+- **Design System:** Material Design 3 with custom color scheme
+- **Theme Data:** Light and dark themes defined in `lib/shared/themes/app_theme.dart`
+- **Fonts:** System fonts (Roboto on Android)
+- **Spacing:** 8pt spacing system (use multiples of 8: 8, 16, 24, 32, 40, 48)
+- **Colors:**
+  - Primary: Brand color (customizable)
+  - Surface: White (light) / Dark grey (dark)
+  - Error: Material red
+  - Success: Material green
+- **Touch Targets:** Minimum 48x48dp for all interactive elements (Material Design standard)
+- **Accessibility:** Support for screen readers, semantic labels, contrast ratio ≥4.5:1
+
+**Standard Widgets (Custom):**
+- AppScaffold (Scaffold + AppBar + navigation)
+- AppButton (elevated, outlined, text variants)
+- AppTextField (with validation states)
+- AppDialog (confirmation, info, error dialogs)
+- AppCard (surface with elevation)
+- AppDataTable (virtualized, sortable, filterable)
+- AppBottomSheet (for actions, filters)
+- AppSnackBar (toast notifications)
+- LoadingIndicator (circular progress)
+- EmptyState (empty list, no results)
+- ErrorWidget (error messages with retry)
+
+**Forms:**
+- `flutter_form_builder` + `form_builder_validators`
+- Custom `FormField` widgets with consistent styling
+- Inline validation with error messages below fields
+- Error messages from translation files
+
+**i18n:**
+- All text from translation dictionaries (no hardcoded strings)
+- `easy_localization` package with RU and UZ locales
+- Date format: DD.MM.YYYY for RU/UZ locales
+- Number format: UZS with thousand separators, no decimal places
+- Translation files in `lib/l10n/ru.json` and `lib/l10n/uz.json`
+
+**Performance Guidelines:**
+- Use `const` widgets wherever possible (immutable widgets compile to faster code)
+- Virtualize long lists with `ListView.builder` or `CustomScrollView`
+- Lazy load images with `cached_network_image`
+- Debounce search input (300ms)
+- Cache frequently accessed data in memory
 
 ## Data Patterns
 
@@ -285,7 +401,7 @@ The Windows desktop POS application requires an automatic update mechanism to en
 - Recipe/production management
 - Multi-currency support
 - E-commerce storefront
-- Mobile clients (iOS/Android)
+- iOS POS application (Android only for MVP)
 
 ## Success Metrics for MVP
 
@@ -296,10 +412,24 @@ The Windows desktop POS application requires an automatic update mechanism to en
 
 ## Print Templates
 
-- **Receipt Printer:** ESC/POS commands for 80mm thermal printers
-- **Format:** 48-character monospace width
+- **Receipt Printer:** ESC/POS commands for 58mm or 80mm thermal printers
+- **Format:** 48-character monospace width (80mm) or 32-character (58mm)
 - **Required Elements:** QR code (fiscal), store info, items, totals, payment method
 - **Languages:** Support RU and UZ text on receipts
+- **Flutter Implementation:**
+  - **Bluetooth Printers:** Use `esc_pos_bluetooth` or `blue_thermal_printer` packages
+  - **Network Printers:** Use `esc_pos_printer` package (WiFi/Ethernet)
+  - **USB Printers:** Use platform channels or `usb_serial` package
+  - **Template Engine:** Generate ESC/POS commands programmatically
+  - **Encoding:** CP866 (Cyrillic) for Russian text, UTF-8 fallback
+- **Printer Discovery:**
+  - Bluetooth: Scan for paired printers in settings
+  - Network: Manual IP entry or auto-discovery (Bonjour/mDNS)
+  - USB: Auto-detect via USB OTG
+- **Error Handling:**
+  - Show clear error messages if printer offline/disconnected
+  - Queue receipts for retry if printing fails
+  - Allow manual reprint from receipt history
 
 ## When Building This System
 
