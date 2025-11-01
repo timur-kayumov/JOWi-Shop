@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AppShell,
@@ -145,14 +145,67 @@ export default function StoreLayout({
       icon: ShoppingCart,
     },
     {
-      title: t('storeNavigation.products'),
-      href: `/store/${selectedStoreId}/products`,
+      title: t('storeNavigation.productManagement'),
       icon: Package,
+      children: [
+        {
+          title: t('storeNavigation.products'),
+          href: `/store/${selectedStoreId}/products`,
+          icon: List,
+        },
+        {
+          title: t('storeNavigation.categories'),
+          href: `/store/${selectedStoreId}/categories`,
+          icon: FolderTree,
+        },
+      ],
     },
     {
       title: t('storeNavigation.inventory'),
-      href: `/store/${selectedStoreId}/inventory`,
       icon: Warehouse,
+      children: [
+        {
+          title: t('storeNavigation.warehouses'),
+          href: `/store/${selectedStoreId}/warehouses`,
+          icon: Building2,
+        },
+        {
+          title: t('storeNavigation.warehouseMonitoring'),
+          href: `/store/${selectedStoreId}/warehouses/monitoring`,
+          icon: Activity,
+        },
+        {
+          title: t('storeNavigation.writeoffs'),
+          href: `/store/${selectedStoreId}/warehouses/writeoffs`,
+          icon: FileX,
+        },
+      ],
+    },
+    {
+      title: t('storeNavigation.documents'),
+      icon: ClipboardList,
+      children: [
+        {
+          title: t('storeNavigation.suppliers'),
+          href: `/store/${selectedStoreId}/documents/suppliers`,
+          icon: Users,
+        },
+        {
+          title: t('storeNavigation.invoices'),
+          href: `/store/${selectedStoreId}/documents/invoices`,
+          icon: FileText,
+        },
+        {
+          title: t('storeNavigation.warehouseTransfers'),
+          href: `/store/${selectedStoreId}/documents/warehouse-transfers`,
+          icon: ArrowRightLeft,
+        },
+        {
+          title: t('storeNavigation.storeTransfers'),
+          href: `/store/${selectedStoreId}/documents/store-transfers`,
+          icon: Building2,
+        },
+      ],
     },
     {
       title: t('storeNavigation.reports'),
@@ -188,6 +241,14 @@ export default function StoreLayout({
       const pageMap: Record<string, string> = {
         orders: t('storeNavigation.orders'),
         products: t('storeNavigation.products'),
+        categories: t('storeNavigation.categories'),
+        warehouses: t('storeNavigation.warehouses'),
+        monitoring: t('storeNavigation.warehouseMonitoring'),
+        writeoffs: t('storeNavigation.writeoffs'),
+        suppliers: t('storeNavigation.suppliers'),
+        invoices: t('storeNavigation.invoices'),
+        'warehouse-transfers': t('storeNavigation.warehouseTransfers'),
+        'store-transfers': t('storeNavigation.storeTransfers'),
         inventory: t('storeNavigation.inventory'),
         reports: t('storeNavigation.reports'),
         settings: t('storeNavigation.settings'),

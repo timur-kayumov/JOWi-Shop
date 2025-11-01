@@ -8,6 +8,7 @@
     "usernamehw.errorlens",
     "eamodio.gitlens",
     "christian-kohler.path-intellisense",
-    "streetsidesoftware.code-spell-checker"
+    "streetsidesoftware.code-spell-checker",
+    "anthropic.claude-code"
   ]
 }

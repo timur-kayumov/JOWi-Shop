@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronLeft, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from './button';
 
@@ -78,23 +78,22 @@ export function Sidebar({ children, className, sidebarHeader, ...props }: Sideba
       >
         {/* Header */}
         <div className="flex h-16 items-center justify-between border-b px-4">
-          {!collapsed && (
-            <h2 className="text-lg font-semibold">JOWi Shop</h2>
-          )}
-          {/* Desktop collapse button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setCollapsed(!collapsed)}
-            className="hidden lg:flex"
-          >
-            <ChevronLeft
-              className={cn(
-                'h-5 w-5 transition-transform',
-                collapsed && 'rotate-180'
-              )}
+          {!collapsed ? (
+            <div className="flex items-center gap-2">
+              <img
+                src="/logo.svg"
+                alt="JOWi Shop Logo"
+                className="h-8 w-8"
+              />
+              <h2 className="text-lg font-semibold">JOWi Shop</h2>
+            </div>
+          ) : (
+            <img
+              src="/logo.svg"
+              alt="JOWi Shop Logo"
+              className="h-8 w-8 mx-auto"
             />
-          </Button>
+          )}
           {/* Mobile close button */}
           <Button
             variant="ghost"

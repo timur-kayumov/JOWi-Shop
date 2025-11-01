@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SidebarTrigger, useSidebar } from './sidebar';
 import { Breadcrumbs, BreadcrumbItem } from './breadcrumbs';
@@ -8,6 +9,7 @@ import { SearchBar } from './search-bar';
 import { NotificationBadge } from './notification-badge';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu, UserMenuProps, Language } from './user-menu';
+import { Button } from './button';
 
 interface TopBarProps {
   breadcrumbs?: BreadcrumbItem[];
@@ -40,7 +42,7 @@ export function TopBar({
   onLogoutClick,
   className,
 }: TopBarProps) {
-  const { collapsed } = useSidebar();
+  const { collapsed, setCollapsed } = useSidebar();
 
   return (
     <header
@@ -51,6 +53,20 @@ export function TopBar({
     >
       {/* Mobile menu trigger */}
       <SidebarTrigger />
+
+      {/* Desktop sidebar toggle */}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setCollapsed(!collapsed)}
+        className="hidden lg:flex"
+      >
+        {collapsed ? (
+          <PanelLeftOpen className="h-5 w-5" />
+        ) : (
+          <PanelLeftClose className="h-5 w-5" />
+        )}
+      </Button>
 
       {/* Breadcrumbs */}
       {breadcrumbs.length > 0 && (
