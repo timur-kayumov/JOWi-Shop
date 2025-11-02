@@ -203,9 +203,8 @@
     "noData": "Нет данных",
     "confirmDelete": "Вы уверены, что хотите удалить?"
   },
-  "currency": {
-    "uzs": "сўм"
-  },
+  "currency": "сўм",
+  "currencyCode": "UZS",
   "units": {
     "pcs": "шт",
     "kg": "кг",
@@ -685,6 +684,7 @@
     "categories": {
       "title": "Категории",
       "description": "Управление категориями товаров",
+      "category": "Категория",
       "createCategory": "Создать категорию",
       "editCategory": "Редактировать категорию",
       "createCategoryDescription": "Создайте новую категорию для организации товаров",

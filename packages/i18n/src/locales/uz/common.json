@@ -203,9 +203,8 @@
     "noData": "Ma'lumot yo'q",
     "confirmDelete": "O'chirishni tasdiqlaysizmi?"
   },
-  "currency": {
-    "uzs": "so'm"
-  },
+  "currency": "so'm",
+  "currencyCode": "UZS",
   "units": {
     "pcs": "dona",
     "kg": "kg",
@@ -685,6 +684,7 @@
     "categories": {
       "title": "Kategoriyalar",
       "description": "Mahsulot kategoriyalarini boshqarish",
+      "category": "Kategoriya",
       "createCategory": "Kategoriya yaratish",
       "editCategory": "Kategoriyani tahrirlash",
       "createCategoryDescription": "Mahsulotlarni tashkil qilish uchun yangi kategoriya yarating",

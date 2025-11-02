@@ -445,6 +445,7 @@ export default function EmployeesPage() {
         data={filteredEmployees}
         onRowClick={(employee) => router.push(`/intranet/employees/${employee.id}`)}
         emptyMessage={search || roleFilter !== 'all' ? t('pages.employees.notFound') : t('pages.employees.noEmployees')}
+        pagination={{ enabled: true, pageSize: 15 }}
       />
 
       {filteredEmployees.length > 0 && (

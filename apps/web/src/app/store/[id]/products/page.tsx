@@ -173,7 +173,7 @@ export default function StoreProductsPage() {
       label: t('pages.products.fields.price'),
       sortable: true,
       render: (product) => (
-        <span>{formatCurrency(product.price)} {t('currency.uzs')}</span>
+        <span>{formatCurrency(product.price)} {t('currency')}</span>
       ),
     },
     {
@@ -181,7 +181,7 @@ export default function StoreProductsPage() {
       label: t('pages.products.fields.cost'),
       sortable: true,
       render: (product) => (
-        <span>{formatCurrency(product.cost)} {t('currency.uzs')}</span>
+        <span>{formatCurrency(product.cost)} {t('currency')}</span>
       ),
     },
     {
@@ -316,6 +316,7 @@ export default function StoreProductsPage() {
             : t('pages.products.noProducts')
         }
         onRowClick={(product) => router.push(`/store/${storeId}/products/${product.id}`)}
+        pagination={{ enabled: true, pageSize: 15 }}
       />
     </div>
   );

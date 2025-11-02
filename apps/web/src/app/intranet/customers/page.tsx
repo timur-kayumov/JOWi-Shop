@@ -473,6 +473,7 @@ export default function CustomersPage() {
             ? t('pages.customers.notFound')
             : t('pages.customers.noCustomers')
         }
+        pagination={{ enabled: true, pageSize: 15 }}
       />
 
       {filteredCustomers.length > 0 && (

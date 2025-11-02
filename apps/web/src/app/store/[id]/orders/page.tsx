@@ -112,14 +112,6 @@ const mockEmployees = [
   { id: '2', name: 'Нигора Усманова' },
 ];
 
-// Format currency
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount) + ' сўм';
-}
-
 // Format date
 function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('ru-RU', {
@@ -152,6 +144,14 @@ export default function StoreReceiptsPage() {
       dateRange?.from !== undefined
     );
   }, [searchQuery, selectedStatus, selectedEmployee, dateRange]);
+
+  // Format currency
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount) + ' ' + t('currency');
+  };
 
   // Reset all filters
   const resetFilters = () => {
@@ -471,6 +471,7 @@ export default function StoreReceiptsPage() {
           data={filteredReceipts}
           emptyMessage={t('pages.receipts.noReceipts')}
           onRowClick={(receipt) => router.push(`/store/${storeId}/orders/${receipt.id}`)}
+          pagination={{ enabled: true, pageSize: 15 }}
         />
       </Card>
     </div>

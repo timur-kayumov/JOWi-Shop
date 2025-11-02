@@ -217,7 +217,7 @@ export default function CustomerShowPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.customerDetail.totalAmount')}</p>
-                  <p className="text-2xl font-bold">{formatCurrency(totalPurchases)} {t('currency.uzs')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalPurchases)} {t('currency')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                   <CreditCard className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -259,7 +259,7 @@ export default function CustomerShowPage() {
                             {item.name} × {item.quantity}
                           </span>
                           <span className="font-medium">
-                            {formatCurrency(item.price * item.quantity)} {t('currency.uzs')}
+                            {formatCurrency(item.price * item.quantity)} {t('currency')}
                           </span>
                         </div>
                       ))}
@@ -268,7 +268,7 @@ export default function CustomerShowPage() {
                     <div className="flex justify-between items-center pt-4 border-t">
                       <span className="font-semibold">{t('pages.customerDetail.total')}</span>
                       <span className="text-lg font-bold">
-                        {formatCurrency(receipt.totalAmount)} {t('currency.uzs')}
+                        {formatCurrency(receipt.totalAmount)} {t('currency')}
                       </span>
                     </div>
                   </div>

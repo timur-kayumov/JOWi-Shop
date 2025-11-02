@@ -362,6 +362,7 @@ export default function StoresPage() {
         data={filteredStores}
         onRowClick={(store) => router.push(`/store/${store.id}`)}
         emptyMessage={search ? t('pages.stores.notFound') : t('pages.stores.noStores')}
+        pagination={{ enabled: true, pageSize: 15 }}
       />
 
       {filteredStores.length > 0 && (

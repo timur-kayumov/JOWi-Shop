@@ -236,29 +236,51 @@ export default function StoreLayout({
     ];
 
     const paths = pathname.split('/').filter(Boolean);
-    if (paths.length > 2) {
-      const currentPage = paths[paths.length - 1];
-      const pageMap: Record<string, string> = {
-        orders: t('storeNavigation.orders'),
-        products: t('storeNavigation.products'),
-        categories: t('storeNavigation.categories'),
-        warehouses: t('storeNavigation.warehouses'),
-        monitoring: t('storeNavigation.warehouseMonitoring'),
-        writeoffs: t('storeNavigation.writeoffs'),
-        suppliers: t('storeNavigation.suppliers'),
-        invoices: t('storeNavigation.invoices'),
-        'warehouse-transfers': t('storeNavigation.warehouseTransfers'),
-        'store-transfers': t('storeNavigation.storeTransfers'),
-        inventory: t('storeNavigation.inventory'),
-        reports: t('storeNavigation.reports'),
-        settings: t('storeNavigation.settings'),
-      };
+    const pageMap: Record<string, string> = {
+      orders: t('storeNavigation.orders'),
+      products: t('storeNavigation.products'),
+      categories: t('storeNavigation.categories'),
+      warehouses: t('storeNavigation.warehouses'),
+      monitoring: t('storeNavigation.warehouseMonitoring'),
+      writeoffs: t('storeNavigation.writeoffs'),
+      suppliers: t('storeNavigation.suppliers'),
+      invoices: t('storeNavigation.invoices'),
+      'warehouse-transfers': t('storeNavigation.warehouseTransfers'),
+      'store-transfers': t('storeNavigation.storeTransfers'),
+      inventory: t('storeNavigation.inventory'),
+      reports: t('storeNavigation.reports'),
+      settings: t('storeNavigation.settings'),
+    };
 
-      if (pageMap[currentPage]) {
+    // Build breadcrumbs for nested routes
+    if (paths.length > 2) {
+      // Check if we're on categories page
+      if (paths.includes('categories')) {
+        const categoriesIndex = paths.indexOf('categories');
         breadcrumbs.push({
-          label: pageMap[currentPage],
-          href: pathname,
+          label: t('storeNavigation.categories'),
+          href: `/store/${selectedStoreId}/categories`,
         });
+
+        // If there's a category ID after 'categories'
+        if (paths.length > categoriesIndex + 1) {
+          const categoryId = paths[categoriesIndex + 1];
+          // For dynamic routes, show the page without translation
+          // In a real app, you'd fetch the category name from API
+          breadcrumbs.push({
+            label: `${t('pages.categories.category')} #${categoryId}`,
+            href: pathname,
+          });
+        }
+      } else {
+        // For other pages, use the old logic
+        const currentPage = paths[paths.length - 1];
+        if (pageMap[currentPage]) {
+          breadcrumbs.push({
+            label: pageMap[currentPage],
+            href: pathname,
+          });
+        }
       }
     }
 

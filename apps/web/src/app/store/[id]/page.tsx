@@ -176,7 +176,7 @@ export default function StoreDashboardPage() {
                 {t('storePages.dashboard.kpi.todayRevenue')}
               </div>
               <div className="text-2xl font-bold mt-1">
-                {formatCurrency(mockKPIs.todayRevenue)} {t('currency.uzs')}
+                {formatCurrency(mockKPIs.todayRevenue)} {t('currency')}
               </div>
               <div className="mt-2">
                 {getTrendIndicator(
@@ -230,7 +230,7 @@ export default function StoreDashboardPage() {
                 {t('storePages.dashboard.kpi.averageCheck')}
               </div>
               <div className="text-2xl font-bold mt-1">
-                {formatCurrency(mockKPIs.averageCheck)} {t('currency.uzs')}
+                {formatCurrency(mockKPIs.averageCheck)} {t('currency')}
               </div>
               <div className="mt-2">
                 {getTrendIndicator(
@@ -284,7 +284,7 @@ export default function StoreDashboardPage() {
                 <XAxis dataKey="hour" />
                 <YAxis />
                 <Tooltip
-                  formatter={(value: number) => formatCurrency(value) + ' ' + t('currency.uzs')}
+                  formatter={(value: number) => formatCurrency(value) + ' ' + t('currency')}
                 />
                 <Line
                   type="monotone"
@@ -351,7 +351,7 @@ export default function StoreDashboardPage() {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number) => formatCurrency(value) + ' ' + t('currency.uzs')}
+                  formatter={(value: number) => formatCurrency(value) + ' ' + t('currency')}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -390,7 +390,7 @@ export default function StoreDashboardPage() {
                     </div>
                   </div>
                   <div className="font-semibold">
-                    {formatCurrency(receipt.amount)} {t('currency.uzs')}
+                    {formatCurrency(receipt.amount)} {t('currency')}
                   </div>
                 </div>
               ))}

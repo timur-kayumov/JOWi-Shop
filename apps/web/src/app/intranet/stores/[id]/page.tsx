@@ -189,7 +189,7 @@ export default function StoreShowPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesToday')}</p>
-                  <p className="text-2xl font-bold">{formatCurrency(store.stats.todaySales)} {t('currency.uzs')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(store.stats.todaySales)} {t('currency')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                   <Building className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -201,7 +201,7 @@ export default function StoreShowPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesThisMonth')}</p>
-                  <p className="text-2xl font-bold">{formatCurrency(store.stats.monthSales)} {t('currency.uzs')}</p>
+                  <p className="text-2xl font-bold">{formatCurrency(store.stats.monthSales)} {t('currency')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-900">
                   <Building className="h-6 w-6 text-orange-600 dark:text-orange-400" />

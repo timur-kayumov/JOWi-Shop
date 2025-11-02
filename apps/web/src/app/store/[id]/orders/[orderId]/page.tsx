@@ -143,14 +143,6 @@ const mockReceipt: MockReceipt = {
   ],
 };
 
-// Format currency
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('ru-RU', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount) + ' сўм';
-}
-
 // Format date
 function formatDate(date: Date | null): string {
   if (!date) return '-';
@@ -173,6 +165,14 @@ export default function ReceiptDetailPage() {
   const [refundDialogOpen, setRefundDialogOpen] = useState(false);
   const [isRefunding, setIsRefunding] = useState(false);
   const [receipt, setReceipt] = useState<MockReceipt>(mockReceipt);
+
+  // Format currency
+  const formatCurrency = (amount: number): string => {
+    return new Intl.NumberFormat('ru-RU', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount) + ' ' + t('currency');
+  };
 
   // Handle refund
   const handleRefund = async () => {
