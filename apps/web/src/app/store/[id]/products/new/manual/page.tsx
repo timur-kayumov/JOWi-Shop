@@ -31,6 +31,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { CategoryBadge } from '@/components/category-badge';
 
 // Simplified schema for manual product creation
 const manualProductSchema = z.object({
@@ -53,10 +54,13 @@ interface ProductDraft extends ManualProductSchema {
 }
 
 const mockCategories = [
-  { id: '1', name: 'Напитки' },
-  { id: '2', name: 'Молочные продукты' },
-  { id: '3', name: 'Хлеб и выпечка' },
-  { id: '4', name: 'Крупы' },
+  { id: '1', name: 'Напитки', icon: 'Coffee', color: '#3B82F6' },
+  { id: '2', name: 'Молочные продукты', icon: 'Milk', color: '#06B6D4' },
+  { id: '3', name: 'Мясо и рыба', icon: 'Beef', color: '#EF4444' },
+  { id: '4', name: 'Хлеб и выпечка', icon: 'Cookie', color: '#F97316' },
+  { id: '5', name: 'Фрукты и овощи', icon: 'Apple', color: '#10B981' },
+  { id: '6', name: 'Крупы', icon: 'Wheat', color: '#F59E0B' },
+  { id: '7', name: 'Сладости', icon: 'Candy', color: '#EC4899' },
 ];
 
 const defaultProduct: Omit<ProductDraft, 'id' | 'isComplete'> = {
@@ -422,30 +426,49 @@ export default function ManualProductPage() {
                       <FormField
                         control={form.control}
                         name="categoryId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t('pages.products.fields.category')}</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="bg-muted">
-                                  <SelectValue
-                                    placeholder={t(
-                                      'pages.products.placeholders.selectCategory'
+                        render={({ field }) => {
+                          const selectedCategory = mockCategories.find(
+                            (cat) => cat.id === field.value
+                          );
+                          return (
+                            <FormItem>
+                              <FormLabel>{t('pages.products.fields.category')}</FormLabel>
+                              <Select onValueChange={field.onChange} value={field.value}>
+                                <FormControl>
+                                  <SelectTrigger className="bg-muted">
+                                    {selectedCategory ? (
+                                      <CategoryBadge
+                                        name={selectedCategory.name}
+                                        icon={selectedCategory.icon}
+                                        color={selectedCategory.color}
+                                        size="sm"
+                                      />
+                                    ) : (
+                                      <SelectValue
+                                        placeholder={t(
+                                          'pages.products.placeholders.selectCategory'
+                                        )}
+                                      />
                                     )}
-                                  />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {mockCategories.map((cat) => (
-                                  <SelectItem key={cat.id} value={cat.id}>
-                                    {cat.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {mockCategories.map((cat) => (
+                                    <SelectItem key={cat.id} value={cat.id}>
+                                      <CategoryBadge
+                                        name={cat.name}
+                                        icon={cat.icon}
+                                        color={cat.color}
+                                        size="sm"
+                                      />
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
                       />
 
                       <FormField

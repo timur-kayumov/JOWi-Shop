@@ -39,10 +39,13 @@ export * from './components/theme-toggle';
 // Primitives
 export * from './components/dropdown-menu';
 export * from './components/dialog';
+export * from './components/popover';
 export * from './components/badge';
 export * from './components/tabs';
 export * from './components/data-table';
 export * from './components/loader';
+export * from './components/calendar';
+export * from './components/date-picker';
 
 // Registration components
 export * from './components/step-indicator';

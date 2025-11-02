@@ -250,6 +250,15 @@ This approach was replaced with Flutter/Android to reduce hardware costs and imp
 - Number format: UZS with thousand separators, no decimal places
 - i18next namespaces keep translations organized
 
+**Page Layout Standards:**
+- **Index/List Pages:** Follow the unified structure defined in [.claude/INDEX_PAGES_UI_GUIDE.md](.claude/INDEX_PAGES_UI_GUIDE.md)
+  - Two Card layout: header card (with title, description, search, filters, create button) + table card
+  - Header card with `p-6` padding, table card without padding
+  - Search uses `flex-1`, filters use fixed width `w-[200px]`
+  - Consistent spacing: `mb-6` between sections, `space-y-6` between cards
+- **Detail Pages:** TBD (to be documented)
+- **Form Pages:** TBD (to be documented)
+
 ### Mobile POS Design System (Flutter)
 **Theme & Typography:**
 - **Design System:** Material Design 3 with custom color scheme

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { LucideIcon, ChevronDown } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useSidebar } from './sidebar';
+import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
 export interface NavItem {
   title: string;
@@ -26,6 +27,8 @@ export function SidebarNav({
 }: SidebarNavProps) {
   const { collapsed, setMobileOpen } = useSidebar();
   const [expandedItems, setExpandedItems] = React.useState<Set<string>>(new Set());
+  const [openPopover, setOpenPopover] = React.useState<string | null>(null);
+  const closeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Load expanded state from localStorage on mount (client-side only)
   React.useEffect(() => {
@@ -96,6 +99,48 @@ export function SidebarNav({
     }
   };
 
+  // Handle popover open with cleanup
+  const handlePopoverOpen = (itemTitle: string) => {
+    // Clear any pending close timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setOpenPopover(itemTitle);
+  };
+
+  // Handle popover close with delay
+  const handlePopoverCloseDelayed = (itemTitle: string) => {
+    // Clear any existing timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+    // Set a timeout to close the popover
+    closeTimeoutRef.current = setTimeout(() => {
+      setOpenPopover((current) => current === itemTitle ? null : current);
+      closeTimeoutRef.current = null;
+    }, 300);
+  };
+
+  // Handle popover close immediately
+  const handlePopoverClose = () => {
+    // Clear any pending timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setOpenPopover(null);
+  };
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const isItemActive = (item: NavItem, allItems: NavItem[]): boolean => {
     if (!item.href) return false;
 
@@ -135,73 +180,129 @@ export function SidebarNav({
       (child) => child.href && (currentPath === child.href || currentPath.startsWith(child.href + '/'))
     );
 
+    // Render button content
+    const buttonContent = (
+      <button
+        onClick={() => handleClick(item.href, item.title, hasChildren)}
+        className={cn(
+          'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+          'hover:bg-accent hover:text-accent-foreground',
+          isActive
+            ? 'bg-accent text-accent-foreground'
+            : hasActiveChild
+            ? 'text-foreground'
+            : 'text-muted-foreground',
+          collapsed && 'justify-center',
+          depth > 0 && !collapsed && 'ml-6'
+        )}
+        title={collapsed ? item.title : undefined}
+      >
+        <Icon className="h-5 w-5 shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="flex-1 text-left">{item.title}</span>
+            {item.badge !== undefined && (
+              <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+                {item.badge}
+              </span>
+            )}
+            {hasChildren && (
+              <ChevronDown
+                className={cn(
+                  'h-4 w-4 transition-transform',
+                  isExpanded && 'rotate-180'
+                )}
+              />
+            )}
+          </>
+        )}
+      </button>
+    );
+
+    // Render children for popover (when collapsed) or inline (when expanded)
+    const renderChildren = () => {
+      if (!hasChildren) return null;
+
+      return item.children!.map((child) => {
+        const ChildIcon = child.icon;
+        const isChildActive = child.href ? isItemActive(child, items) : false;
+
+        return (
+          <button
+            key={child.title}
+            onClick={() => {
+              handleClick(child.href, child.title, false);
+              handlePopoverClose(); // Close popover on navigation
+            }}
+            className={cn(
+              'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              'hover:bg-accent hover:text-accent-foreground',
+              !collapsed && 'pl-12',
+              isChildActive
+                ? 'bg-accent text-accent-foreground'
+                : 'text-muted-foreground'
+            )}
+          >
+            {collapsed && <ChildIcon className="h-4 w-4 shrink-0" />}
+            <span className="flex-1 text-left truncate">{child.title}</span>
+            {child.badge !== undefined && (
+              <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+                {child.badge}
+              </span>
+            )}
+          </button>
+        );
+      });
+    };
+
     return (
       <div key={item.title}>
-        <button
-          onClick={() => handleClick(item.href, item.title, hasChildren)}
-          className={cn(
-            'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-            'hover:bg-accent hover:text-accent-foreground',
-            isActive
-              ? 'bg-accent text-accent-foreground'
-              : hasActiveChild
-              ? 'text-foreground'
-              : 'text-muted-foreground',
-            collapsed && 'justify-center',
-            depth > 0 && !collapsed && 'ml-6'
-          )}
-          title={collapsed ? item.title : undefined}
-        >
-          <Icon className="h-5 w-5 shrink-0" />
-          {!collapsed && (
-            <>
-              <span className="flex-1 text-left">{item.title}</span>
-              {item.badge !== undefined && (
-                <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
-                  {item.badge}
-                </span>
-              )}
-              {hasChildren && (
-                <ChevronDown
-                  className={cn(
-                    'h-4 w-4 transition-transform',
-                    isExpanded && 'rotate-180'
-                  )}
-                />
-              )}
-            </>
-          )}
-        </button>
+        {/* If collapsed and has children, wrap in Popover */}
+        {collapsed && hasChildren ? (
+          <Popover
+            open={openPopover === item.title}
+            onOpenChange={(open) => {
+              if (open) {
+                handlePopoverOpen(item.title);
+              } else {
+                handlePopoverClose();
+              }
+            }}
+          >
+            <PopoverTrigger asChild>
+              <div
+                onMouseEnter={() => handlePopoverOpen(item.title)}
+                onMouseLeave={() => handlePopoverCloseDelayed(item.title)}
+              >
+                {buttonContent}
+              </div>
+            </PopoverTrigger>
+            <PopoverContent
+              side="right"
+              align="start"
+              className="w-56 p-2"
+              onMouseEnter={() => handlePopoverOpen(item.title)}
+              onMouseLeave={handlePopoverClose}
+            >
+              <div className="space-y-1">
+                <div className="px-2 py-1.5 text-sm font-semibold">
+                  {item.title}
+                </div>
+                {renderChildren()}
+              </div>
+            </PopoverContent>
+          </Popover>
+        ) : (
+          <>
+            {buttonContent}
 
-        {/* Render children if expanded and not collapsed */}
-        {hasChildren && isExpanded && !collapsed && (
-          <div className="mt-1 space-y-1">
-            {item.children!.map((child) => {
-              const isChildActive = child.href ? isItemActive(child, items) : false;
-
-              return (
-                <button
-                  key={child.title}
-                  onClick={() => handleClick(child.href, child.title, false)}
-                  className={cn(
-                    'flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                    'hover:bg-accent hover:text-accent-foreground',
-                    'pl-12',
-                    isChildActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground'
-                  )}
-                >
-                  <span className="flex-1 text-left truncate">{child.title}</span>
-                  {child.badge !== undefined && (
-                    <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
-                      {child.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+            {/* Render children inline if expanded and not collapsed */}
+            {hasChildren && isExpanded && !collapsed && (
+              <div className="mt-1 space-y-1">
+                {renderChildren()}
+              </div>
+            )}
+          </>
         )}
       </div>
     );

@@ -46,7 +46,7 @@
   },
   "storeNavigation": {
     "dashboard": "Панель управления",
-    "orders": "Заказы",
+    "orders": "Чеки",
     "products": "Товары",
     "productManagement": "Управление товарами",
     "categories": "Категории",
@@ -107,8 +107,8 @@
       }
     },
     "orders": {
-      "title": "Заказы",
-      "description": "Управление заказами и чеками магазина"
+      "title": "Чеки",
+      "description": "История продаж и чеков магазина"
     },
     "products": {
       "title": "Товары",
@@ -608,6 +608,102 @@
       "viewTerminals": "Просмотреть кассы",
       "salesReports": "Отчёты по продажам",
       "manageSettings": "Управление настройками"
+    },
+    "receipts": {
+      "title": "Чеки",
+      "description": "История продаж и чеков магазина",
+      "searchPlaceholder": "Поиск по номеру чека...",
+      "backToList": "К списку чеков",
+      "receiptNumber": "Чек №",
+      "noReceipts": "Нет чеков",
+      "receiptNotFound": "Чек не найден",
+      "statistics": {
+        "totalReceipts": "Всего чеков",
+        "totalAmount": "Сумма чеков",
+        "totalDiscount": "Сумма скидок",
+        "topEmployee": "Лидирующий сотрудник"
+      },
+      "filters": {
+        "dateRange": "Диапазон дат",
+        "dateFrom": "С даты",
+        "dateTo": "До даты",
+        "status": "Статус",
+        "employee": "Кассир",
+        "allStatuses": "Все статусы",
+        "allEmployees": "Все кассиры"
+      },
+      "fields": {
+        "receiptNumber": "Номер чека",
+        "date": "Дата и время",
+        "employee": "Кассир",
+        "customer": "Клиент",
+        "discount": "Скидка",
+        "amount": "Сумма счета",
+        "status": "Статус",
+        "paymentMethod": "Способ оплаты",
+        "comment": "Комментарий",
+        "noCustomer": "Без клиента",
+        "createdAt": "Создан",
+        "completedAt": "Завершен",
+        "terminal": "Касса",
+        "subtotal": "Подытог",
+        "tax": "НДС",
+        "total": "Итого"
+      },
+      "statuses": {
+        "draft": "Черновик",
+        "completed": "Завершен",
+        "refunded": "Возврат"
+      },
+      "details": {
+        "aboutReceipt": "О чеке",
+        "financialData": "Финансовые данные",
+        "customerInfo": "Информация о клиенте",
+        "receiptContent": "Содержание чека",
+        "paymentInfo": "Оплата",
+        "additionalInfo": "Дополнительная информация",
+        "viewCustomer": "Открыть профиль клиента"
+      },
+      "items": {
+        "product": "Товар",
+        "quantity": "Количество",
+        "price": "Цена",
+        "discount": "Скидка",
+        "total": "Итого",
+        "noItems": "Нет товаров"
+      },
+      "refund": {
+        "button": "Возврат чека",
+        "title": "Подтверждение возврата",
+        "message": "Вы уверены, что хотите сделать возврат этого чека? Это действие нельзя отменить.",
+        "confirm": "Да, сделать возврат",
+        "cancel": "Отмена",
+        "success": "Чек успешно возвращен",
+        "error": "Ошибка при возврате чека"
+      }
+    },
+    "categories": {
+      "title": "Категории",
+      "description": "Управление категориями товаров",
+      "createCategory": "Создать категорию",
+      "editCategory": "Редактировать категорию",
+      "createCategoryDescription": "Создайте новую категорию для организации товаров",
+      "editCategoryDescription": "Внесите изменения в категорию",
+      "productCount": "Товаров",
+      "type": "Тип",
+      "systemCategory": "Системная",
+      "userCategory": "Пользовательская",
+      "allCategories": "Все категории",
+      "systemCategories": "Системные категории",
+      "userCategories": "Пользовательские категории",
+      "noCategories": "Нет категорий",
+      "addProduct": "Добавить товар",
+      "totalProducts": "Всего товаров",
+      "inStock": "В наличии",
+      "totalValue": "Общая стоимость",
+      "productsInCategory": "Товары в категории",
+      "noProducts": "В этой категории пока нет товаров",
+      "addFirstProduct": "Добавить первый товар"
     }
   },
   "paymentMethods": {
@@ -622,5 +718,21 @@
     "bread": "Хлеб",
     "cereals": "Крупы",
     "other": "Прочее"
+  },
+  "fields": {
+    "name": "Название",
+    "actions": "Действия",
+    "status": "Статус",
+    "sku": "Артикул",
+    "price": "Цена",
+    "stock": "Остаток",
+    "icon": "Иконка",
+    "color": "Цвет",
+    "parentCategory": "Родительская категория",
+    "sortOrder": "Порядок сортировки"
+  },
+  "statuses": {
+    "active": "Активен",
+    "inactive": "Неактивен"
   }
 }

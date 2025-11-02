@@ -46,7 +46,7 @@
   },
   "storeNavigation": {
     "dashboard": "Boshqaruv paneli",
-    "orders": "Buyurtmalar",
+    "orders": "Cheklar",
     "products": "Mahsulotlar",
     "productManagement": "Mahsulotlarni boshqarish",
     "categories": "Kategoriyalar",
@@ -107,8 +107,8 @@
       }
     },
     "orders": {
-      "title": "Buyurtmalar",
-      "description": "Do'kon buyurtmalari va cheklar boshqaruvi"
+      "title": "Cheklar",
+      "description": "Savdo tarixi va do'kon cheklari"
     },
     "products": {
       "title": "Mahsulotlar",
@@ -608,6 +608,102 @@
       "viewTerminals": "Kassalarni ko'rish",
       "salesReports": "Sotuv hisobotlari",
       "manageSettings": "Sozlamalarni boshqarish"
+    },
+    "receipts": {
+      "title": "Cheklar",
+      "description": "Savdo tarixi va do'kon cheklari",
+      "searchPlaceholder": "Chek raqami bo'yicha qidirish...",
+      "backToList": "Cheklar ro'yxatiga",
+      "receiptNumber": "Chek №",
+      "noReceipts": "Cheklar yo'q",
+      "receiptNotFound": "Chek topilmadi",
+      "statistics": {
+        "totalReceipts": "Jami cheklar",
+        "totalAmount": "Cheklar summasi",
+        "totalDiscount": "Chegirmalar summasi",
+        "topEmployee": "Yetakchi xodim"
+      },
+      "filters": {
+        "dateRange": "Sana oralig'i",
+        "dateFrom": "Dan",
+        "dateTo": "Gacha",
+        "status": "Status",
+        "employee": "Kassir",
+        "allStatuses": "Barcha statuslar",
+        "allEmployees": "Barcha kassirlar"
+      },
+      "fields": {
+        "receiptNumber": "Chek raqami",
+        "date": "Sana va vaqt",
+        "employee": "Kassir",
+        "customer": "Mijoz",
+        "discount": "Chegirma",
+        "amount": "Hisob summasi",
+        "status": "Status",
+        "paymentMethod": "To'lov usuli",
+        "comment": "Izoh",
+        "noCustomer": "Mijoz yo'q",
+        "createdAt": "Yaratildi",
+        "completedAt": "Tugallandi",
+        "terminal": "Kassa",
+        "subtotal": "Oraliq jami",
+        "tax": "QQS",
+        "total": "Jami"
+      },
+      "statuses": {
+        "draft": "Qoralama",
+        "completed": "Tugallandi",
+        "refunded": "Qaytarildi"
+      },
+      "details": {
+        "aboutReceipt": "Chek haqida",
+        "financialData": "Moliyaviy ma'lumotlar",
+        "customerInfo": "Mijoz haqida ma'lumot",
+        "receiptContent": "Chek tarkibi",
+        "paymentInfo": "To'lov",
+        "additionalInfo": "Qo'shimcha ma'lumot",
+        "viewCustomer": "Mijoz profilini ochish"
+      },
+      "items": {
+        "product": "Mahsulot",
+        "quantity": "Miqdor",
+        "price": "Narx",
+        "discount": "Chegirma",
+        "total": "Jami",
+        "noItems": "Mahsulotlar yo'q"
+      },
+      "refund": {
+        "button": "Chekni qaytarish",
+        "title": "Qaytarishni tasdiqlash",
+        "message": "Ushbu chekni qaytarishga ishonchingiz komilmi? Bu harakatni bekor qilish mumkin emas.",
+        "confirm": "Ha, qaytarish",
+        "cancel": "Bekor qilish",
+        "success": "Chek muvaffaqiyatli qaytarildi",
+        "error": "Chekni qaytarishda xatolik"
+      }
+    },
+    "categories": {
+      "title": "Kategoriyalar",
+      "description": "Mahsulot kategoriyalarini boshqarish",
+      "createCategory": "Kategoriya yaratish",
+      "editCategory": "Kategoriyani tahrirlash",
+      "createCategoryDescription": "Mahsulotlarni tashkil qilish uchun yangi kategoriya yarating",
+      "editCategoryDescription": "Kategoriyaga o'zgartirishlar kiriting",
+      "productCount": "Mahsulotlar",
+      "type": "Turi",
+      "systemCategory": "Tizim",
+      "userCategory": "Foydalanuvchi",
+      "allCategories": "Barcha kategoriyalar",
+      "systemCategories": "Tizim kategoriyalari",
+      "userCategories": "Foydalanuvchi kategoriyalari",
+      "noCategories": "Kategoriyalar yo'q",
+      "addProduct": "Mahsulot qo'shish",
+      "totalProducts": "Jami mahsulotlar",
+      "inStock": "Mavjud",
+      "totalValue": "Umumiy qiymat",
+      "productsInCategory": "Kategoriyada mahsulotlar",
+      "noProducts": "Bu kategoriyada hali mahsulotlar yo'q",
+      "addFirstProduct": "Birinchi mahsulotni qo'shing"
     }
   },
   "paymentMethods": {
@@ -622,5 +718,21 @@
     "bread": "Non",
     "cereals": "Donlar",
     "other": "Boshqa"
+  },
+  "fields": {
+    "name": "Nomi",
+    "actions": "Harakatlar",
+    "status": "Holat",
+    "sku": "Artikul",
+    "price": "Narx",
+    "stock": "Qoldiq",
+    "icon": "Belgisi",
+    "color": "Rang",
+    "parentCategory": "Asosiy kategoriya",
+    "sortOrder": "Tartiblash"
+  },
+  "statuses": {
+    "active": "Faol",
+    "inactive": "Faol emas"
   }
 }
