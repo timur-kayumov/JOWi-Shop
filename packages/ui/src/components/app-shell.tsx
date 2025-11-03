@@ -16,6 +16,7 @@ interface AppShellProps {
   currentLanguage?: Language;
   notificationCount?: number;
   sidebarHeader?: React.ReactNode;
+  sidebarFooter?: React.ReactNode;
   notificationComponent?: React.ReactNode;
   onNavigate?: (href: string) => void;
   onSearch?: (query: string) => void;
@@ -35,6 +36,7 @@ function AppShellContent({
   currentLanguage,
   notificationCount,
   sidebarHeader,
+  sidebarFooter,
   notificationComponent,
   onNavigate,
   onSearch,
@@ -50,7 +52,7 @@ function AppShellContent({
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
-      <Sidebar sidebarHeader={sidebarHeader}>
+      <Sidebar sidebarHeader={sidebarHeader} sidebarFooter={sidebarFooter}>
         <SidebarNav
           items={navItems}
           currentPath={currentPath}

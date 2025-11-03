@@ -48,9 +48,10 @@ export function SidebarProvider({
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   sidebarHeader?: React.ReactNode;
+  sidebarFooter?: React.ReactNode;
 }
 
-export function Sidebar({ children, className, sidebarHeader, ...props }: SidebarProps) {
+export function Sidebar({ children, className, sidebarHeader, sidebarFooter, ...props }: SidebarProps) {
   const { collapsed, setCollapsed, mobileOpen, setMobileOpen } = useSidebar();
 
   return (
@@ -76,42 +77,53 @@ export function Sidebar({ children, className, sidebarHeader, ...props }: Sideba
         )}
         {...props}
       >
-        {/* Header */}
-        <div className="flex h-16 items-center justify-between border-b px-4">
-          {!collapsed ? (
-            <div className="flex items-center gap-2">
+        <div className="flex h-full flex-col">
+          {/* Header */}
+          <div className="flex h-16 items-center justify-between border-b px-4">
+            {!collapsed ? (
+              <div className="flex items-center gap-2">
+                <img
+                  src="/logo.svg"
+                  alt="JOWi Shop Logo"
+                  className="h-8 w-8"
+                />
+                <img
+                  src="/logo-lettering.svg"
+                  alt="JOWi Shop"
+                  className="h-8 dark:invert"
+                />
+              </div>
+            ) : (
               <img
                 src="/logo.svg"
                 alt="JOWi Shop Logo"
-                className="h-8 w-8"
+                className="h-8 w-8 mx-auto"
               />
-              <h2 className="text-lg font-semibold">JOWi Shop</h2>
-            </div>
-          ) : (
-            <img
-              src="/logo.svg"
-              alt="JOWi Shop Logo"
-              className="h-8 w-8 mx-auto"
-            />
+            )}
+            {/* Mobile close button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setMobileOpen(false)}
+              className="lg:hidden"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Sidebar Header (e.g., store selector) */}
+          {sidebarHeader && !collapsed && (
+            <div className="border-b p-3">{sidebarHeader}</div>
           )}
-          {/* Mobile close button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(false)}
-            className="lg:hidden"
-          >
-            <X className="h-5 w-5" />
-          </Button>
+
+          {/* Content */}
+          <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-2">{children}</div>
+
+          {/* Footer (e.g., POS download banner) */}
+          {sidebarFooter && !collapsed && (
+            <div className="border-t p-3">{sidebarFooter}</div>
+          )}
         </div>
-
-        {/* Sidebar Header (e.g., store selector) */}
-        {sidebarHeader && !collapsed && (
-          <div className="border-b p-3">{sidebarHeader}</div>
-        )}
-
-        {/* Content */}
-        <div className="flex flex-col gap-2 p-2">{children}</div>
       </aside>
     </>
   );

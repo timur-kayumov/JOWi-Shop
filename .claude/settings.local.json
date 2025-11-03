@@ -71,7 +71,8 @@
       "Bash(nul)",
       "Bash(tasklist:*)",
       "Bash(find:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(copy:*)"
     ],
     "deny": [],
     "ask": []

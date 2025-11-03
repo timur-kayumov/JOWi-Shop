@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Store, Users, UserCircle, BarChart3 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AppShell, NavItem, type Language, type Notification, NotificationPanel } from '@jowi/ui';
+import { AppShell, NavItem, type Language, type Notification, NotificationPanel, PosDownloadBanner } from '@jowi/ui';
 
 // Mock user data - replace with actual auth later
 const mockUser = {
@@ -220,6 +220,13 @@ export default function IntranetLayout({
     localStorage.setItem('jowi-language', language);
   };
 
+  const handlePosDownload = () => {
+    console.log('POS download clicked');
+    // TODO: Implement POS app download functionality (e.g., redirect to download page)
+    // For now, just log the action
+    // Future: router.push('/intranet/pos-download') or window.open('download-url')
+  };
+
   // Custom notification component
   const notificationComponent = (
     <NotificationPanel
@@ -231,6 +238,11 @@ export default function IntranetLayout({
     />
   );
 
+  // POS download banner in sidebar footer
+  const sidebarFooter = (
+    <PosDownloadBanner onDownloadClick={handlePosDownload} />
+  );
+
   return (
     <AppShell
       navItems={navItems}
@@ -240,6 +252,7 @@ export default function IntranetLayout({
       currentLanguage={currentLanguage}
       notificationCount={notifications.filter(n => !n.isRead).length}
       notificationComponent={notificationComponent}
+      sidebarFooter={sidebarFooter}
       onNavigate={handleNavigate}
       onSearch={handleSearch}
       onSettingsClick={handleSettings}

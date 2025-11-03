@@ -22,6 +22,7 @@ export * from './components/app-shell';
 export * from './components/sidebar';
 export * from './components/sidebar-nav';
 export * from './components/topbar';
+export * from './components/pos-download-banner';
 
 // Navigation components
 export * from './components/breadcrumbs';
