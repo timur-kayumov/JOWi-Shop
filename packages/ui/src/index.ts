@@ -26,6 +26,7 @@ export * from './components/topbar';
 // Navigation components
 export * from './components/breadcrumbs';
 export * from './components/search-bar';
+export * from './components/global-search';
 
 // User components
 export * from './components/avatar';

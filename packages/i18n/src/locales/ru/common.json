@@ -734,5 +734,30 @@
   "statuses": {
     "active": "Активен",
     "inactive": "Неактивен"
+  },
+  "globalSearch": {
+    "placeholder": "Поиск... (⌘K)",
+    "searching": "Поиск...",
+    "noResults": "Ничего не найдено",
+    "noResultsDescription": "Попробуйте изменить поисковый запрос",
+    "resultsFor": "Результаты для",
+    "filterByType": "Фильтр по типу:",
+    "clearFilters": "Сбросить",
+    "entityTypes": {
+      "store": "Магазины",
+      "stores": "Магазины",
+      "employee": "Сотрудники",
+      "employees": "Сотрудники",
+      "customer": "Клиенты",
+      "customers": "Клиенты",
+      "product": "Товары",
+      "products": "Товары",
+      "category": "Категории",
+      "categories": "Категории",
+      "receipt": "Чеки",
+      "receipts": "Чеки",
+      "document": "Документы",
+      "documents": "Документы"
+    }
   }
 }

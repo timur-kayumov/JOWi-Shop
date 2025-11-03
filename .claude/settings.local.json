@@ -70,7 +70,8 @@
       "mcp__context7__get-library-docs",
       "Bash(nul)",
       "Bash(tasklist:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

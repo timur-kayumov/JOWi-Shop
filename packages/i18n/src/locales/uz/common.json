@@ -734,5 +734,30 @@
   "statuses": {
     "active": "Faol",
     "inactive": "Faol emas"
+  },
+  "globalSearch": {
+    "placeholder": "Qidirish... (⌘K)",
+    "searching": "Qidirish...",
+    "noResults": "Hech narsa topilmadi",
+    "noResultsDescription": "Qidiruv so'rovini o'zgartirib ko'ring",
+    "resultsFor": "Natijalar",
+    "filterByType": "Tur bo'yicha filtr:",
+    "clearFilters": "Tozalash",
+    "entityTypes": {
+      "store": "Do'konlar",
+      "stores": "Do'konlar",
+      "employee": "Xodimlar",
+      "employees": "Xodimlar",
+      "customer": "Mijozlar",
+      "customers": "Mijozlar",
+      "product": "Mahsulotlar",
+      "products": "Mahsulotlar",
+      "category": "Kategoriyalar",
+      "categories": "Kategoriyalar",
+      "receipt": "Cheklar",
+      "receipts": "Cheklar",
+      "document": "Hujjatlar",
+      "documents": "Hujjatlar"
+    }
   }
 }

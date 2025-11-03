@@ -5,7 +5,7 @@ import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { SidebarTrigger, useSidebar } from './sidebar';
 import { Breadcrumbs, BreadcrumbItem } from './breadcrumbs';
-import { SearchBar } from './search-bar';
+import { GlobalSearch } from './global-search';
 import { NotificationBadge } from './notification-badge';
 import { ThemeToggle } from './theme-toggle';
 import { UserMenu, UserMenuProps, Language } from './user-menu';
@@ -14,7 +14,7 @@ import { Button } from './button';
 interface TopBarProps {
   breadcrumbs?: BreadcrumbItem[];
   onBreadcrumbNavigate?: (href: string) => void;
-  onSearch?: (query: string) => void;
+  currentStoreId?: string; // For resolving store-specific paths in search results
   notificationCount?: number;
   notificationComponent?: React.ReactNode;
   onNotificationsClick?: () => void;
@@ -30,7 +30,7 @@ interface TopBarProps {
 export function TopBar({
   breadcrumbs = [],
   onBreadcrumbNavigate,
-  onSearch,
+  currentStoreId,
   notificationCount = 0,
   notificationComponent,
   onNotificationsClick,
@@ -80,10 +80,9 @@ export function TopBar({
       {/* Spacer */}
       <div className="flex-1" />
 
-      {/* Search bar */}
-      <SearchBar
-        onSearch={onSearch}
-        placeholder="Поиск..."
+      {/* Global Search */}
+      <GlobalSearch
+        currentStoreId={currentStoreId}
         className="hidden w-64 md:block lg:w-80"
       />
 

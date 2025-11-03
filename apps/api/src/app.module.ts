@@ -9,6 +9,7 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { StoresModule } from './modules/stores/stores.module';
 import { DatabaseModule } from './modules/database/database.module';
+import { SearchModule } from './modules/search/search.module';
 import { HealthController } from './health.controller';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { TenantGuard } from './common/guards/tenant.guard';
@@ -27,6 +28,7 @@ import { TenantGuard } from './common/guards/tenant.guard';
     SalesModule,
     CustomersModule,
     ReportsModule,
+    SearchModule,
   ],
   controllers: [HealthController],
   providers: [
