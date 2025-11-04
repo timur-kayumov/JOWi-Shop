@@ -3,10 +3,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { Plus, Search, Pencil, Trash2, Settings } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 import {
   Button,
   Input,
+  TimeInput,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -29,6 +30,8 @@ import {
   DataTable,
   Column,
   Card,
+  ImageUpload,
+  Avatar,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -43,6 +46,7 @@ const mockStores = [
     phone: '+998901234567',
     country: 'Uzbekistan',
     city: 'Ташкент',
+    logoUrl: undefined,
     shiftTransitionTime: '00:00',
     isActive: true,
     createdAt: new Date('2024-01-15'),
@@ -54,6 +58,7 @@ const mockStores = [
     phone: '+998907654321',
     country: 'Uzbekistan',
     city: 'Ташкент',
+    logoUrl: undefined,
     shiftTransitionTime: '00:00',
     isActive: true,
     createdAt: new Date('2024-02-20'),
@@ -65,6 +70,7 @@ const mockStores = [
     phone: '+998905555555',
     country: 'Uzbekistan',
     city: 'Ташкент',
+    logoUrl: undefined,
     shiftTransitionTime: '00:00',
     isActive: false,
     createdAt: new Date('2024-03-10'),
@@ -87,7 +93,8 @@ export default function StoresPage() {
       phone: '',
       country: 'Uzbekistan',
       city: '',
-      shiftTransitionTime: '00:00',
+      logoUrl: undefined,
+      shiftTransitionTime: '',
       isActive: true,
     },
   });
@@ -186,12 +193,31 @@ export default function StoresPage() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
+                  name="logoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.stores.fields.logo')}</FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          value={field.value}
+                          onChange={field.onChange}
+                          maxSize={5}
+                          accept="image/png,image/jpeg"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('pages.stores.fields.name')}</FormLabel>
                       <FormControl>
-                        <Input placeholder={t('pages.stores.placeholders.name')} {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -229,7 +255,7 @@ export default function StoresPage() {
                       <FormItem>
                         <FormLabel>{t('pages.stores.fields.city')}</FormLabel>
                         <FormControl>
-                          <Input placeholder={t('pages.stores.placeholders.city')} {...field} />
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -259,7 +285,7 @@ export default function StoresPage() {
                       <FormItem>
                         <FormLabel>{t('pages.stores.fields.phone')}</FormLabel>
                         <FormControl>
-                          <Input placeholder={t('pages.stores.placeholders.phone')} {...field} />
+                          <Input placeholder="+998" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -273,7 +299,7 @@ export default function StoresPage() {
                       <FormItem>
                         <FormLabel>{t('pages.stores.fields.shiftTransitionTime')}</FormLabel>
                         <FormControl>
-                          <Input placeholder={t('pages.stores.placeholders.shiftTransitionTime')} {...field} />
+                          <TimeInput placeholder="00:00" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -299,6 +325,18 @@ export default function StoresPage() {
 
       <DataTable
         columns={[
+          {
+            key: 'logo',
+            label: t('pages.stores.fields.logo'),
+            render: (store) => (
+              <Avatar
+                src={store.logoUrl}
+                alt={store.name}
+                fallback={store.name.substring(0, 2).toUpperCase()}
+                size="md"
+              />
+            ),
+          },
           {
             key: 'name',
             label: t('pages.stores.fields.name'),
@@ -343,17 +381,8 @@ export default function StoresPage() {
                     router.push(`/intranet/stores/${store.id}`);
                   }}
                 >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push(`/store/${store.id}`);
-                  }}
-                >
-                  <Settings className="h-4 w-4" />
+                  <Pencil className="mr-2 h-4 w-4" />
+                  {t('actions.edit')}
                 </Button>
               </div>
             ),

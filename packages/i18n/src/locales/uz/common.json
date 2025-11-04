@@ -1,4 +1,5 @@
 {
+  "search": "Qidirish",
   "app": {
     "name": "JOWi Shop",
     "tagline": "Chakana savdo boshqaruv tizimi"
@@ -18,6 +19,7 @@
     "close": "Yopish",
     "submit": "Yuborish",
     "back": "Orqaga",
+    "backToList": "Ro'yxatga qaytish",
     "next": "Keyingi",
     "confirm": "Tasdiqlash",
     "view": "Ko'rish"
@@ -29,7 +31,9 @@
     "completed": "Tugallangan",
     "pending": "Kutilmoqda",
     "processing": "Qayta ishlanmoqda",
-    "failed": "Xato"
+    "failed": "Xato",
+    "refunded": "Qaytarilgan",
+    "partially_refunded": "Qisman qaytarilgan"
   },
   "navigation": {
     "dashboard": "Boshqaruv paneli",
@@ -42,7 +46,9 @@
     "pos": "Kassa",
     "stores": "Do'konlar",
     "employees": "Xodimlar",
-    "intranet": "Intranet"
+    "intranet": "Intranet",
+    "integrations": "Integratsiyalar",
+    "subscription": "Obuna"
   },
   "storeNavigation": {
     "dashboard": "Boshqaruv paneli",
@@ -60,6 +66,7 @@
     "warehouseTransfers": "Omborlar o'rtasida ko'chirish",
     "storeTransfers": "Do'konlar o'rtasida ko'chirish",
     "reports": "Hisobotlar",
+    "integrations": "Integratsiyalar",
     "settings": "Sozlamalar",
     "currentStore": "Joriy do'kon"
   },
@@ -203,6 +210,14 @@
     "noData": "Ma'lumot yo'q",
     "confirmDelete": "O'chirishni tasdiqlaysizmi?"
   },
+  "confirmations": {
+    "deleteStore": {
+      "title": "Do'konni o'chirishmi?",
+      "description": "Haqiqatan ham bu do'konni o'chirmoqchimisiz? Bu amalni qaytarib bo'lmaydi.",
+      "confirm": "O'chirish",
+      "cancel": "Bekor qilish"
+    }
+  },
   "currency": "so'm",
   "currencyCode": "UZS",
   "units": {
@@ -210,6 +225,27 @@
     "kg": "kg",
     "liter": "l",
     "meter": "m"
+  },
+  "permissions": {
+    "view": "Ko'rish",
+    "create": "Yaratish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "editPermissions": "Huquqlarni tahrirlash",
+    "manage": "Boshqarish",
+    "salesReports": "Sotuv hisobotlari",
+    "productReports": "Mahsulot hisobotlari",
+    "employeeReports": "Xodimlar hisobotlari",
+    "inventoryReports": "Ombor hisobotlari",
+    "noAccess": "Kirish yo'q",
+    "viewOnly": "Faqat ko'rish",
+    "fullAccess": "To'liq kirish"
+  },
+  "roles": {
+    "admin": "Administrator",
+    "manager": "Menejer",
+    "cashier": "Kassir",
+    "warehouse": "Ombor xodimi"
   },
   "pages": {
     "employees": {
@@ -266,6 +302,7 @@
       "deleteConfirm": "Ushbu do'konni o'chirishga ishonchingiz komilmi?",
       "fields": {
         "name": "Do'kon nomi",
+        "logo": "Logotip",
         "country": "Mamlakat",
         "city": "Shahar",
         "address": "Manzil",
@@ -556,7 +593,39 @@
       "noPurchaseHistory": "Xarid tarixi yo'q",
       "receipt": "Chek",
       "total": "Jami:",
-      "customerSince": "Mijoz"
+      "customerSince": "Mijoz",
+      "editCustomer": "Tahrirlash",
+      "deleteCustomer": "Mijozni o'chirish",
+      "deleteCustomerConfirm": "{{name}} mijozni o'chirishga ishonchingiz komilmi? Bu amalni qaytarib bo'lmaydi.",
+      "searchReceipts": "Chek raqami bo'yicha qidirish...",
+      "filterByStore": "Do'kon bo'yicha filtr",
+      "allStores": "Barcha do'konlar",
+      "filterByPeriod": "Davr",
+      "dateFrom": "Dan",
+      "dateTo": "Gacha",
+      "filterByPaymentMethod": "To'lov usuli",
+      "allPaymentMethods": "Barcha usullar",
+      "store": "Do'kon",
+      "showMore": "...yana {{count}} mahsulot",
+      "receiptDetails": "Chek tafsilotlari",
+      "goToReceipt": "Chekka o'tish",
+      "receiptNumber": "Chek №",
+      "cashier": "Kassir",
+      "terminal": "Terminal",
+      "subtotal": "Oraliq jami",
+      "discount": "Chegirma",
+      "tax": "Soliq",
+      "paymentMethods": "To'lov usullari",
+      "comments": "Izohlar",
+      "itemsTable": {
+        "image": "Rasm",
+        "name": "Nomi",
+        "sku": "Artikul",
+        "quantity": "Soni",
+        "unitPrice": "Narxi",
+        "discount": "Chegirma",
+        "total": "Summa"
+      }
     },
     "employeeDetail": {
       "back": "Orqaga",
@@ -606,7 +675,8 @@
       "viewEmployees": "Xodimlarni ko'rish",
       "viewTerminals": "Kassalarni ko'rish",
       "salesReports": "Sotuv hisobotlari",
-      "manageSettings": "Sozlamalarni boshqarish"
+      "manageSettings": "Sozlamalarni boshqarish",
+      "dangerZone": "Xavfli zona"
     },
     "receipts": {
       "title": "Cheklar",
@@ -758,6 +828,32 @@
       "receipts": "Cheklar",
       "document": "Hujjatlar",
       "documents": "Hujjatlar"
+    }
+  },
+  "components": {
+    "imageUpload": {
+      "empty": "Rasmni yuklang",
+      "dragActive": "Yuklash uchun qo'yib yuboring",
+      "clickToUpload": "Bosing yoki sudrab olib keling",
+      "pasteImage": "yoki Ctrl+V bosing",
+      "formats": "PNG, JPG {{size}} MB gacha",
+      "converting": "Konvertatsiya...",
+      "loading": "Yuklanmoqda {{progress}}%",
+      "completion": "Tugallanmoqda...",
+      "replaceImage": "Almashtirish",
+      "remove": "O'chirish",
+      "fileInfo": "{{name}} ({{size}})",
+      "dimensions": "{{width}}×{{height}}px",
+      "format": "{{format}}",
+      "tryAgain": "Qayta urinib ko'ring",
+      "errors": {
+        "fileTooLarge": "Fayl juda katta. Maksimal {{max}} MB",
+        "invalidType": "Noto'g'ri format. Ruxsat etilgan: {{types}}",
+        "dimensionsTooSmall": "Rasm juda kichik. Minimal {{width}}×{{height}}px",
+        "dimensionsTooLarge": "Rasm juda katta. Maksimal {{width}}×{{height}}px",
+        "notSquare": "Rasm kvadrat bo'lishi kerak",
+        "failedToRead": "Faylni o'qib bo'lmadi"
+      }
     }
   }
 }

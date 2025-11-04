@@ -99,7 +99,8 @@ export const createStoreSchema = z.object({
   shiftTransitionTime: z
     .string()
     .regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, 'Время должно быть в формате HH:MM')
-    .default('00:00'),
+    .or(z.literal(''))
+    .transform((val) => (val === '' ? '00:00' : val)),
   isActive: z.boolean().default(true),
 });
 
@@ -194,6 +195,34 @@ export const createReceiptSchema = z.object({
     .min(1),
 });
 
+// Receipt status
+export const receiptStatusSchema = z.enum(['draft', 'completed', 'refunded', 'partially_refunded']);
+
+// Receipt filters with pagination
+export const getCustomerReceiptsSchema = z.object({
+  customerId: z.string(), // Temporarily removed .uuid() for mock data compatibility
+  page: z.number().int().positive().default(1),
+  pageSize: z.number().int().positive().max(50).default(10),
+  search: z.string().optional(), // search by receipt number
+  storeId: z.string().optional(), // Temporarily removed .uuid() for mock data compatibility
+  paymentMethod: paymentMethodSchema.optional(),
+  dateFrom: z.date().optional(),
+  dateTo: z.date().optional(),
+});
+
+// Refund schemas
+export const refundReceiptItemSchema = z.object({
+  receiptItemId: z.string().uuid(),
+  quantity: z.number().positive(),
+  reason: z.string().max(500).optional(),
+});
+
+export const refundReceiptSchema = z.object({
+  receiptId: z.string().uuid(),
+  items: z.array(refundReceiptItemSchema).min(1),
+  reason: z.string().max(500).optional(),
+});
+
 // Customer
 export const genderSchema = z.enum(['male', 'female', 'other']);
 
@@ -236,15 +265,170 @@ export const createEmployeeSchema = z.object({
   phone: z.string().min(9).max(20),
   email: z.string().email(),
   password: z.string().min(8, 'Пароль должен содержать минимум 8 символов'),
-  role: userRoleSchema,
-  storeId: z.string().uuid(),
   citizenship: z.string().min(2).max(100),
   passportSeries: z.string().min(1).max(10),
   passportNumber: z.string().min(1).max(20),
-  pin: z.string().length(4).optional(),
 });
 
-export const updateEmployeeSchema = createEmployeeSchema.partial().omit({ password: true });
+export const updateEmployeeBasicInfoSchema = z.object({
+  firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа').max(100).optional(),
+  lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа').max(100).optional(),
+  phone: z.string().min(9).max(20).optional(),
+  email: z.string().email().optional(),
+  citizenship: z.string().min(2).max(100).optional(),
+  passportSeries: z.string().min(1).max(10).optional(),
+  passportNumber: z.string().min(1).max(20).optional(),
+  isActive: z.boolean().optional(),
+});
+
+// Store Employee (per-store role assignment)
+export const createStoreEmployeeSchema = z.object({
+  userId: z.string().uuid(),
+  storeId: z.string().uuid(),
+  role: userRoleSchema,
+  isActive: z.boolean().default(true),
+});
+
+export const updateStoreEmployeeSchema = z.object({
+  role: userRoleSchema.optional(),
+  isActive: z.boolean().optional(),
+});
+
+// Intranet Access (global permissions)
+export const intranetPermissionsSchema = z.object({
+  stores: z
+    .object({
+      view: z.boolean().default(false),
+      create: z.boolean().default(false),
+      edit: z.boolean().default(false),
+      delete: z.boolean().default(false),
+    })
+    .optional(),
+  employees: z
+    .object({
+      view: z.boolean().default(false),
+      create: z.boolean().default(false),
+      edit: z.boolean().default(false),
+      editPermissions: z.boolean().default(false),
+      delete: z.boolean().default(false),
+    })
+    .optional(),
+  customers: z
+    .object({
+      view: z.boolean().default(false),
+      create: z.boolean().default(false),
+      edit: z.boolean().default(false),
+      delete: z.boolean().default(false),
+    })
+    .optional(),
+  reports: z
+    .object({
+      view: z.boolean().default(false),
+      sales: z.boolean().default(false),
+      products: z.boolean().default(false),
+      employees: z.boolean().default(false),
+      inventory: z.boolean().default(false),
+    })
+    .optional(),
+  subscription: z
+    .object({
+      view: z.boolean().default(false),
+      manage: z.boolean().default(false),
+    })
+    .optional(),
+});
+
+export const updateIntranetAccessSchema = z.object({
+  userId: z.string().uuid(),
+  permissions: intranetPermissionsSchema,
+});
+
+// Store Web Access (per-store web admin permissions)
+export const storeWebPermissionsSchema = z.object({
+  dashboard: z
+    .object({
+      view: z.boolean().default(false),
+    })
+    .optional(),
+  orders: z
+    .object({
+      view: z.boolean().default(false),
+      viewDetail: z.boolean().default(false),
+      refund: z.boolean().default(false),
+    })
+    .optional(),
+  products: z
+    .object({
+      view: z.boolean().default(false),
+      create: z.boolean().default(false),
+      edit: z.boolean().default(false),
+      delete: z.boolean().default(false),
+      addFromNomenclature: z.boolean().default(false),
+    })
+    .optional(),
+  categories: z
+    .object({
+      view: z.boolean().default(false),
+      create: z.boolean().default(false),
+      edit: z.boolean().default(false),
+      delete: z.boolean().default(false),
+    })
+    .optional(),
+  inventory: z
+    .object({
+      view: z.boolean().default(false),
+      manageWarehouses: z.boolean().default(false),
+      monitoring: z.boolean().default(false),
+      alerts: z.boolean().default(false),
+      writeoff: z.boolean().default(false),
+      count: z.boolean().default(false),
+    })
+    .optional(),
+  documents: z
+    .object({
+      suppliers: z.boolean().default(false),
+      invoices: z.boolean().default(false),
+      warehouseTransfers: z.boolean().default(false),
+      storeTransfers: z.boolean().default(false),
+    })
+    .optional(),
+  reports: z
+    .object({
+      view: z.boolean().default(false),
+    })
+    .optional(),
+  integrations: z
+    .object({
+      manage: z.boolean().default(false),
+    })
+    .optional(),
+  settings: z
+    .object({
+      view: z.boolean().default(false),
+      edit: z.boolean().default(false),
+    })
+    .optional(),
+});
+
+// Store POS Access (per-store POS terminal permissions) - placeholder for future
+export const storePosPermissionsSchema = z.object({
+  sales: z.boolean().default(false),
+  returns: z.boolean().default(false),
+  shiftManagement: z.boolean().default(false),
+  viewReports: z.boolean().default(false),
+});
+
+export const updateStoreWebAccessSchema = z.object({
+  userId: z.string().uuid(),
+  storeId: z.string().uuid(),
+  permissions: storeWebPermissionsSchema,
+});
+
+export const updateStorePosAccessSchema = z.object({
+  userId: z.string().uuid(),
+  storeId: z.string().uuid(),
+  permissions: storePosPermissionsSchema,
+});
 
 // Permissions
 export const permissionResourceSchema = z.enum([
@@ -292,11 +476,23 @@ export type UpdateCategorySchema = z.infer<typeof updateCategorySchema>;
 export type CreateCustomerSchema = z.infer<typeof createCustomerSchema>;
 export type UpdateCustomerSchema = z.infer<typeof updateCustomerSchema>;
 export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>;
-export type UpdateEmployeeSchema = z.infer<typeof updateEmployeeSchema>;
+export type UpdateEmployeeBasicInfoSchema = z.infer<typeof updateEmployeeBasicInfoSchema>;
+export type CreateStoreEmployeeSchema = z.infer<typeof createStoreEmployeeSchema>;
+export type UpdateStoreEmployeeSchema = z.infer<typeof updateStoreEmployeeSchema>;
+export type IntranetPermissions = z.infer<typeof intranetPermissionsSchema>;
+export type UpdateIntranetAccessSchema = z.infer<typeof updateIntranetAccessSchema>;
+export type StoreWebPermissions = z.infer<typeof storeWebPermissionsSchema>;
+export type StorePosPermissions = z.infer<typeof storePosPermissionsSchema>;
+export type UpdateStoreWebAccessSchema = z.infer<typeof updateStoreWebAccessSchema>;
+export type UpdateStorePosAccessSchema = z.infer<typeof updateStorePosAccessSchema>;
 export type Gender = z.infer<typeof genderSchema>;
 export type UserRole = z.infer<typeof userRoleSchema>;
 export type PermissionResource = z.infer<typeof permissionResourceSchema>;
 export type PermissionAction = z.infer<typeof permissionActionSchema>;
+export type ReceiptStatus = z.infer<typeof receiptStatusSchema>;
+export type GetCustomerReceiptsSchema = z.infer<typeof getCustomerReceiptsSchema>;
+export type RefundReceiptItemSchema = z.infer<typeof refundReceiptItemSchema>;
+export type RefundReceiptSchema = z.infer<typeof refundReceiptSchema>;
 
 // Export all schemas
 // TODO: Add auth and inventory schema modules when needed

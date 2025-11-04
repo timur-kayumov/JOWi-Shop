@@ -34,14 +34,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
-// Schema для сотрудника
+// Schema для сотрудника (базовая информация без роли и магазина)
 const employeeSchema = z.object({
   firstName: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
   lastName: z.string().min(2, 'Фамилия должна содержать минимум 2 символа'),
   email: z.string().email('Некорректный email'),
   phone: z.string().min(9, 'Некорректный номер телефона'),
-  role: z.enum(['administrator', 'manager', 'cashier', 'warehouse']),
-  storeId: z.string().min(1, 'Выберите магазин'),
+  password: z.string().min(8, 'Пароль должен содержать минимум 8 символов'),
+  citizenship: z.string().min(2, 'Введите гражданство'),
+  passportSeries: z.string().min(1, 'Введите серию паспорта'),
+  passportNumber: z.string().min(1, 'Введите номер паспорта'),
   isActive: z.boolean().default(true),
 });
 
@@ -138,8 +140,10 @@ export default function EmployeesPage() {
       lastName: '',
       email: '',
       phone: '',
-      role: 'cashier',
-      storeId: '',
+      password: '',
+      citizenship: '',
+      passportSeries: '',
+      passportNumber: '',
       isActive: true,
     },
   });
@@ -154,25 +158,39 @@ export default function EmployeesPage() {
   });
 
   const onSubmit = (data: EmployeeSchema) => {
-    const store = mockStores.find((s) => s.id === data.storeId);
     if (editingEmployee) {
-      // Update existing employee
+      // Update existing employee - только базовая информация
       setEmployees(
         employees.map((e) =>
           e.id === editingEmployee.id
-            ? { ...e, ...data, storeName: store?.name || '' }
+            ? {
+                ...e,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                phone: data.phone,
+                isActive: data.isActive,
+              }
             : e
         )
       );
     } else {
-      // Create new employee
+      // Create new employee - роль и магазин назначаются позже на странице сотрудника
       const newEmployee = {
         id: String(employees.length + 1),
-        ...data,
-        storeName: store?.name || '',
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        role: 'cashier' as const, // Временная роль для демо
+        storeId: '1', // Временный магазин для демо
+        storeName: 'Не назначен', // Показываем, что магазин еще не назначен
+        isActive: data.isActive,
         createdAt: new Date(),
       };
       setEmployees([...employees, newEmployee]);
+      // После создания редиректим на страницу сотрудника для настройки доступов
+      // router.push(`/intranet/employees/${newEmployee.id}`);
     }
     setOpen(false);
     form.reset();
@@ -186,8 +204,10 @@ export default function EmployeesPage() {
       lastName: employee.lastName,
       email: employee.email,
       phone: employee.phone,
-      role: employee.role,
-      storeId: employee.storeId,
+      password: '', // Пароль не показываем при редактировании
+      citizenship: 'Узбекистан', // Mock данные
+      passportSeries: 'AB', // Mock данные
+      passportNumber: '1234567', // Mock данные
       isActive: employee.isActive,
     });
     setOpen(true);
@@ -321,26 +341,46 @@ export default function EmployeesPage() {
                   )}
                 />
 
+                {!editingEmployee && (
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Пароль</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Минимум 8 символов" type="password" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <FormField
+                  control={form.control}
+                  name="citizenship"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.employees.fields.citizenship')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Узбекистан" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="role"
+                    name="passportSeries"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('pages.employees.fields.role')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('pages.employees.placeholders.selectRole')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="administrator">{t('pages.employees.roles.administrator')}</SelectItem>
-                            <SelectItem value="manager">{t('pages.employees.roles.manager')}</SelectItem>
-                            <SelectItem value="cashier">{t('pages.employees.roles.cashier')}</SelectItem>
-                            <SelectItem value="warehouse">{t('pages.employees.roles.warehouse')}</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FormLabel>Серия паспорта</FormLabel>
+                        <FormControl>
+                          <Input placeholder="AB" {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -348,24 +388,13 @@ export default function EmployeesPage() {
 
                   <FormField
                     control={form.control}
-                    name="storeId"
+                    name="passportNumber"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('pages.employees.fields.store')}</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t('pages.employees.placeholders.selectStore')} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {mockStores.map((store) => (
-                              <SelectItem key={store.id} value={store.id}>
-                                {store.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormLabel>Номер паспорта</FormLabel>
+                        <FormControl>
+                          <Input placeholder="1234567" {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

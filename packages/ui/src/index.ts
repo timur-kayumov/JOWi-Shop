@@ -11,6 +11,7 @@ export * from './components/card';
 export * from './components/input';
 export * from './components/phone-input';
 export * from './components/otp-input';
+export * from './components/time-input';
 export * from './components/label';
 export * from './components/textarea';
 export * from './components/select';
@@ -48,6 +49,8 @@ export * from './components/data-table';
 export * from './components/loader';
 export * from './components/calendar';
 export * from './components/date-picker';
+export * from './components/checkbox';
+export * from './components/switch';
 
 // Registration components
 export * from './components/step-indicator';

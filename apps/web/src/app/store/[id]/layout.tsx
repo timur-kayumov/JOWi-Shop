@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2 } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2, Network } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AppShell,
@@ -213,6 +213,11 @@ export default function StoreLayout({
       icon: BarChart3,
     },
     {
+      title: t('storeNavigation.integrations'),
+      href: `/store/${selectedStoreId}/integrations`,
+      icon: Network,
+    },
+    {
       title: t('storeNavigation.settings'),
       href: `/store/${selectedStoreId}/settings`,
       icon: Settings,
@@ -249,6 +254,7 @@ export default function StoreLayout({
       'store-transfers': t('storeNavigation.storeTransfers'),
       inventory: t('storeNavigation.inventory'),
       reports: t('storeNavigation.reports'),
+      integrations: t('storeNavigation.integrations'),
       settings: t('storeNavigation.settings'),
     };
 

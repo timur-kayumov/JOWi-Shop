@@ -3,9 +3,34 @@
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Mail, Phone, Calendar, CreditCard, ShoppingBag, User } from 'lucide-react';
-import { Button, Badge } from '@jowi/ui';
+import { ArrowLeft, Mail, Phone, Calendar, CreditCard, ShoppingBag, User, Edit, Trash } from 'lucide-react';
+import {
+  Button,
+  Badge,
+  Input,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@jowi/ui';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { updateCustomerSchema, type UpdateCustomerSchema } from '@jowi/validators';
 import '../../../../lib/i18n'; // Ensure i18n is initialized
+import { CustomerPurchaseHistory } from '../../../../components/customer-purchase-history';
 
 // Mock data for a single customer with purchase history
 const mockCustomerData = {
@@ -22,6 +47,8 @@ const mockCustomerData = {
     receipts: [
       {
         id: 'R001',
+        storeId: 'store1',
+        storeName: 'Магазин Центральный',
         createdAt: new Date('2024-03-15T14:30:00'),
         totalAmount: 250000,
         items: [
@@ -32,6 +59,8 @@ const mockCustomerData = {
       },
       {
         id: 'R002',
+        storeId: 'store2',
+        storeName: 'Магазин Чиланзар',
         createdAt: new Date('2024-03-10T10:15:00'),
         totalAmount: 120000,
         items: [
@@ -42,6 +71,8 @@ const mockCustomerData = {
       },
       {
         id: 'R003',
+        storeId: 'store1',
+        storeName: 'Магазин Центральный',
         createdAt: new Date('2024-02-28T16:45:00'),
         totalAmount: 350000,
         items: [
@@ -64,6 +95,8 @@ const mockCustomerData = {
     receipts: [
       {
         id: 'R004',
+        storeId: 'store2',
+        storeName: 'Магазин Чиланзар',
         createdAt: new Date('2024-03-12T11:20:00'),
         totalAmount: 180000,
         items: [
@@ -83,14 +116,49 @@ export default function CustomerShowPage() {
 
   const customer = mockCustomerData[customerId as keyof typeof mockCustomerData];
 
+  // Dialog states
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  // Form for editing customer
+  const form = useForm<UpdateCustomerSchema>({
+    resolver: zodResolver(updateCustomerSchema),
+    defaultValues: {
+      firstName: customer?.firstName || '',
+      lastName: customer?.lastName || '',
+      phone: customer?.phone || '',
+      email: customer?.email || '',
+      gender: customer?.gender as 'male' | 'female' | 'other' | undefined,
+      dateOfBirth: customer?.dateOfBirth,
+      loyaltyCardNumber: customer?.loyaltyCardNumber || '',
+    },
+  });
+
+  const handleEditSubmit = (data: UpdateCustomerSchema) => {
+    console.log('Update customer:', data);
+    // TODO: API call to update customer
+    setIsEditOpen(false);
+  };
+
+  const handleDelete = () => {
+    console.log('Delete customer:', customerId);
+    // TODO: API call to delete customer
+    setIsDeleteOpen(false);
+    router.push('/intranet/customers');
+  };
+
   if (!customer) {
     return (
       <div className="space-y-6">
-        <Button variant="ghost" onClick={() => router.push('/intranet/customers')}>
+        <Button
+          variant="outline"
+          onClick={() => router.push('/intranet/customers')}
+          className="bg-white hover:bg-neutral-100"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t('pages.customerDetail.backToList')}
         </Button>
-        <div className="rounded-lg border bg-card p-8 text-center">
+        <div className="rounded-2xl border bg-card p-8 text-center">
           <p className="text-lg text-muted-foreground">{t('pages.customerDetail.notFound')}</p>
         </div>
       </div>
@@ -137,17 +205,177 @@ export default function CustomerShowPage() {
   const totalPurchases = customer.receipts.reduce((sum, receipt) => sum + receipt.totalAmount, 0);
   const purchaseCount = customer.receipts.length;
 
+  // Get unique stores from receipts for the new component
+  const stores = Array.from(new Set(customer.receipts.map((r) => r.storeId))).map((storeId) => {
+    const receipt = customer.receipts.find((r) => r.storeId === storeId);
+    return { id: storeId, name: receipt?.storeName || storeId };
+  });
+
   return (
     <div className="space-y-6">
-      <Button variant="ghost" onClick={() => router.push('/intranet/customers')}>
+      <Button
+        variant="outline"
+        onClick={() => router.push('/intranet/customers')}
+        className="bg-white hover:bg-neutral-100"
+      >
         <ArrowLeft className="mr-2 h-4 w-4" />
         {t('pages.customerDetail.backToList')}
       </Button>
 
+      {/* Edit Customer Dialog */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t('pages.customers.editCustomer')}</DialogTitle>
+            <DialogDescription>{t('pages.customers.editDescription')}</DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="firstName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.customers.fields.firstName')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.customers.fields.lastName')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.customers.fields.phone')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.customers.fields.emailOptional')}</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.customers.fields.genderOptional')}</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={t('pages.customers.placeholders.selectGender')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">{t('pages.customers.gender.male')}</SelectItem>
+                          <SelectItem value="female">{t('pages.customers.gender.female')}</SelectItem>
+                          <SelectItem value="other">{t('pages.customers.gender.other')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dateOfBirth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.customers.fields.dateOfBirthOptional')}</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
+                          onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="loyaltyCardNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.customers.fields.loyaltyCardNumber')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} value={field.value || ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
+                  {t('actions.cancel')}
+                </Button>
+                <Button type="submit">{t('actions.save')}</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('pages.customerDetail.deleteCustomer')}</DialogTitle>
+            <DialogDescription>
+              {t('pages.customerDetail.deleteCustomerConfirm', {
+                name: `${customer.firstName} ${customer.lastName}`,
+              })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteOpen(false)}>
+              {t('actions.cancel')}
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              {t('actions.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="grid gap-6 md:grid-cols-3">
         {/* Customer Info Card */}
         <div className="md:col-span-1">
-          <div className="rounded-lg border bg-card p-6 space-y-6">
+          <div className="rounded-2xl border bg-card p-6 space-y-6">
             <div className="flex flex-col items-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted mb-4">
                 <User className="h-10 w-10 text-muted-foreground" />
@@ -183,7 +411,7 @@ export default function CustomerShowPage() {
               {customer.dateOfBirth && (
                 <div className="flex items-center gap-3 text-sm">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{formatDate(customer.dateOfBirth)}</span>
+                  <span suppressHydrationWarning>{formatDate(customer.dateOfBirth)}</span>
                 </div>
               )}
             </div>
@@ -191,8 +419,27 @@ export default function CustomerShowPage() {
             <div className="border-t pt-4 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">{t('pages.customerDetail.customerSince')}</span>
-                <span className="text-sm font-medium">{formatDate(customer.createdAt)}</span>
+                <span className="text-sm font-medium" suppressHydrationWarning>{formatDate(customer.createdAt)}</span>
               </div>
+            </div>
+
+            <div className="border-t pt-4 flex gap-2">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setIsEditOpen(true)}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                {t('pages.customerDetail.editCustomer')}
+              </Button>
+              <Button
+                variant="ghost"
+                className="flex-1 bg-red-50 text-destructive hover:bg-red-100 hover:text-destructive"
+                onClick={() => setIsDeleteOpen(true)}
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                {t('pages.customerDetail.deleteCustomer')}
+              </Button>
             </div>
           </div>
         </div>
@@ -201,7 +448,7 @@ export default function CustomerShowPage() {
         <div className="md:col-span-2 space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.customerDetail.totalPurchases')}</p>
@@ -213,11 +460,11 @@ export default function CustomerShowPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.customerDetail.totalAmount')}</p>
-                  <p className="text-2xl font-bold">{formatCurrency(totalPurchases)} {t('currency')}</p>
+                  <p className="text-2xl font-bold" suppressHydrationWarning>{formatCurrency(totalPurchases)} {t('currency')}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
                   <CreditCard className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -227,55 +474,7 @@ export default function CustomerShowPage() {
           </div>
 
           {/* Purchase History */}
-          <div className="rounded-lg border bg-card">
-            <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">{t('pages.customerDetail.purchaseHistory')}</h3>
-            </div>
-
-            <div className="divide-y">
-              {customer.receipts.length === 0 ? (
-                <div className="p-8 text-center text-sm text-muted-foreground">
-                  {t('pages.customerDetail.noPurchaseHistory')}
-                </div>
-              ) : (
-                customer.receipts.map((receipt) => (
-                  <div key={receipt.id} className="p-6 hover:bg-muted/50">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <p className="font-semibold">{t('pages.customerDetail.receipt')} #{receipt.id}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDateTime(receipt.createdAt)}
-                        </p>
-                      </div>
-                      <Badge variant="outline">
-                        {getPaymentMethodLabel(receipt.payments[0]?.method)}
-                      </Badge>
-                    </div>
-
-                    <div className="space-y-2 mb-4">
-                      {receipt.items.map((item, index) => (
-                        <div key={index} className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">
-                            {item.name} × {item.quantity}
-                          </span>
-                          <span className="font-medium">
-                            {formatCurrency(item.price * item.quantity)} {t('currency')}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">{t('pages.customerDetail.total')}</span>
-                      <span className="text-lg font-bold">
-                        {formatCurrency(receipt.totalAmount)} {t('currency')}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <CustomerPurchaseHistory customerId={customerId} stores={stores} />
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { Plus, Search, Pencil, Trash2, Filter, User } from 'lucide-react';
+import { Plus, Search, Pencil, Trash2, User } from 'lucide-react';
 import {
   Button,
   Input,
@@ -28,6 +28,7 @@ import {
   Badge,
   DataTable,
   Column,
+  Card,
 } from '@jowi/ui';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -195,32 +196,61 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{t('pages.customers.title')}</h1>
-        <p className="text-muted-foreground mt-2">
-          {t('pages.customers.subtitle')}
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t('pages.customers.searchPlaceholder')}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
+      <Card className="p-6">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold">{t('pages.customers.title')}</h1>
+            <p className="text-muted-foreground mt-2">
+              {t('pages.customers.subtitle')}
+            </p>
           </div>
 
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setEditingCustomer(null)}>
-                <Plus className="mr-2 h-4 w-4" />
-                {t('pages.customers.addCustomer')}
-              </Button>
-            </DialogTrigger>
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder={t('pages.customers.searchPlaceholder')}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+
+              <Select value={genderFilter} onValueChange={setGenderFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Пол" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('pages.customers.gender.all')}</SelectItem>
+                  <SelectItem value="male">{t('pages.customers.gender.male')}</SelectItem>
+                  <SelectItem value="female">{t('pages.customers.gender.female')}</SelectItem>
+                  <SelectItem value="other">{t('pages.customers.gender.other')}</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={birthYearFilter} onValueChange={setBirthYearFilter}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Год рождения" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('pages.customers.birthYear.all')}</SelectItem>
+                  <SelectItem value="2000+">{t('pages.customers.birthYear.2000plus')}</SelectItem>
+                  <SelectItem value="1990-1999">{t('pages.customers.birthYear.1990-1999')}</SelectItem>
+                  <SelectItem value="1980-1989">{t('pages.customers.birthYear.1980-1989')}</SelectItem>
+                  <SelectItem value="1970-1979">{t('pages.customers.birthYear.1970-1979')}</SelectItem>
+                  <SelectItem value="<1970">{t('pages.customers.birthYear.before1970')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setEditingCustomer(null)}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  {t('pages.customers.addCustomer')}
+                </Button>
+              </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
                 <DialogTitle>
@@ -367,51 +397,11 @@ export default function CustomersPage() {
             </DialogContent>
           </Dialog>
         </div>
-
-        <div className="flex items-center gap-4">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <Select value={genderFilter} onValueChange={setGenderFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Пол" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('pages.customers.gender.all')}</SelectItem>
-              <SelectItem value="male">{t('pages.customers.gender.male')}</SelectItem>
-              <SelectItem value="female">{t('pages.customers.gender.female')}</SelectItem>
-              <SelectItem value="other">{t('pages.customers.gender.other')}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={birthYearFilter} onValueChange={setBirthYearFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Год рождения" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t('pages.customers.birthYear.all')}</SelectItem>
-              <SelectItem value="2000+">{t('pages.customers.birthYear.2000plus')}</SelectItem>
-              <SelectItem value="1990-1999">{t('pages.customers.birthYear.1990-1999')}</SelectItem>
-              <SelectItem value="1980-1989">{t('pages.customers.birthYear.1980-1989')}</SelectItem>
-              <SelectItem value="1970-1979">{t('pages.customers.birthYear.1970-1979')}</SelectItem>
-              <SelectItem value="<1970">{t('pages.customers.birthYear.before1970')}</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {(genderFilter !== 'all' || birthYearFilter !== 'all') && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setGenderFilter('all');
-                setBirthYearFilter('all');
-              }}
-            >
-              {t('pages.customers.resetFilters')}
-            </Button>
-          )}
-        </div>
       </div>
+      </Card>
 
-      <DataTable
+      <Card>
+        <DataTable
         columns={[
           {
             key: 'fullName',
@@ -475,6 +465,7 @@ export default function CustomersPage() {
         }
         pagination={{ enabled: true, pageSize: 15 }}
       />
+      </Card>
 
       {filteredCustomers.length > 0 && (
         <div className="text-sm text-muted-foreground">

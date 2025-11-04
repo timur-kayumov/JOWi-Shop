@@ -154,7 +154,7 @@ export function DataTable<T extends Record<string, any>>({
   };
 
   return (
-    <div className={cn('rounded-2xl border bg-card overflow-hidden', className)}>
+    <div className={cn('border bg-card overflow-hidden rounded-2xl', className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className="border-b bg-muted/50">
@@ -207,7 +207,7 @@ export function DataTable<T extends Record<string, any>>({
             ) : (
               paginatedData.map((item, index) => (
                 <tr
-                  key={index}
+                  key={item.id || `row-${index}`}
                   className={cn(
                     'transition-colors',
                     onRowClick &&

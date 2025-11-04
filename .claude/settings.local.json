@@ -72,7 +72,9 @@
       "Bash(tasklist:*)",
       "Bash(find:*)",
       "Bash(npx tsx:*)",
-      "Bash(copy:*)"
+      "Bash(copy:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate:*)"
     ],
     "deny": [],
     "ask": []

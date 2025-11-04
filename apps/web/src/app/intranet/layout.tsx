@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Store, Users, UserCircle, BarChart3 } from 'lucide-react';
+import { Store, Users, UserCircle, BarChart3, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { AppShell, NavItem, type Language, type Notification, NotificationPanel, PosDownloadBanner } from '@jowi/ui';
 
@@ -134,6 +134,11 @@ export default function IntranetLayout({
       href: '/intranet/reports',
       icon: BarChart3,
     },
+    {
+      title: t('navigation.subscription'),
+      href: '/intranet/subscription',
+      icon: CreditCard,
+    },
   ];
 
   // Generate breadcrumbs from pathname with translations
@@ -149,14 +154,65 @@ export default function IntranetLayout({
       employees: t('navigation.employees'),
       customers: t('navigation.customers'),
       reports: t('navigation.reports'),
+      subscription: t('navigation.subscription'),
     };
 
-    if (paths.length > 1) {
-      const currentPage = paths[paths.length - 1];
-      if (pathMap[currentPage]) {
+    // Check if we're in employee/customer context (for special breadcrumb handling)
+    const isEmployeeContext = pathname.includes('/employees/');
+    const isCustomerContext = pathname.includes('/customers/');
+
+    // Build breadcrumbs for each path segment
+    let currentPath = '';
+    for (let i = 1; i < paths.length; i++) {
+      const segment = paths[i];
+      currentPath += `/${segment}`;
+
+      // Skip 'intranet' as it's already the root
+      if (segment === 'intranet') continue;
+
+      // Check if it's a known page
+      if (pathMap[segment]) {
         breadcrumbs.push({
-          label: pathMap[currentPage],
-          href: pathname,
+          label: pathMap[segment],
+          href: currentPath,
+        });
+      }
+      // Handle dynamic routes (UUIDs or numeric IDs)
+      else if (/^[0-9a-f-]+$|^\d+$/.test(segment)) {
+        const parent = paths[i - 1];
+        if (parent === 'employees') {
+          breadcrumbs.push({
+            label: 'Детали сотрудника',
+            href: currentPath,
+          });
+        } else if (parent === 'customers') {
+          breadcrumbs.push({
+            label: 'Детали клиента',
+            href: currentPath,
+          });
+        } else if (parent === 'stores' && !isEmployeeContext && !isCustomerContext) {
+          // Only show store details if NOT in employee/customer context
+          breadcrumbs.push({
+            label: 'Детали магазина',
+            href: currentPath,
+          });
+        }
+        // Skip store IDs in employee/customer context
+      }
+      // Skip 'stores' segment in employee/customer context
+      else if (segment === 'stores' && (isEmployeeContext || isCustomerContext)) {
+        continue;
+      }
+      // Handle 'web' or 'pos' access pages
+      else if (segment === 'web') {
+        breadcrumbs.push({
+          label: 'WEB доступ',
+          href: currentPath,
+        });
+      } else if (segment === 'pos') {
+        breadcrumbs.push({
+          label: 'POS доступ',
+          href: currentPath,
         });
       }
     }

@@ -377,6 +377,9 @@ This approach was replaced with Flutter/Android to reduce hardware costs and imp
   1. Before running `pnpm dev`, kill any existing dev server processes
   2. Use `KillShell` to terminate background processes before starting new ones
   3. Check for port conflicts and resolve them by terminating old processes
+  4. **IMPORTANT (Windows):** Always use PowerShell to kill processes, NOT taskkill
+     - ✅ Correct: `powershell -Command "Stop-Process -Id <PID> -Force"`
+     - ❌ Incorrect: `taskkill /F /PID <PID>` (causes encoding issues)
 - **Rationale:** Multiple running instances on different ports cause confusion, resource waste, and potential conflicts
 
 ### Code Organization

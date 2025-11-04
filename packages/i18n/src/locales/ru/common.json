@@ -1,4 +1,5 @@
 {
+  "search": "Поиск",
   "app": {
     "name": "JOWi Shop",
     "tagline": "Система управления розничной торговлей"
@@ -18,6 +19,7 @@
     "close": "Закрыть",
     "submit": "Отправить",
     "back": "Назад",
+    "backToList": "Назад к списку",
     "next": "Далее",
     "confirm": "Подтвердить",
     "view": "Просмотр"
@@ -29,7 +31,9 @@
     "completed": "Завершен",
     "pending": "Ожидает",
     "processing": "Обрабатывается",
-    "failed": "Ошибка"
+    "failed": "Ошибка",
+    "refunded": "Возвращен",
+    "partially_refunded": "Частично возвращен"
   },
   "navigation": {
     "dashboard": "Панель управления",
@@ -42,7 +46,9 @@
     "pos": "Касса",
     "stores": "Магазины",
     "employees": "Сотрудники",
-    "intranet": "Интранет"
+    "intranet": "Интранет",
+    "integrations": "Интеграции",
+    "subscription": "Подписка"
   },
   "storeNavigation": {
     "dashboard": "Панель управления",
@@ -60,6 +66,7 @@
     "warehouseTransfers": "Перемещение между складами",
     "storeTransfers": "Перемещение между магазинами",
     "reports": "Отчёты",
+    "integrations": "Интеграции",
     "settings": "Настройки",
     "currentStore": "Текущий магазин"
   },
@@ -193,6 +200,27 @@
     "createdAt": "Создано",
     "updatedAt": "Обновлено"
   },
+  "permissions": {
+    "view": "Просмотр",
+    "create": "Создание",
+    "edit": "Редактирование",
+    "delete": "Удаление",
+    "editPermissions": "Редактирование прав",
+    "manage": "Управление",
+    "salesReports": "Отчёты по продажам",
+    "productReports": "Отчёты по товарам",
+    "employeeReports": "Отчёты по сотрудникам",
+    "inventoryReports": "Отчёты по складу",
+    "noAccess": "Нет доступа",
+    "viewOnly": "Просмотр",
+    "fullAccess": "Полный доступ"
+  },
+  "roles": {
+    "admin": "Администратор",
+    "manager": "Менеджер",
+    "cashier": "Кассир",
+    "warehouse": "Складской работник"
+  },
   "messages": {
     "loading": "Загрузка...",
     "saving": "Сохранение...",
@@ -202,6 +230,14 @@
     "success": "Успешно",
     "noData": "Нет данных",
     "confirmDelete": "Вы уверены, что хотите удалить?"
+  },
+  "confirmations": {
+    "deleteStore": {
+      "title": "Удалить магазин?",
+      "description": "Вы уверены, что хотите удалить этот магазин? Это действие необратимо.",
+      "confirm": "Удалить",
+      "cancel": "Отмена"
+    }
   },
   "currency": "сўм",
   "currencyCode": "UZS",
@@ -234,7 +270,8 @@
         "role": "Роль",
         "store": "Магазин",
         "employee": "Сотрудник",
-        "contacts": "Контакты"
+        "contacts": "Контакты",
+        "citizenship": "Гражданство"
       },
       "roles": {
         "administrator": "Администратор",
@@ -266,6 +303,7 @@
       "deleteConfirm": "Вы уверены, что хотите удалить этот магазин?",
       "fields": {
         "name": "Название магазина",
+        "logo": "Логотип",
         "country": "Страна",
         "city": "Город",
         "address": "Адрес",
@@ -556,7 +594,39 @@
       "noPurchaseHistory": "Нет истории покупок",
       "receipt": "Чек",
       "total": "Итого:",
-      "customerSince": "Клиент с"
+      "customerSince": "Клиент с",
+      "editCustomer": "Редактировать",
+      "deleteCustomer": "Удалить клиента",
+      "deleteCustomerConfirm": "Вы уверены, что хотите удалить клиента {{name}}? Это действие необратимо.",
+      "searchReceipts": "Поиск по номеру чека...",
+      "filterByStore": "Фильтр по магазину",
+      "allStores": "Все магазины",
+      "filterByPeriod": "Период",
+      "dateFrom": "С",
+      "dateTo": "По",
+      "filterByPaymentMethod": "Способ оплаты",
+      "allPaymentMethods": "Все способы",
+      "store": "Магазин",
+      "showMore": "...ещё {{count}} товаров",
+      "receiptDetails": "Детали чека",
+      "goToReceipt": "Перейти к чеку",
+      "receiptNumber": "Чек №",
+      "cashier": "Кассир",
+      "terminal": "Терминал",
+      "subtotal": "Подытог",
+      "discount": "Скидка",
+      "tax": "Налог",
+      "paymentMethods": "Способы оплаты",
+      "comments": "Комментарии",
+      "itemsTable": {
+        "image": "Фото",
+        "name": "Название",
+        "sku": "Артикул",
+        "quantity": "Кол-во",
+        "unitPrice": "Цена",
+        "discount": "Скидка",
+        "total": "Сумма"
+      }
     },
     "employeeDetail": {
       "back": "Назад",
@@ -564,10 +634,31 @@
       "saveChanges": "Сохранить изменения",
       "information": "Информация о сотруднике",
       "basicInfo": "Основная информация и статус",
-      "storeAccess": "Права доступа к магазину",
-      "storeAccessDescription": "Настройка доступа к функциям магазина",
-      "intranetAccess": "Права доступа к интранету",
-      "intranetAccessDescription": "Настройка доступа к административным функциям",
+      "storeAccess": "Доступ к магазинам",
+      "storeAccessDescription": "Управление доступом сотрудника к магазинам и их функциям",
+      "intranetAccess": "Доступ к интранету",
+      "intranetAccessDescription": "Глобальные права доступа к административным функциям",
+      "enableAll": "Включить все",
+      "disableAll": "Отключить все",
+      "addToStore": "Добавить магазин",
+      "storeName": "Название магазина",
+      "role": "Роль",
+      "webAccess": "Web админка",
+      "posAccess": "POS терминал",
+      "noAccess": "Нет доступа",
+      "configureWebAccess": "Настроить доступ к web админке",
+      "configurePosAccess": "Настроить доступ к POS терминалу",
+      "editEmployee": "Редактировать сотрудника",
+      "editEmployeeDescription": "Изменить основную информацию о сотруднике",
+      "deleteEmployee": "Удалить сотрудника",
+      "deleteConfirmation": "Вы уверены, что хотите удалить сотрудника {{name}}? Это действие необратимо.",
+      "modules": {
+        "stores": "Магазины",
+        "employees": "Сотрудники",
+        "customers": "Клиенты",
+        "reports": "Отчёты",
+        "subscription": "Подписка"
+      },
       "permissions": {
         "pos": "POS (касса)",
         "warehouse": "Склад",
@@ -606,7 +697,8 @@
       "viewEmployees": "Просмотреть сотрудников",
       "viewTerminals": "Просмотреть кассы",
       "salesReports": "Отчёты по продажам",
-      "manageSettings": "Управление настройками"
+      "manageSettings": "Управление настройками",
+      "dangerZone": "Опасная зона"
     },
     "receipts": {
       "title": "Чеки",
@@ -681,6 +773,36 @@
         "error": "Ошибка при возврате чека"
       }
     },
+    "storeWebAccess": {
+      "title": "Доступ к Web админке",
+      "description": "Настройка прав доступа сотрудника {{employee}} к магазину «{{store}}»",
+      "currentRole": "Текущая роль",
+      "modules": {
+        "dashboard": "Панель управления",
+        "orders": "Чеки",
+        "products": "Товары",
+        "categories": "Категории",
+        "inventory": "Склад",
+        "documents": "Накладные",
+        "reports": "Отчёты",
+        "integrations": "Интеграции",
+        "settings": "Настройки"
+      },
+      "permissions": {
+        "viewDetail": "Просмотр деталей",
+        "refund": "Возврат",
+        "addFromNomenclature": "Добавление из номенклатуры",
+        "manageWarehouses": "Управление складами",
+        "monitoring": "Мониторинг",
+        "alerts": "Уведомления",
+        "writeoff": "Списания",
+        "count": "Инвентаризация",
+        "suppliers": "Поставщики",
+        "invoices": "Накладные",
+        "warehouseTransfers": "Перемещения между складами",
+        "storeTransfers": "Перемещения между магазинами"
+      }
+    },
     "categories": {
       "title": "Категории",
       "description": "Управление категориями товаров",
@@ -719,18 +841,6 @@
     "cereals": "Крупы",
     "other": "Прочее"
   },
-  "fields": {
-    "name": "Название",
-    "actions": "Действия",
-    "status": "Статус",
-    "sku": "Артикул",
-    "price": "Цена",
-    "stock": "Остаток",
-    "icon": "Иконка",
-    "color": "Цвет",
-    "parentCategory": "Родительская категория",
-    "sortOrder": "Порядок сортировки"
-  },
   "statuses": {
     "active": "Активен",
     "inactive": "Неактивен"
@@ -758,6 +868,32 @@
       "receipts": "Чеки",
       "document": "Документы",
       "documents": "Документы"
+    }
+  },
+  "components": {
+    "imageUpload": {
+      "empty": "Загрузите изображение",
+      "dragActive": "Отпустите для загрузки",
+      "clickToUpload": "Нажмите или перетащите",
+      "pasteImage": "или нажмите Ctrl+V",
+      "formats": "PNG, JPG до {{size}} МБ",
+      "converting": "Конвертация...",
+      "loading": "Загрузка {{progress}}%",
+      "completion": "Завершение...",
+      "replaceImage": "Заменить",
+      "remove": "Удалить",
+      "fileInfo": "{{name}} ({{size}})",
+      "dimensions": "{{width}}×{{height}}px",
+      "format": "{{format}}",
+      "tryAgain": "Попробовать снова",
+      "errors": {
+        "fileTooLarge": "Файл слишком большой. Максимум {{max}} МБ",
+        "invalidType": "Неверный формат. Разрешены: {{types}}",
+        "dimensionsTooSmall": "Изображение слишком маленькое. Минимум {{width}}×{{height}}px",
+        "dimensionsTooLarge": "Изображение слишком большое. Максимум {{width}}×{{height}}px",
+        "notSquare": "Изображение должно быть квадратным",
+        "failedToRead": "Не удалось прочитать файл"
+      }
     }
   }
 }

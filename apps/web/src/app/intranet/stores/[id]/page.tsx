@@ -1,9 +1,36 @@
 'use client';
 
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, MapPin, Phone, Clock, Globe, Building } from 'lucide-react';
-import { Button, Badge } from '@jowi/ui';
+import { ArrowLeft, MapPin, Phone, Clock, Globe, Building, Pencil, Trash2 } from 'lucide-react';
+import {
+  Button,
+  Badge,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+  TimeInput,
+  ImageUpload,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@jowi/ui';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createStoreSchema, type CreateStoreSchema } from '@jowi/validators';
 import '../../../../lib/i18n'; // Ensure i18n is initialized
 
 // Mock data for stores with additional details
@@ -70,12 +97,63 @@ export default function StoreShowPage() {
   const { t } = useTranslation('common');
   const storeId = params.id as string;
 
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const store = mockStoreData[storeId as keyof typeof mockStoreData];
+
+  const form = useForm<CreateStoreSchema>({
+    resolver: zodResolver(createStoreSchema),
+    defaultValues: store ? {
+      name: store.name,
+      address: store.address,
+      phone: store.phone,
+      country: store.country,
+      city: store.city,
+      logoUrl: store.logoUrl || undefined,
+      shiftTransitionTime: store.shiftTransitionTime,
+      isActive: store.isActive,
+    } : {},
+  });
+
+  const handleEdit = () => {
+    setEditDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const onSubmit = (data: CreateStoreSchema) => {
+    // TODO: Implement actual store update
+    console.log('Updating store:', data);
+    setEditDialogOpen(false);
+  };
+
+  const confirmDelete = () => {
+    // TODO: Implement actual store deletion
+    console.log('Deleting store:', storeId);
+    setDeleteDialogOpen(false);
+    router.push('/intranet/stores');
+  };
+
+  const getCountryLabel = (country: string) => {
+    const labels: Record<string, string> = {
+      Uzbekistan: t('pages.stores.countries.uzbekistan'),
+      Kazakhstan: t('pages.stores.countries.kazakhstan'),
+      Kyrgyzstan: t('pages.stores.countries.kyrgyzstan'),
+    };
+    return labels[country] || country;
+  };
 
   if (!store) {
     return (
       <div className="space-y-6">
-        <Button variant="ghost" onClick={() => router.push('/intranet/stores')}>
+        <Button
+          variant="outline"
+          onClick={() => router.push('/intranet/stores')}
+          className="bg-white hover:bg-neutral-100"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t('pages.storeDetail.backToList')}
         </Button>
@@ -99,15 +177,22 @@ export default function StoreShowPage() {
 
   return (
     <div className="space-y-6">
-      <Button variant="ghost" onClick={() => router.push('/intranet/stores')}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        {t('pages.storeDetail.backToList')}
-      </Button>
+      {/* Header with back button only */}
+      <div className="flex items-center">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/intranet/stores')}
+          className="bg-white hover:bg-neutral-100"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {t('actions.backToList')}
+        </Button>
+      </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Store Info Card */}
-        <div className="md:col-span-1">
-          <div className="rounded-lg border bg-card p-6 space-y-6">
+        <div className="md:col-span-1 space-y-6">
+          <div className="rounded-2xl border bg-card p-6 space-y-6">
             <div className="flex flex-col items-center">
               <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted mb-4">
                 <Building className="h-10 w-10 text-muted-foreground" />
@@ -154,6 +239,26 @@ export default function StoreShowPage() {
                 <span className="text-sm font-medium">{formatDate(store.createdAt)}</span>
               </div>
             </div>
+
+            {/* Edit button at the bottom of info card */}
+            <div className="border-t pt-4">
+              <Button onClick={handleEdit} className="w-full">
+                <Pencil className="mr-2 h-4 w-4" />
+                {t('actions.edit')}
+              </Button>
+            </div>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="rounded-2xl border bg-card p-6">
+            <Button
+              variant="ghost"
+              onClick={handleDelete}
+              className="w-full bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {t('actions.delete')}
+            </Button>
           </div>
         </div>
 
@@ -161,7 +266,7 @@ export default function StoreShowPage() {
         <div className="md:col-span-2 space-y-6">
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.employeesCount')}</p>
@@ -173,7 +278,7 @@ export default function StoreShowPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.terminalsCount')}</p>
@@ -185,7 +290,7 @@ export default function StoreShowPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesToday')}</p>
@@ -197,7 +302,7 @@ export default function StoreShowPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-card p-6">
+            <div className="rounded-2xl border bg-card p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">{t('pages.storeDetail.salesThisMonth')}</p>
@@ -209,71 +314,168 @@ export default function StoreShowPage() {
               </div>
             </div>
           </div>
-
-          {/* Additional Info */}
-          <div className="rounded-lg border bg-card">
-            <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">{t('pages.storeDetail.additionalInfo')}</h3>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.storeId')}</span>
-                <span className="text-sm font-medium font-mono">{store.id}</span>
-              </div>
-
-              <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">{t('fields.status')}</span>
-                <Badge variant={store.isActive ? 'success' : 'outline'}>
-                  {store.isActive ? t('status.active') : t('status.inactive')}
-                </Badge>
-              </div>
-
-              <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.shiftTransitionTime')}</span>
-                <span className="text-sm font-medium">{store.shiftTransitionTime}</span>
-              </div>
-
-              <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.city')}</span>
-                <span className="text-sm font-medium">{store.city}</span>
-              </div>
-
-              <div className="flex items-center justify-between py-3 border-b">
-                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.country')}</span>
-                <span className="text-sm font-medium">{store.country}</span>
-              </div>
-
-              <div className="flex items-center justify-between py-3">
-                <span className="text-sm text-muted-foreground">{t('pages.storeDetail.createdAt')}</span>
-                <span className="text-sm font-medium">{formatDate(store.createdAt)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="rounded-lg border bg-card">
-            <div className="p-6 border-b">
-              <h3 className="text-lg font-semibold">{t('pages.storeDetail.quickActions')}</h3>
-            </div>
-
-            <div className="p-6 grid gap-3 md:grid-cols-2">
-              <Button variant="outline" className="justify-start">
-                {t('pages.storeDetail.viewEmployees')}
-              </Button>
-              <Button variant="outline" className="justify-start">
-                {t('pages.storeDetail.viewTerminals')}
-              </Button>
-              <Button variant="outline" className="justify-start">
-                {t('pages.storeDetail.salesReports')}
-              </Button>
-              <Button variant="outline" className="justify-start">
-                {t('pages.storeDetail.manageSettings')}
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>{t('pages.stores.editStore')}</DialogTitle>
+            <DialogDescription>{t('pages.stores.editDescription')}</DialogDescription>
+          </DialogHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="logoUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.stores.fields.logo')}</FormLabel>
+                    <FormControl>
+                      <ImageUpload
+                        value={field.value}
+                        onChange={field.onChange}
+                        maxSize={5}
+                        accept="image/png,image/jpeg"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.stores.fields.name')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.stores.fields.country')}</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder={t('pages.stores.placeholders.country')} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Uzbekistan">{t('pages.stores.countries.uzbekistan')}</SelectItem>
+                          <SelectItem value="Kazakhstan">{t('pages.stores.countries.kazakhstan')}</SelectItem>
+                          <SelectItem value="Kyrgyzstan">{t('pages.stores.countries.kyrgyzstan')}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="city"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.stores.fields.city')}</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('pages.stores.fields.address')}</FormLabel>
+                    <FormControl>
+                      <Input placeholder={t('pages.stores.placeholders.address')} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.stores.fields.phone')}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+998" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="shiftTransitionTime"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('pages.stores.fields.shiftTransitionTime')}</FormLabel>
+                      <FormControl>
+                        <TimeInput placeholder="00:00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
+                  {t('actions.cancel')}
+                </Button>
+                <Button type="submit">{t('actions.save')}</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{t('confirmations.deleteStore.title')}</DialogTitle>
+            <DialogDescription>
+              {t('confirmations.deleteStore.description')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              {t('confirmations.deleteStore.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+            >
+              {t('confirmations.deleteStore.confirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
