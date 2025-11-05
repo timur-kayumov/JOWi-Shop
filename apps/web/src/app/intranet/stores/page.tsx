@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
@@ -36,6 +36,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createStoreSchema, type CreateStoreSchema } from '@jowi/validators';
+import { toast } from '@/lib/toast';
 
 // Mock data
 const mockStores = [
@@ -107,6 +108,7 @@ export default function StoresPage() {
     if (editingStore) {
       // Update existing store
       setStores(stores.map((s) => (s.id === editingStore.id ? { ...s, ...data } : s)));
+      toast.success('Магазин обновлён', 'Изменения успешно сохранены');
     } else {
       // Create new store
       const newStore = {
@@ -115,6 +117,7 @@ export default function StoresPage() {
         createdAt: new Date(),
       };
       setStores([...stores, newStore]);
+      toast.success('Магазин создан', `${data.name} добавлен в систему`);
     }
     setOpen(false);
     form.reset();
@@ -130,6 +133,7 @@ export default function StoresPage() {
   const handleDelete = (id: string) => {
     if (confirm(t('pages.stores.deleteConfirm'))) {
       setStores(stores.filter((s) => s.id !== id));
+      toast.success('Магазин удалён', 'Данные успешно удалены из системы');
     }
   };
 

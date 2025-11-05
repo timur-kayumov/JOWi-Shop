@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Download } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -13,6 +14,7 @@ export function PosDownloadBanner({
   className,
   onDownloadClick
 }: PosDownloadBannerProps) {
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   if (isCollapsed) {
@@ -26,7 +28,7 @@ export function PosDownloadBanner({
         onClick={onDownloadClick}
       >
         <Download className="h-4 w-4" />
-        <span>POS-приложение</span>
+        <span>{t('components.posDownloadBanner.appName')}</span>
       </button>
     );
   }
@@ -60,14 +62,12 @@ export function PosDownloadBanner({
 
       {/* Title */}
       <h3 className="mb-1 text-lg font-semibold leading-tight text-white">
-        POS-терминал
-        <br />
-        для планшетов
+        {t('components.posDownloadBanner.title')}
       </h3>
 
       {/* Subtitle */}
       <p className="mb-4 text-sm text-white/80">
-        Продающий подзаголовок
+        {t('components.posDownloadBanner.subtitle')}
       </p>
 
       {/* Download Button */}
@@ -78,7 +78,7 @@ export function PosDownloadBanner({
           onDownloadClick?.();
         }}
       >
-        Скачать
+        {t('components.posDownloadBanner.download')}
       </button>
     </div>
   );

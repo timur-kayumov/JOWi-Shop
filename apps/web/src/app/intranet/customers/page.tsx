@@ -33,6 +33,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createCustomerSchema, type CreateCustomerSchema } from '@jowi/validators';
+import { toast } from '@/lib/toast';
 
 // Mock data
 const mockCustomers = [
@@ -136,6 +137,7 @@ export default function CustomersPage() {
     if (editingCustomer) {
       // Update existing customer
       setCustomers(customers.map((c) => (c.id === editingCustomer.id ? { ...c, ...data } : c)));
+      toast.success('Клиент обновлён', 'Изменения успешно сохранены');
     } else {
       // Create new customer
       const newCustomer = {
@@ -148,6 +150,7 @@ export default function CustomersPage() {
         createdAt: new Date(),
       };
       setCustomers([...customers, newCustomer]);
+      toast.success('Клиент создан', `${data.firstName} ${data.lastName} добавлен в систему`);
     }
     setOpen(false);
     form.reset();
@@ -171,6 +174,7 @@ export default function CustomersPage() {
   const handleDelete = (id: string) => {
     if (confirm(t('pages.customers.deleteConfirm'))) {
       setCustomers(customers.filter((c) => c.id !== id));
+      toast.success('Клиент удалён', 'Данные успешно удалены из системы');
     }
   };
 

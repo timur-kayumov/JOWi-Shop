@@ -7,10 +7,11 @@ export interface PhoneInputProps
   value?: string;
   onChange?: (value: string) => void;
   error?: string;
+  variant?: 'default' | 'card';
 }
 
 const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
-  ({ className, value = '', onChange, error, ...props }, ref) => {
+  ({ className, value = '', onChange, error, variant = 'default', ...props }, ref) => {
     const inputRef = useMask({
       mask: '+998 (__) ___-__-__',
       replacement: { _: /\d/ },
@@ -74,7 +75,10 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
           type="tel"
           onChange={handleChange}
           className={cn(
-            'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+            'flex h-10 w-full rounded-lg border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',
+            // Variant styles
+            variant === 'default' && 'bg-muted hover:bg-muted-foreground/10',
+            variant === 'card' && 'bg-card hover:bg-muted-foreground/5',
             error && 'border-destructive focus-visible:ring-destructive',
             className
           )}

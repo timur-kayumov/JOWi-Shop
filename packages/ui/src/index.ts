@@ -24,6 +24,8 @@ export * from './components/sidebar';
 export * from './components/sidebar-nav';
 export * from './components/topbar';
 export * from './components/pos-download-banner';
+export * from './components/auth-layout';
+export * from './components/language-switcher';
 
 // Navigation components
 export * from './components/breadcrumbs';

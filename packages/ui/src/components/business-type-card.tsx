@@ -23,7 +23,7 @@ export function BusinessTypeCard({
       type="button"
       onClick={() => onSelect(value)}
       className={cn(
-        'relative w-full rounded-lg border-2 p-6 text-left transition-all hover:border-primary/50',
+        'relative w-full rounded-lg border-2 p-4 text-left transition-all hover:border-primary/50',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         {
           'border-primary bg-primary/5': selected,
@@ -31,30 +31,17 @@ export function BusinessTypeCard({
         }
       )}
     >
-      <div className="flex items-start gap-4">
-        {icon && (
-          <div
-            className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-full',
-              {
-                'bg-primary text-primary-foreground': selected,
-                'bg-muted text-muted-foreground': !selected,
-              }
-            )}
-          >
-            {icon}
-          </div>
-        )}
+      <div className="flex items-start gap-3">
         <div className="flex-1">
           <h3
-            className={cn('font-semibold', {
+            className={cn('text-base font-semibold', {
               'text-foreground': selected,
               'text-foreground/90': !selected,
             })}
           >
             {title}
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
         </div>
         {selected && (
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground">

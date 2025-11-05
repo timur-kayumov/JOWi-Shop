@@ -95,17 +95,11 @@ export default function IntranetLayout({
   const pathname = usePathname();
   const router = useRouter();
   const { t, i18n } = useTranslation('common');
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('ru');
+  // Initialize with i18n language (already set by I18nProvider from server cookie)
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(
+    () => (i18n.language as Language) || 'ru'
+  );
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  // Load saved language on mount
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('jowi-language');
-    if (savedLanguage && (savedLanguage === 'ru' || savedLanguage === 'uz')) {
-      setCurrentLanguage(savedLanguage as Language);
-      i18n.changeLanguage(savedLanguage);
-    }
-  }, [i18n]);
 
   // Initialize notifications
   useEffect(() => {
@@ -273,7 +267,11 @@ export default function IntranetLayout({
     console.log('Language changed to:', language);
     setCurrentLanguage(language);
     i18n.changeLanguage(language);
+    // Save to both localStorage and cookie
     localStorage.setItem('jowi-language', language);
+    document.cookie = `jowi-language=${language}; path=/; max-age=31536000`; // 1 year
+    // Reload page to ensure server and client are in sync
+    window.location.reload();
   };
 
   const handlePosDownload = () => {

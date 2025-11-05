@@ -30,6 +30,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from '@/lib/toast';
 
 // Mock nomenclature data (государственная номенклатура)
 interface NomenclatureItem {
@@ -143,7 +144,7 @@ export default function NomenclatureProductPage() {
   const handleAddFromNomenclature = (nomenclatureItem: NomenclatureItem) => {
     // Check if already in store
     if (nomenclatureItem.isInStore) {
-      alert('Этот товар уже есть в каталоге магазина');
+      toast.error('Товар уже в каталоге', 'Этот товар уже есть в каталоге магазина');
       return;
     }
 
@@ -153,7 +154,7 @@ export default function NomenclatureProductPage() {
     );
 
     if (alreadyAdded) {
-      alert('Этот товар уже добавлен в список');
+      toast.warning('Товар уже добавлен', 'Этот товар уже добавлен в список');
       return;
     }
 
@@ -288,7 +289,7 @@ export default function NomenclatureProductPage() {
 
     // In production, this would call the API
     console.log('Saving products:', selectedProducts);
-    alert(`${selectedProducts.length} товаров сохранено! (это демо версия)`);
+    toast.success(`${selectedProducts.length} товаров сохранено!`, 'Это демо версия');
     router.push(`/store/${storeId}/products`);
   };
 

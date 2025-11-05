@@ -65,6 +65,14 @@
     "invoices": "Накладные",
     "warehouseTransfers": "Перемещение между складами",
     "storeTransfers": "Перемещение между магазинами",
+    "finance": "Финансы",
+    "safes": "Сейфы",
+    "paymentTypes": "Типы оплат",
+    "cashRegisters": "Кассы",
+    "counterparties": "Контрагенты",
+    "purposes": "Назначения",
+    "transactions": "Транзакции",
+    "accruals": "Начисления",
     "reports": "Отчёты",
     "integrations": "Интеграции",
     "settings": "Настройки",
@@ -198,7 +206,9 @@
     "total": "Итого",
     "status": "Статус",
     "createdAt": "Создано",
-    "updatedAt": "Обновлено"
+    "updatedAt": "Обновлено",
+    "parentCategory": "Родительская категория",
+    "actions": "Действия"
   },
   "permissions": {
     "view": "Просмотр",
@@ -848,6 +858,7 @@
   "globalSearch": {
     "placeholder": "Поиск... (⌘K)",
     "searching": "Поиск...",
+    "error": "Ошибка поиска",
     "noResults": "Ничего не найдено",
     "noResultsDescription": "Попробуйте изменить поисковый запрос",
     "resultsFor": "Результаты для",
@@ -893,6 +904,71 @@
         "dimensionsTooLarge": "Изображение слишком большое. Максимум {{width}}×{{height}}px",
         "notSquare": "Изображение должно быть квадратным",
         "failedToRead": "Не удалось прочитать файл"
+      }
+    },
+    "posDownloadBanner": {
+      "appName": "POS-приложение",
+      "title": "POS-терминал для планшетов",
+      "subtitle": "Мобильная касса для вашего бизнеса",
+      "download": "Скачать"
+    },
+    "toast": {
+      "success": "Успешно",
+      "error": "Ошибка",
+      "warning": "Предупреждение",
+      "info": "Информация",
+      "loading": "Загрузка...",
+      "close": "Закрыть",
+      "dismiss": "Скрыть",
+      "undo": "Отменить",
+      "retry": "Повторить",
+      "employee": {
+        "created": "Сотрудник создан",
+        "createdDesc": "{{name}} добавлен в систему",
+        "updated": "Сотрудник обновлён",
+        "updatedDesc": "Изменения успешно сохранены",
+        "deleted": "Сотрудник удалён",
+        "deletedDesc": "Данные успешно удалены из системы"
+      },
+      "store": {
+        "created": "Магазин создан",
+        "createdDesc": "{{name}} добавлен в систему",
+        "updated": "Магазин обновлён",
+        "updatedDesc": "Изменения успешно сохранены",
+        "deleted": "Магазин удалён",
+        "deletedDesc": "Данные успешно удалены из системы"
+      },
+      "customer": {
+        "created": "Клиент создан",
+        "createdDesc": "{{name}} добавлен в систему",
+        "updated": "Клиент обновлён",
+        "updatedDesc": "Изменения успешно сохранены",
+        "deleted": "Клиент удалён",
+        "deletedDesc": "Данные успешно удалены из системы"
+      },
+      "category": {
+        "created": "Категория создана",
+        "createdDesc": "{{name}} добавлена в систему",
+        "updated": "Категория обновлена",
+        "updatedDesc": "Изменения успешно сохранены",
+        "deleted": "Категория удалена",
+        "deletedDesc": "Данные успешно удалены из системы"
+      },
+      "variant": {
+        "created": "Вариант создан",
+        "createdDesc": "{{name}} добавлен в товар",
+        "updated": "Вариант обновлён",
+        "updatedDesc": "Изменения успешно сохранены",
+        "deleted": "Вариант удалён",
+        "deletedDesc": "Данные успешно удалены из системы"
+      },
+      "product": {
+        "savedBulk": "{{count}} товаров сохранено",
+        "savedBulkDesc": "Это демо версия",
+        "alreadyInStore": "Товар уже в каталоге",
+        "alreadyInStoreDesc": "Этот товар уже есть в каталоге магазина",
+        "alreadyAdded": "Товар уже добавлен",
+        "alreadyAddedDesc": "Этот товар уже добавлен в список"
       }
     }
   }

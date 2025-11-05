@@ -65,6 +65,14 @@
     "invoices": "Hujjatlar",
     "warehouseTransfers": "Omborlar o'rtasida ko'chirish",
     "storeTransfers": "Do'konlar o'rtasida ko'chirish",
+    "finance": "Moliya",
+    "safes": "Seyflar",
+    "paymentTypes": "To'lov turlari",
+    "cashRegisters": "Kassalar",
+    "counterparties": "Hamkorlar",
+    "purposes": "Maqsadlar",
+    "transactions": "Tranzaksiyalar",
+    "accruals": "Hisob-kitoblar",
     "reports": "Hisobotlar",
     "integrations": "Integratsiyalar",
     "settings": "Sozlamalar",
@@ -198,7 +206,9 @@
     "total": "Jami",
     "status": "Holat",
     "createdAt": "Yaratilgan",
-    "updatedAt": "Yangilangan"
+    "updatedAt": "Yangilangan",
+    "parentCategory": "Ota-ona kategoriya",
+    "actions": "Amallar"
   },
   "messages": {
     "loading": "Yuklanmoqda...",
@@ -808,6 +818,7 @@
   "globalSearch": {
     "placeholder": "Qidirish... (⌘K)",
     "searching": "Qidirish...",
+    "error": "Qidiruv xatosi",
     "noResults": "Hech narsa topilmadi",
     "noResultsDescription": "Qidiruv so'rovini o'zgartirib ko'ring",
     "resultsFor": "Natijalar",
@@ -853,6 +864,71 @@
         "dimensionsTooLarge": "Rasm juda katta. Maksimal {{width}}×{{height}}px",
         "notSquare": "Rasm kvadrat bo'lishi kerak",
         "failedToRead": "Faylni o'qib bo'lmadi"
+      }
+    },
+    "posDownloadBanner": {
+      "appName": "POS-ilova",
+      "title": "Planshetlar uchun POS-terminal",
+      "subtitle": "Biznesingiz uchun mobil kassa",
+      "download": "Yuklab olish"
+    },
+    "toast": {
+      "success": "Muvaffaqiyatli",
+      "error": "Xato",
+      "warning": "Ogohlantirish",
+      "info": "Ma'lumot",
+      "loading": "Yuklanmoqda...",
+      "close": "Yopish",
+      "dismiss": "Yashirish",
+      "undo": "Bekor qilish",
+      "retry": "Qayta urinish",
+      "employee": {
+        "created": "Xodim yaratildi",
+        "createdDesc": "{{name}} tizimga qo'shildi",
+        "updated": "Xodim yangilandi",
+        "updatedDesc": "O'zgarishlar saqlandi",
+        "deleted": "Xodim o'chirildi",
+        "deletedDesc": "Ma'lumotlar tizimdan o'chirildi"
+      },
+      "store": {
+        "created": "Do'kon yaratildi",
+        "createdDesc": "{{name}} tizimga qo'shildi",
+        "updated": "Do'kon yangilandi",
+        "updatedDesc": "O'zgarishlar saqlandi",
+        "deleted": "Do'kon o'chirildi",
+        "deletedDesc": "Ma'lumotlar tizimdan o'chirildi"
+      },
+      "customer": {
+        "created": "Mijoz yaratildi",
+        "createdDesc": "{{name}} tizimga qo'shildi",
+        "updated": "Mijoz yangilandi",
+        "updatedDesc": "O'zgarishlar saqlandi",
+        "deleted": "Mijoz o'chirildi",
+        "deletedDesc": "Ma'lumotlar tizimdan o'chirildi"
+      },
+      "category": {
+        "created": "Kategoriya yaratildi",
+        "createdDesc": "{{name}} tizimga qo'shildi",
+        "updated": "Kategoriya yangilandi",
+        "updatedDesc": "O'zgarishlar saqlandi",
+        "deleted": "Kategoriya o'chirildi",
+        "deletedDesc": "Ma'lumotlar tizimdan o'chirildi"
+      },
+      "variant": {
+        "created": "Variant yaratildi",
+        "createdDesc": "{{name}} mahsulotga qo'shildi",
+        "updated": "Variant yangilandi",
+        "updatedDesc": "O'zgarishlar saqlandi",
+        "deleted": "Variant o'chirildi",
+        "deletedDesc": "Ma'lumotlar tizimdan o'chirildi"
+      },
+      "product": {
+        "savedBulk": "{{count}} mahsulot saqlandi",
+        "savedBulkDesc": "Bu demo versiya",
+        "alreadyInStore": "Mahsulot allaqachon katalogda",
+        "alreadyInStoreDesc": "Bu mahsulot allaqachon do'kon katalogida mavjud",
+        "alreadyAdded": "Mahsulot allaqachon qo'shilgan",
+        "alreadyAddedDesc": "Bu mahsulot ro'yxatga allaqachon qo'shilgan"
       }
     }
   }

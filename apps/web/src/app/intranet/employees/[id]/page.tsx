@@ -18,6 +18,7 @@ import {
   Tablet,
 } from 'lucide-react';
 import '../../../../lib/i18n';
+import { toast } from '@/lib/toast';
 import {
   Button,
   Card,
@@ -188,12 +189,14 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
   const handleEditSubmit = (data: UpdateEmployeeBasicInfoSchema) => {
     console.log('Update employee:', data);
     // TODO: API call to update employee
+    toast.success('Сотрудник обновлён', 'Изменения успешно сохранены');
     setIsEditOpen(false);
   };
 
   const handleDelete = () => {
     console.log('Delete employee:', id);
     // TODO: API call to delete employee
+    toast.success('Сотрудник удалён', 'Данные успешно удалены из системы');
     setIsDeleteOpen(false);
     router.push('/intranet/employees');
   };
@@ -222,7 +225,7 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
 
     console.log('Save intranet permissions:', backendPermissions);
     // TODO: API call to save permissions
-    alert('Права доступа сохранены!');
+    toast.success('Права доступа сохранены!');
   };
 
   const handleStoreRoleChange = (storeId: string, role: UserRole, checked: boolean) => {

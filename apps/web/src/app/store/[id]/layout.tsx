@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2, Network } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2, Network, Wallet, Vault, CreditCard, DollarSign, Tag, Receipt, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AppShell,
@@ -107,18 +107,12 @@ export default function StoreLayout({
   const router = useRouter();
   const params = useParams();
   const { t, i18n } = useTranslation('common');
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('ru');
+  // Initialize with i18n language (already set by I18nProvider from server cookie)
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(
+    () => (i18n.language as Language) || 'ru'
+  );
   const [selectedStoreId, setSelectedStoreId] = useState<string>(params.id as string);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  // Load saved language on mount
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem('jowi-language');
-    if (savedLanguage && (savedLanguage === 'ru' || savedLanguage === 'uz')) {
-      setCurrentLanguage(savedLanguage as Language);
-      i18n.changeLanguage(savedLanguage);
-    }
-  }, [i18n]);
 
   // Update selected store when params change
   useEffect(() => {
@@ -204,6 +198,47 @@ export default function StoreLayout({
           title: t('storeNavigation.storeTransfers'),
           href: `/store/${selectedStoreId}/documents/store-transfers`,
           icon: Building2,
+        },
+      ],
+    },
+    {
+      title: t('storeNavigation.finance'),
+      icon: Wallet,
+      children: [
+        {
+          title: t('storeNavigation.safes'),
+          href: `/store/${selectedStoreId}/finance/safes`,
+          icon: Vault,
+        },
+        {
+          title: t('storeNavigation.paymentTypes'),
+          href: `/store/${selectedStoreId}/finance/payment-types`,
+          icon: CreditCard,
+        },
+        {
+          title: t('storeNavigation.cashRegisters'),
+          href: `/store/${selectedStoreId}/finance/cash-registers`,
+          icon: DollarSign,
+        },
+        {
+          title: t('storeNavigation.counterparties'),
+          href: `/store/${selectedStoreId}/finance/counterparties`,
+          icon: Users,
+        },
+        {
+          title: t('storeNavigation.purposes'),
+          href: `/store/${selectedStoreId}/finance/purposes`,
+          icon: Tag,
+        },
+        {
+          title: t('storeNavigation.transactions'),
+          href: `/store/${selectedStoreId}/finance/transactions`,
+          icon: Receipt,
+        },
+        {
+          title: t('storeNavigation.accruals'),
+          href: `/store/${selectedStoreId}/finance/accruals`,
+          icon: TrendingUp,
         },
       ],
     },
@@ -344,7 +379,11 @@ export default function StoreLayout({
     console.log('Language changed to:', language);
     setCurrentLanguage(language);
     i18n.changeLanguage(language);
+    // Save to both localStorage and cookie
     localStorage.setItem('jowi-language', language);
+    document.cookie = `jowi-language=${language}; path=/; max-age=31536000`; // 1 year
+    // Reload page to ensure server and client are in sync
+    window.location.reload();
   };
 
   const handleStoreChange = (storeId: string) => {

@@ -74,7 +74,10 @@
       "Bash(npx tsx:*)",
       "Bash(copy:*)",
       "Bash(npx prisma generate:*)",
-      "Bash(npx prisma migrate:*)"
+      "Bash(npx prisma migrate:*)",
+      "Bash(npx prisma studio)",
+      "Bash(if not exist \"apps\\web\\public\\images\\auth\" mkdir \"apps\\web\\public\\images\\auth\")",
+      "Bash(if not exist \"apps\\web\\public\\images\\flags\" mkdir \"apps\\web\\public\\images\\flags\")"
     ],
     "deny": [],
     "ask": []

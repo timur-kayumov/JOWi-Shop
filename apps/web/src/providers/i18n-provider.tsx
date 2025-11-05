@@ -1,25 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../lib/i18n';
 
-export function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [isReady, setIsReady] = useState(false);
+interface I18nProviderProps {
+  children: React.ReactNode;
+  initialLanguage?: string;
+}
 
+export function I18nProvider({ children, initialLanguage = 'ru' }: I18nProviderProps) {
+  // Set language synchronously before render to avoid hydration mismatch
+  if (i18n.language !== initialLanguage) {
+    i18n.changeLanguage(initialLanguage);
+  }
+
+  // Sync localStorage with the server-provided language after hydration
   useEffect(() => {
-    // Ensure i18n is initialized on client side
+    // Update localStorage to match the server's language from cookie
     if (typeof window !== 'undefined') {
-      // Load saved language from localStorage on mount
-      const savedLanguage = localStorage.getItem('jowi-language');
-      if (savedLanguage && (savedLanguage === 'ru' || savedLanguage === 'uz')) {
-        i18n.changeLanguage(savedLanguage).then(() => setIsReady(true));
-      } else {
-        setIsReady(true);
+      const currentLocalStorageLanguage = localStorage.getItem('jowi-language');
+      if (currentLocalStorageLanguage !== initialLanguage) {
+        localStorage.setItem('jowi-language', initialLanguage);
       }
     }
-  }, []);
+  }, [initialLanguage]);
 
-  // Render immediately to avoid hydration mismatch
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }

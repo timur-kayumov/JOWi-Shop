@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { OTPInput, SlotProps } from 'input-otp';
+import { OTPInput, SlotProps, REGEXP_ONLY_DIGITS } from 'input-otp';
 import { cn } from '../lib/utils';
 
 export interface OTPInputComponentProps {
@@ -24,17 +24,25 @@ const OTPInputComponent = React.forwardRef<
         value={value}
         onChange={onChange}
         disabled={disabled}
-        containerClassName="flex gap-2 justify-center"
+        pattern={REGEXP_ONLY_DIGITS}
+        containerClassName="flex gap-2"
         render={({ slots }) => (
           <>
             {slots.map((slot, idx) => (
-              <Slot key={idx} {...slot} hasError={!!error} />
+              <React.Fragment key={idx}>
+                <Slot {...slot} hasError={!!error} />
+                {idx === 2 && (
+                  <div className="flex items-center justify-center w-4 text-muted-foreground">
+                    —
+                  </div>
+                )}
+              </React.Fragment>
             ))}
           </>
         )}
       />
       {error && (
-        <p className="mt-2 text-center text-sm text-destructive">{error}</p>
+        <p className="mt-2 text-sm text-destructive">{error}</p>
       )}
     </div>
   );
@@ -46,15 +54,13 @@ function Slot(props: SlotProps & { hasError?: boolean }) {
   return (
     <div
       className={cn(
-        'relative h-12 w-10 text-[2rem] flex items-center justify-center',
-        'border-y border-r border-input rounded-md',
-        'transition-all duration-300',
-        'first:border-l first:rounded-l-md last:rounded-r-md',
-        'group-hover:border-accent-foreground/20',
-        'focus-within:border-accent-foreground/20',
-        'outline outline-0 outline-accent-foreground/20',
+        'relative h-[52px] w-10 text-base flex items-center justify-center',
+        'border border-input rounded-lg bg-muted',
+        'transition-colors',
+        'hover:bg-muted-foreground/10',
+        'focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-0',
         {
-          'outline-2 outline-ring': props.isActive,
+          'ring-2 ring-ring ring-offset-0': props.isActive,
           'border-destructive': props.hasError,
         }
       )}

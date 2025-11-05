@@ -35,6 +35,7 @@ import * as z from 'zod';
 import { CategoryBadge } from '@/components/category-badge';
 import { IconPickerPopover } from '@/components/icon-picker-popover';
 import { ColorPickerPopover } from '@/components/color-picker-popover';
+import { toast } from '@/lib/toast';
 
 // Mock data
 const mockCategories = [
@@ -584,6 +585,7 @@ export default function CategoriesPage() {
       createdAt: new Date().toISOString(),
     };
     setData([...data, newCategory]);
+    toast.success('Категория создана', `${formData.name} добавлена в систему`);
     setIsCreateDialogOpen(false);
     createForm.reset();
   };
@@ -604,6 +606,7 @@ export default function CategoriesPage() {
           : cat
       )
     );
+    toast.success('Категория обновлена', 'Изменения успешно сохранены');
     setIsEditDialogOpen(false);
     setSelectedCategory(null);
     editForm.reset();
@@ -616,6 +619,7 @@ export default function CategoriesPage() {
       )
     ) {
       setData(data.filter((cat) => cat.id !== category.id));
+      toast.success('Категория удалена', 'Данные успешно удалены из системы');
     }
   };
 

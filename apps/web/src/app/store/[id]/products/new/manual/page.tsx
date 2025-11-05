@@ -32,6 +32,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { CategoryBadge } from '@/components/category-badge';
+import { toast } from '@/lib/toast';
 
 // Simplified schema for manual product creation
 const manualProductSchema = z.object({
@@ -232,7 +233,7 @@ export default function ManualProductPage() {
 
     // In production, this would call the API
     console.log('Saving products:', products);
-    alert(`${products.length} товаров сохранено! (это демо версия)`);
+    toast.success(`${products.length} товаров сохранено!`, 'Это демо версия');
     router.push(`/store/${storeId}/products`);
   };
 

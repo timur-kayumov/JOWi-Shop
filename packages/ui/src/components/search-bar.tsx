@@ -46,7 +46,7 @@ export function SearchBar({
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        className="h-9 w-full bg-neutral-100 pl-9 pr-4"
+        className="h-9 w-full pl-9 pr-4"
       />
     </div>
   );

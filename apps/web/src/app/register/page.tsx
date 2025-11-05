@@ -1,18 +1,20 @@
 'use client';
 
+import * as React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import {
   PhoneInput,
   OTPInput,
-  StepIndicator,
   BusinessTypeCard,
   Button,
   Input,
-  Card,
+  AuthLayout,
+  Loader,
 } from '@jowi/ui';
 import {
   registerStep1Schema,
@@ -29,30 +31,44 @@ export default function RegisterPage() {
   const [userName, setUserName] = useState('');
   const { t } = useTranslation('auth');
 
-  const steps = [
-    { label: t('register.steps.phone'), description: t('register.step1.subtitle') },
-    { label: t('register.steps.verification'), description: t('register.step2.subtitle') },
-    { label: t('register.steps.business'), description: t('register.step3.subtitle') },
-  ];
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-2xl p-8">
+    <AuthLayout>
+      <div>
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">{t('register.title')}</h1>
-          <p className="mt-2 text-muted-foreground">
-            {t('register.subtitle')}
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">
+            {currentStep === 2
+              ? t('register.step2.title')
+              : currentStep === 3
+                ? t('register.step3.title')
+                : t('register.title')}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {currentStep === 2 ? (
+              <>
+                {t('register.step2.subtitle')}{' '}
+                <span className="font-medium text-foreground">
+                  +{phoneNumber.slice(0, 3)} ({phoneNumber.slice(3, 5)}) {phoneNumber.slice(5, 8)}-
+                  {phoneNumber.slice(8, 10)}-{phoneNumber.slice(10)}
+                </span>
+              </>
+            ) : currentStep === 3 ? (
+              t('register.step3.subtitle')
+            ) : (
+              t('register.subtitle')
+            )}
           </p>
         </div>
 
-        {/* Step Indicator */}
-        <div className="mb-8">
-          <StepIndicator steps={steps} currentStep={currentStep} />
+        {/* Simple Step Indicator */}
+        <div className="mb-6">
+          <p className="text-sm text-muted-foreground">
+            {t('register.stepIndicator', { current: currentStep, total: 3 })}
+          </p>
         </div>
 
         {/* Step Content */}
-        <div className="min-h-[400px]">
+        <div>
           {currentStep === 1 && (
             <Step1
               onNext={(data) => {
@@ -79,14 +95,14 @@ export default function RegisterPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-6 text-center text-sm text-muted-foreground">
           {t('register.hasAccount')}{' '}
           <Link href="/login" className="font-medium text-primary hover:underline">
             {t('register.loginLink')}
           </Link>
         </div>
-      </Card>
-    </div>
+      </div>
+    </AuthLayout>
   );
 }
 
@@ -119,13 +135,6 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step1.title')}</h2>
-        <p className="text-sm text-muted-foreground">
-          {t('register.step1.subtitle')}
-        </p>
-      </div>
-
       <div>
         <label htmlFor="phone" className="mb-2 block text-sm font-medium">
           {t('register.step1.phoneLabel')}
@@ -147,7 +156,6 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
         <Input
           id="name"
           {...register('name')}
-          placeholder={t('register.step1.namePlaceholder')}
           disabled={isSubmitting}
         />
         {errors.name && (
@@ -212,6 +220,16 @@ function Step2({
   const otp = watch('otp');
   const [resendTimer, setResendTimer] = useState(60);
 
+  // Countdown timer effect
+  React.useEffect(() => {
+    if (resendTimer > 0) {
+      const timerId = setTimeout(() => {
+        setResendTimer(resendTimer - 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+    }
+  }, [resendTimer]);
+
   const onSubmit = async (data: RegisterStep2Schema) => {
     // TODO: Call API to verify OTP
     console.log('Step 2 data:', data);
@@ -227,19 +245,8 @@ function Step2({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step2.title')}</h2>
-        <p className="text-sm text-muted-foreground">
-          {t('register.step2.subtitle')}{' '}
-          <span className="font-medium text-foreground">
-            +{phone.slice(0, 3)} ({phone.slice(3, 5)}) {phone.slice(5, 8)}-
-            {phone.slice(8, 10)}-{phone.slice(10)}
-          </span>
-        </p>
-      </div>
-
       <div>
-        <label htmlFor="otp" className="mb-4 block text-center text-sm font-medium">
+        <label htmlFor="otp" className="mb-4 block text-sm font-medium">
           {t('register.step2.codeLabel')}
         </label>
         <OTPInput
@@ -249,7 +256,7 @@ function Step2({
         />
       </div>
 
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground">
         {t('register.step2.resendText')}{' '}
         {resendTimer > 0 ? (
           <span>{t('register.step2.resendTimer', { seconds: resendTimer })}</span>
@@ -287,6 +294,7 @@ function Step3({
   onBack: () => void;
 }) {
   const { t } = useTranslation(['auth', 'common']);
+  const [isCreatingBusiness, setIsCreatingBusiness] = useState(false);
   const {
     register,
     handleSubmit,
@@ -311,21 +319,34 @@ function Step3({
       ...data,
     };
     console.log('Registration data:', fullData);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
 
-    // Redirect to success page
-    window.location.href = '/auth/success';
+    // Show fullscreen loader
+    setIsCreatingBusiness(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+
+    // Redirect to intranet
+    window.location.href = '/intranet/stores';
   };
+
+  // Show fullscreen loader while creating business
+  if (isCreatingBusiness) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center">
+        <Image
+          src="/logo.svg"
+          alt="JOWi Shop"
+          width={88}
+          height={88}
+          className="mb-6 animate-pulse"
+        />
+        <Loader size="lg" text={t('loading.creatingBusiness')} />
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('register.step3.title')}</h2>
-        <p className="text-sm text-muted-foreground">
-          {t('register.step3.subtitle')}
-        </p>
-      </div>
-
       <div>
         <label className="mb-4 block text-sm font-medium">
           {t('register.step3.businessTypeLabel')}

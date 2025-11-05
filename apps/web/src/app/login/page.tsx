@@ -1,11 +1,12 @@
 'use client';
 
+import * as React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-import { PhoneInput, OTPInput, Button, Card } from '@jowi/ui';
+import { PhoneInput, OTPInput, Button, AuthLayout } from '@jowi/ui';
 import {
   loginStep1Schema,
   loginStep2Schema,
@@ -19,16 +20,20 @@ export default function LoginPage() {
   const { t } = useTranslation('auth');
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-      <Card className="w-full max-w-md p-8">
+    <AuthLayout>
+      <div>
         {/* Header */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">{t('login.title')}</h1>
-          <p className="mt-2 text-muted-foreground">{t('login.subtitle')}</p>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">
+            {currentStep === 1 ? t('login.title') : t('login.step2.title')}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {currentStep === 1 ? t('login.subtitle') : ''}
+          </p>
         </div>
 
         {/* Step Content */}
-        <div className="min-h-[300px]">
+        <div>
           {currentStep === 1 && (
             <Step1
               onNext={(data) => {
@@ -43,14 +48,14 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+        <div className="mt-6 text-center text-sm text-muted-foreground">
           {t('login.noAccount')}{' '}
           <Link href="/register" className="font-medium text-primary hover:underline">
             {t('login.registerLink')}
           </Link>
         </div>
-      </Card>
-    </div>
+      </div>
+    </AuthLayout>
   );
 }
 
@@ -80,13 +85,6 @@ function Step1({ onNext }: { onNext: (data: LoginStep1Schema) => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('login.step1.title')}</h2>
-        <p className="text-sm text-muted-foreground">
-          {t('login.step1.subtitle')}
-        </p>
-      </div>
-
       <div>
         <label htmlFor="phone" className="mb-2 block text-sm font-medium">
           {t('login.step1.phoneLabel')}
@@ -127,13 +125,23 @@ function Step2({ phone, onBack }: { phone: string; onBack: () => void }) {
   const otp = watch('otp');
   const [resendTimer, setResendTimer] = useState(60);
 
+  // Countdown timer effect
+  React.useEffect(() => {
+    if (resendTimer > 0) {
+      const timerId = setTimeout(() => {
+        setResendTimer(resendTimer - 1);
+      }, 1000);
+      return () => clearTimeout(timerId);
+    }
+  }, [resendTimer]);
+
   const onSubmit = async (data: LoginStep2Schema) => {
     // TODO: Call API to verify OTP and login
     console.log('Login Step 2 data:', data);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
 
-    // Redirect to success page for testing
-    window.location.href = '/auth/success';
+    // Redirect to intranet
+    window.location.href = '/intranet/stores';
   };
 
   const handleResend = async () => {
@@ -144,8 +152,7 @@ function Step2({ phone, onBack }: { phone: string; onBack: () => void }) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">{t('login.step2.title')}</h2>
+      <div className="mb-4">
         <p className="text-sm text-muted-foreground">
           {t('login.step2.subtitle')}{' '}
           <span className="font-medium text-foreground">
@@ -156,7 +163,7 @@ function Step2({ phone, onBack }: { phone: string; onBack: () => void }) {
       </div>
 
       <div>
-        <label htmlFor="otp" className="mb-4 block text-center text-sm font-medium">
+        <label htmlFor="otp" className="mb-4 block text-sm font-medium">
           {t('login.step2.codeLabel')}
         </label>
         <OTPInput
@@ -166,7 +173,7 @@ function Step2({ phone, onBack }: { phone: string; onBack: () => void }) {
         />
       </div>
 
-      <div className="text-center text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground">
         {t('login.step2.resendText')}{' '}
         {resendTimer > 0 ? (
           <span>{t('login.step2.resendTimer', { seconds: resendTimer })}</span>

@@ -33,6 +33,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from '@/lib/toast';
 
 // Schema для сотрудника (базовая информация без роли и магазина)
 const employeeSchema = z.object({
@@ -174,6 +175,7 @@ export default function EmployeesPage() {
             : e
         )
       );
+      toast.success(t('components.toast.employee.updated'), t('components.toast.employee.updatedDesc'));
     } else {
       // Create new employee - роль и магазин назначаются позже на странице сотрудника
       const newEmployee = {
@@ -189,6 +191,10 @@ export default function EmployeesPage() {
         createdAt: new Date(),
       };
       setEmployees([...employees, newEmployee]);
+      toast.success(
+        t('components.toast.employee.created'),
+        t('components.toast.employee.createdDesc', { name: `${data.firstName} ${data.lastName}` })
+      );
       // После создания редиректим на страницу сотрудника для настройки доступов
       // router.push(`/intranet/employees/${newEmployee.id}`);
     }
@@ -216,6 +222,7 @@ export default function EmployeesPage() {
   const handleDelete = (id: string) => {
     if (confirm(t('pages.employees.deleteConfirm'))) {
       setEmployees(employees.filter((e) => e.id !== id));
+      toast.success(t('components.toast.employee.deleted'), t('components.toast.employee.deletedDesc'));
     }
   };
 

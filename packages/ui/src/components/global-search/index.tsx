@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import { Search, X, Filter } from 'lucide-react';
 import { Input } from '../input';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover';
@@ -18,6 +19,7 @@ interface GlobalSearchProps {
 }
 
 export function GlobalSearch({ className, currentStoreId }: GlobalSearchProps) {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -108,7 +110,7 @@ export function GlobalSearch({ className, currentStoreId }: GlobalSearchProps) {
         <Input
           ref={inputRef}
           type="text"
-          placeholder="Поиск... (⌘K)"
+          placeholder={t('globalSearch.placeholder')}
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
@@ -152,12 +154,12 @@ export function GlobalSearch({ className, currentStoreId }: GlobalSearchProps) {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader size="default" />
-              <p className="mt-3 text-sm text-gray-500">Поиск...</p>
+              <p className="mt-3 text-sm text-gray-500">{t('globalSearch.searching')}</p>
             </div>
           ) : error ? (
             <div className="px-4 py-8 text-center">
               <div className="mb-2 text-sm font-medium text-red-600">
-                Ошибка поиска
+                {t('globalSearch.error')}
               </div>
               <div className="text-xs text-gray-500">{error.message}</div>
             </div>

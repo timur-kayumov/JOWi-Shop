@@ -34,6 +34,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from '@/lib/toast';
 
 // Simplified variant schema
 const variantSchema = z.object({
@@ -173,6 +174,7 @@ export default function ProductDetailPage() {
             : v
         )
       );
+      toast.success('Вариант обновлён', 'Изменения успешно сохранены');
     } else {
       // Add new variant
       const newVariant = {
@@ -184,6 +186,7 @@ export default function ProductDetailPage() {
         isActive: true,
       };
       setVariants([...variants, newVariant]);
+      toast.success('Вариант создан', `${data.name} добавлен в товар`);
     }
     setOpen(false);
     setEditingVariant(null);
@@ -207,6 +210,7 @@ export default function ProductDetailPage() {
   const handleDelete = (variantId: string) => {
     if (confirm(t('pages.products.deleteConfirm'))) {
       setVariants(variants.filter((v) => v.id !== variantId));
+      toast.success('Вариант удалён', 'Данные успешно удалены из системы');
     }
   };
 

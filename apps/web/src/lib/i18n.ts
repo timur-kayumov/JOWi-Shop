@@ -18,13 +18,31 @@ const resources = {
   },
 };
 
+// Get initial language from cookie (client-side) or use fallback
+const getInitialLanguage = (): string => {
+  if (typeof window === 'undefined') {
+    // On server, default to 'ru' - will be overridden by I18nProvider with server value
+    return 'ru';
+  }
+
+  // On client, read from cookie to match server-side value
+  const cookieLanguage = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('jowi-language='))
+    ?.split('=')[1];
+
+  return cookieLanguage || 'ru';
+};
+
 // Initialize i18next only if not already initialized
 if (!i18n.isInitialized) {
+  const initialLanguage = getInitialLanguage();
+
   i18n
     .use(initReactI18next)
     .init({
       resources,
-      lng: 'ru', // default language
+      lng: initialLanguage, // Use language from cookie to match server
       fallbackLng: 'ru',
       defaultNS: 'common',
       ns: ['common', 'auth'],
