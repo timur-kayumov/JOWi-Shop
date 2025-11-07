@@ -13,8 +13,8 @@ export class SearchController {
   @Get()
   async search(@Query() query: SearchQueryDto, @Req() req: any) {
     // Extract tenantId from JWT token (set by TenantGuard)
-    // For now, use a default tenant ID for development/mock data
-    const tenantId = req.user?.tenantId || 'mock-tenant-id';
+    // For now, use the seeded business tenant ID for development/mock data
+    const tenantId = req.user?.tenantId || '424af838-23a4-40ae-bb7c-a7243106026e';
 
     return this.searchService.globalSearch(query, tenantId);
   }

@@ -118,7 +118,7 @@ export class SearchService {
   }
 
   private async searchEmployees(searchTerm: string, tenantId: string): Promise<SearchResult[]> {
-    const normalizedTerm = searchTerm.replace(/[-.\s]/g, '');
+    const normalizedTerm = searchTerm.replace(/[-.\s]/g, '').toLowerCase();
     const searchPattern = `%${normalizedTerm}%`;
 
     const employees = await this.prisma.$queryRaw<any[]>`
@@ -129,10 +129,18 @@ export class SearchService {
       WHERE e.tenant_id = ${tenantId}
         AND e.deleted_at IS NULL
         AND (
-          LOWER(REPLACE(REPLACE(REPLACE(u.first_name, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(u.last_name, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(u.email, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(u.phone, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
+          -- Direct match (same alphabet)
+          LOWER(u.first_name) LIKE ${searchPattern}
+          OR LOWER(u.last_name) LIKE ${searchPattern}
+          -- Transliterated match (Cyrillic search → Latin data)
+          OR LOWER(u.first_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
+          OR LOWER(u.last_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
+          -- Transliterated match (Latin search → Cyrillic data)
+          OR LOWER(u.first_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
+          OR LOWER(u.last_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
+          -- Other fields
+          OR LOWER(COALESCE(u.email, '')) LIKE ${searchPattern}
+          OR LOWER(COALESCE(u.phone, '')) LIKE ${searchPattern}
         )
       ORDER BY u.first_name, u.last_name
       LIMIT 5
@@ -152,7 +160,7 @@ export class SearchService {
   }
 
   private async searchCustomers(searchTerm: string, tenantId: string): Promise<SearchResult[]> {
-    const normalizedTerm = searchTerm.replace(/[-.\s]/g, '');
+    const normalizedTerm = searchTerm.replace(/[-.\s]/g, '').toLowerCase();
     const searchPattern = `%${normalizedTerm}%`;
 
     const customers = await this.prisma.$queryRaw<any[]>`
@@ -161,11 +169,19 @@ export class SearchService {
       WHERE tenant_id = ${tenantId}
         AND deleted_at IS NULL
         AND (
-          LOWER(REPLACE(REPLACE(REPLACE(first_name, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(last_name, '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(COALESCE(phone, ''), '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(COALESCE(email, ''), '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
-          OR LOWER(REPLACE(REPLACE(REPLACE(COALESCE(loyalty_card_number, ''), '-', ''), '.', ''), ' ', '')::text COLLATE "ru-RU-x-icu") LIKE LOWER(${searchPattern}::text COLLATE "ru-RU-x-icu")
+          -- Direct match (same alphabet)
+          LOWER(first_name) LIKE ${searchPattern}
+          OR LOWER(last_name) LIKE ${searchPattern}
+          -- Transliterated match (Cyrillic search → Latin data)
+          OR LOWER(first_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
+          OR LOWER(last_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
+          -- Transliterated match (Latin search → Cyrillic data)
+          OR LOWER(first_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
+          OR LOWER(last_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
+          -- Other fields
+          OR LOWER(COALESCE(phone, '')) LIKE ${searchPattern}
+          OR LOWER(COALESCE(email, '')) LIKE ${searchPattern}
+          OR LOWER(COALESCE(loyalty_card_number, '')) LIKE ${searchPattern}
         )
       ORDER BY first_name, last_name
       LIMIT 5

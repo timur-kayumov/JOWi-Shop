@@ -30,6 +30,7 @@ async function main() {
       tenantId: business.id,
       name: 'Central Store',
       address: 'Tashkent, Amir Temur Ave, 1',
+      city: 'Tashkent',
       phone: '+998901234567',
     },
   });
@@ -43,7 +44,8 @@ async function main() {
     create: {
       tenantId: business.id,
       email: 'admin@jowi.shop',
-      name: 'Admin User',
+      firstName: 'Admin',
+      lastName: 'User',
       phone: '+998901234567',
       password: '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewY5GyYqNw8QD.qC', // password: admin123
       role: 'admin',
@@ -83,6 +85,9 @@ async function main() {
       userId: adminUser.id,
       storeId: store.id,
       pin: '1234',
+      citizenship: 'UZ',
+      passportSeries: 'AA',
+      passportNumber: '1234567',
     },
   });
 
@@ -220,10 +225,172 @@ async function main() {
 
   console.log('✅ Created stock levels');
 
+  // Create demo customers
+  const customer1 = await prisma.customer.create({
+    data: {
+      tenantId: business.id,
+      firstName: 'Aziz',
+      lastName: 'Karimov',
+      phone: '+998901111111',
+    },
+  });
+
+  const customer2 = await prisma.customer.create({
+    data: {
+      tenantId: business.id,
+      firstName: 'Dilnoza',
+      lastName: 'Saidova',
+      phone: '+998902222222',
+      email: 'dilnoza@example.uz',
+    },
+  });
+
+  const customer3 = await prisma.customer.create({
+    data: {
+      tenantId: business.id,
+      firstName: 'Rustam',
+      lastName: 'Tashkentov',
+      phone: '+998903333333',
+    },
+  });
+
+  console.log('✅ Created customers');
+
+  // Create demo shift
+  const shift = await prisma.shift.create({
+    data: {
+      tenantId: business.id,
+      terminalId: terminal.id,
+      employeeId: employee.id,
+      shiftNumber: 1,
+      openingCash: 500000, // 500,000 UZS starting cash
+    },
+  });
+
+  console.log('✅ Created shift');
+
+  // Create demo receipts
+  const receipt1 = await prisma.receipt.create({
+    data: {
+      tenantId: business.id,
+      storeId: store.id,
+      terminalId: terminal.id,
+      employeeId: employee.id,
+      customerId: customer1.id,
+      receiptNumber: 'RCP-001',
+      subtotal: 8500000,
+      discountAmount: 0,
+      taxAmount: 1020000,
+      total: 9520000,
+      status: 'completed',
+      items: {
+        create: {
+          variantId: laptopVariant!.id,
+          quantity: 1,
+          price: 8500000,
+          discountAmount: 0,
+          taxRate: 12,
+          total: 9520000,
+        },
+      },
+      payments: {
+        create: {
+          method: 'card',
+          amount: 9520000,
+        },
+      },
+    },
+  });
+
+  const waterVariant1 = waterVariants[0];
+  const waterVariant2 = waterVariants[1];
+
+  const receipt2 = await prisma.receipt.create({
+    data: {
+      tenantId: business.id,
+      storeId: store.id,
+      terminalId: terminal.id,
+      employeeId: employee.id,
+      customerId: customer2.id,
+      receiptNumber: 'RCP-002',
+      subtotal: 23000,
+      discountAmount: 0,
+      taxAmount: 0,
+      total: 23000,
+      status: 'completed',
+      items: {
+        create: [
+          {
+            variantId: waterVariant1.id,
+            quantity: 4,
+            price: 3000,
+            discountAmount: 0,
+            taxRate: 0,
+            total: 12000,
+          },
+          {
+            variantId: waterVariant2.id,
+            quantity: 2,
+            price: 5000,
+            discountAmount: 0,
+            taxRate: 0,
+            total: 10000,
+          },
+        ],
+      },
+      payments: {
+        create: {
+          method: 'cash',
+          amount: 23000,
+        },
+      },
+    },
+  });
+
+  const receipt3 = await prisma.receipt.create({
+    data: {
+      tenantId: business.id,
+      storeId: store.id,
+      terminalId: terminal.id,
+      employeeId: employee.id,
+      customerId: customer3.id,
+      receiptNumber: 'RCP-003',
+      subtotal: 15000,
+      discountAmount: 0,
+      taxAmount: 0,
+      total: 15000,
+      status: 'completed',
+      items: {
+        create: {
+          variantId: waterVariant2.id,
+          quantity: 3,
+          price: 5000,
+          discountAmount: 0,
+          taxRate: 0,
+          total: 15000,
+        },
+      },
+      payments: {
+        create: {
+          method: 'cash',
+          amount: 15000,
+        },
+      },
+    },
+  });
+
+  console.log('✅ Created receipts');
+
   console.log('🎉 Seeding completed!');
   console.log('\nDemo credentials:');
   console.log('  Email: admin@jowi.shop');
   console.log('  Password: admin123');
+  console.log('\nDemo data:');
+  console.log('  - 1 business, 1 store, 1 terminal');
+  console.log('  - 2 categories, 2 products (3 variants)');
+  console.log('  - 3 customers');
+  console.log('  - 1 active shift');
+  console.log('  - 3 receipts (total: 9,558,000 UZS)');
 }
 
 main()

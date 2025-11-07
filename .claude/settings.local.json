@@ -77,7 +77,9 @@
       "Bash(npx prisma migrate:*)",
       "Bash(npx prisma studio)",
       "Bash(if not exist \"apps\\web\\public\\images\\auth\" mkdir \"apps\\web\\public\\images\\auth\")",
-      "Bash(if not exist \"apps\\web\\public\\images\\flags\" mkdir \"apps\\web\\public\\images\\flags\")"
+      "Bash(if not exist \"apps\\web\\public\\images\\flags\" mkdir \"apps\\web\\public\\images\\flags\")",
+      "Bash(docker-compose down:*)",
+      "Bash(npx prisma db push:*)"
     ],
     "deny": [],
     "ask": []
