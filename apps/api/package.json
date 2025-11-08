@@ -15,6 +15,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@jowi/cache": "workspace:*",
     "@jowi/database": "workspace:*",
     "@jowi/i18n": "workspace:*",
     "@jowi/types": "workspace:*",

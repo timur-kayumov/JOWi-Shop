@@ -1,0 +1,79 @@
+{
+  "timestamp": "2025-11-07T21:28:47.898Z",
+  "duration": 30,
+  "connections": 10,
+  "scenarios": [
+    {
+      "scenario": "Health Check",
+      "rps": "14670.57",
+      "latency_p50": 0,
+      "latency_p95": 1,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Search - Global",
+      "rps": "5517.50",
+      "latency_p50": 1,
+      "latency_p95": 3,
+      "latency_p99": 4,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Stores - List",
+      "rps": "8241.60",
+      "latency_p50": 1,
+      "latency_p95": 2,
+      "latency_p99": 3,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Customers - List",
+      "rps": "7642.54",
+      "latency_p50": 1,
+      "latency_p95": 2,
+      "latency_p99": 3,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Receipts - Create (POST)",
+      "rps": "7685.80",
+      "latency_p50": 1,
+      "latency_p95": 2,
+      "latency_p99": 3,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Product Search by Barcode",
+      "rps": "11221.14",
+      "latency_p50": 0,
+      "latency_p95": 2,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Receipts - Create Large (30 items)",
+      "rps": "7610.94",
+      "latency_p50": 1,
+      "latency_p95": 2,
+      "latency_p99": 3,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Mixed Load (70% R, 25% C, 4% U, 1% D)",
+      "rps": "8081.48",
+      "latency_p50": 2,
+      "latency_p95": 5,
+      "latency_p99": 6,
+      "errors": 0,
+      "timeouts": 0
+    }
+  ]
+}

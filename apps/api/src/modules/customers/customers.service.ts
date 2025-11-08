@@ -2,15 +2,26 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { CacheService } from '../cache/cache.module';
+import { Cacheable, CacheEvict, injectCacheService } from '@jowi/cache';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
 
 @Injectable()
-export class CustomersService {
-  constructor(private readonly db: DatabaseService) {}
+export class CustomersService implements OnModuleInit {
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly cacheService: CacheService,
+  ) {}
 
+  onModuleInit() {
+    injectCacheService(this, this.cacheService);
+  }
+
+  @CacheEvict({ pattern: 'customers:*' })
   async create(tenantId: string, createCustomerDto: CreateCustomerDto) {
     try {
       const customer = await this.db.customer.create({
@@ -26,6 +37,21 @@ export class CustomersService {
     }
   }
 
+  @Cacheable({
+    keyPrefix: 'customers:list',
+    ttl: 300, // 5 minutes cache for customer list
+    keyGenerator: (
+      tenantId: string,
+      search?: string,
+      gender?: string,
+      birthYearFrom?: number,
+      birthYearTo?: number,
+      page: number = 1,
+      limit: number = 20
+    ) => {
+      return `${tenantId}:${search || 'all'}:${gender || 'all'}:${birthYearFrom || 'any'}:${birthYearTo || 'any'}:${page}:${limit}`;
+    },
+  })
   async findAll(
     tenantId: string,
     search?: string,
@@ -100,6 +126,11 @@ export class CustomersService {
     };
   }
 
+  @Cacheable({
+    keyPrefix: 'customers:one',
+    ttl: 1800, // 30 minutes cache for single customer
+    keyGenerator: (tenantId: string, id: string) => `${tenantId}:${id}`,
+  })
   async findOne(tenantId: string, id: string): Promise<any> {
     const customer = await this.db.customer.findFirst({
       where: {
@@ -134,6 +165,7 @@ export class CustomersService {
     return customer;
   }
 
+  @CacheEvict({ pattern: 'customers:*' })
   async update(tenantId: string, id: string, updateCustomerDto: UpdateCustomerDto) {
     // Check if customer exists
     await this.findOne(tenantId, id);
@@ -150,6 +182,7 @@ export class CustomersService {
     }
   }
 
+  @CacheEvict({ pattern: 'customers:*' })
   async remove(tenantId: string, id: string) {
     // Check if customer exists
     await this.findOne(tenantId, id);

@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-11-07T16:57:34.449Z",
+  "duration": 30,
+  "connections": 10,
+  "scenarios": [
+    {
+      "scenario": "Health Check",
+      "rps": "12418.30",
+      "latency_p50": 0,
+      "latency_p95": 2,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Search - Global",
+      "rps": "320.37",
+      "latency_p50": 27,
+      "latency_p95": 76,
+      "latency_p99": 89,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Stores - List",
+      "rps": "469.67",
+      "latency_p50": 20,
+      "latency_p95": 32,
+      "latency_p99": 36,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Customers - List",
+      "rps": "437.44",
+      "latency_p50": 21,
+      "latency_p95": 34,
+      "latency_p99": 40,
+      "errors": 0,
+      "timeouts": 0
+    }
+  ]
+}

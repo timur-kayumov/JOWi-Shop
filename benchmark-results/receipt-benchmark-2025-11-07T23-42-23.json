@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-11-07T23:42:23.004Z",
+  "duration": 30,
+  "connections": 10,
+  "totalRequests": 13827,
+  "rps": "460.90",
+  "latency": {
+    "p50": 17,
+    "p95": 67,
+    "p99": 104
+  },
+  "errors": 0,
+  "timeouts": 0,
+  "non2xx": 13827,
+  "successfulRequests": 0,
+  "successRate": "0.00%"
+}

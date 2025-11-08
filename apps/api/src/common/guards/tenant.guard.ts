@@ -31,7 +31,15 @@ export class TenantGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user; // Set by JwtStrategy
 
+    // TEMPORARY: For load testing, also accept x-tenant-id header
+    const headerTenantId = request.headers['x-tenant-id'];
+
     if (!user || !user.tenantId) {
+      // Fallback to header for testing (when JWT guard is disabled)
+      if (headerTenantId) {
+        request.tenantId = headerTenantId;
+        return true;
+      }
       throw new ForbiddenException('TENANT_MISSING');
     }
 

@@ -2,15 +2,26 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { CacheService } from '../cache/cache.module';
+import { Cacheable, CacheEvict, injectCacheService } from '@jowi/cache';
 import { CreateStoreDto } from './dto/create-store.dto';
 import { UpdateStoreDto } from './dto/update-store.dto';
 
 @Injectable()
-export class StoresService {
-  constructor(private readonly db: DatabaseService) {}
+export class StoresService implements OnModuleInit {
+  constructor(
+    private readonly db: DatabaseService,
+    private readonly cacheService: CacheService,
+  ) {}
 
+  onModuleInit() {
+    injectCacheService(this, this.cacheService);
+  }
+
+  @CacheEvict({ pattern: 'stores:*' })
   async create(tenantId: string, createStoreDto: CreateStoreDto) {
     try {
       const store = await this.db.store.create({
@@ -26,6 +37,13 @@ export class StoresService {
     }
   }
 
+  @Cacheable({
+    keyPrefix: 'stores:list',
+    ttl: 300, // 5 minutes cache for store list
+    keyGenerator: (tenantId: string, search?: string, page: number = 1, limit: number = 20) => {
+      return `${tenantId}:${search || 'all'}:${page}:${limit}`;
+    },
+  })
   async findAll(
     tenantId: string,
     search?: string,
@@ -64,6 +82,11 @@ export class StoresService {
     };
   }
 
+  @Cacheable({
+    keyPrefix: 'stores:one',
+    ttl: 3600, // 1 hour cache for single store
+    keyGenerator: (tenantId: string, id: string) => `${tenantId}:${id}`,
+  })
   async findOne(tenantId: string, id: string) {
     const store = await this.db.store.findFirst({
       where: {
@@ -80,6 +103,7 @@ export class StoresService {
     return store;
   }
 
+  @CacheEvict({ pattern: 'stores:*' })
   async update(tenantId: string, id: string, updateStoreDto: UpdateStoreDto) {
     // Check if store exists
     await this.findOne(tenantId, id);
@@ -96,6 +120,7 @@ export class StoresService {
     }
   }
 
+  @CacheEvict({ pattern: 'stores:*' })
   async remove(tenantId: string, id: string) {
     // Check if store exists
     await this.findOne(tenantId, id);

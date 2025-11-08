@@ -1,0 +1,21 @@
+{
+  "name": "@jowi/cache",
+  "version": "0.0.1",
+  "description": "Redis caching utilities for JOWi Shop",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": ["redis", "cache", "nestjs"],
+  "author": "JOWi Shop",
+  "license": "MIT",
+  "dependencies": {
+    "ioredis": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "typescript": "^5.7.3"
+  }
+}

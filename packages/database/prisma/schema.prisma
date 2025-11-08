@@ -17,13 +17,13 @@ datasource db {
 model Business {
   id        String    @id @default(uuid())
   name      String
-  taxId     String    @unique
+  taxId     String    @unique @map("tax_id")
   currency  String    @default("UZS")
   locale    String    @default("ru")
   metadata  Json      @default("{}")
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   stores              Store[]
@@ -46,9 +46,9 @@ model Store {
   city                String
   logoUrl             String?   @map("logo_url")
   shiftTransitionTime String    @default("00:00") @map("shift_transition_time")
-  isActive            Boolean   @default(true)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  isActive            Boolean   @default(true) @map("is_active")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
   deletedAt           DateTime? @map("deleted_at")
 
   business          Business           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -73,9 +73,9 @@ model Terminal {
   deviceId         String    @unique @map("device_id")
   fiscalProviderId String?   @map("fiscal_provider_id")
   settings         Json      @default("{}")
-  isActive         Boolean   @default(true)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  isActive         Boolean   @default(true) @map("is_active")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
   deletedAt        DateTime? @map("deleted_at")
 
   store    Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -100,9 +100,9 @@ model User {
   lastName  String    @map("last_name")
   password  String?
   role      String // admin, manager, cashier, warehouse
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   business        Business         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -124,8 +124,8 @@ model Employee {
   citizenship    String
   passportSeries String    @map("passport_series")
   passportNumber String    @map("passport_number")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -145,9 +145,9 @@ model StoreEmployee {
   userId    String    @map("user_id")
   storeId   String    @map("store_id")
   role      String // admin, manager, cashier, warehouse
-  isActive  Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -173,8 +173,8 @@ model Category {
   color     String?
   isSystem  Boolean   @default(false) @map("is_system")
   sortOrder Int       @default(0) @map("sort_order")
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   business Business   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -193,13 +193,13 @@ model Product {
   name        String
   description String?
   categoryId  String?   @map("category_id")
-  taxRate     Decimal   @default(0) @db.Decimal(5, 2)
+  taxRate     Decimal   @default(0) @db.Decimal(5, 2) @map("tax_rate")
   imageUrl    String?   @map("image_url")
   sourceType  String    @default("manual") @map("source_type") // manual, nomenclature
-  isActive    Boolean   @default(true)
-  hasVariants Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  isActive    Boolean   @default(true) @map("is_active")
+  hasVariants Boolean   @default(false) @map("has_variants")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
 
   business Business         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -223,9 +223,9 @@ model ProductVariant {
   unit       String    @default("шт")
   imageUrl   String?   @map("image_url")
   attributes Json?
-  isActive   Boolean   @default(true)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  isActive   Boolean   @default(true) @map("is_active")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
   deletedAt  DateTime? @map("deleted_at")
 
   product       Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
@@ -251,8 +251,8 @@ model StockLevel {
   storeId          String   @map("store_id")
   variantId        String   @map("variant_id")
   quantity         Decimal  @default(0) @db.Decimal(15, 3)
-  reservedQuantity Decimal  @default(0) @db.Decimal(15, 3)
-  updatedAt        DateTime @updatedAt
+  reservedQuantity Decimal  @default(0) @db.Decimal(15, 3) @map("reserved_quantity")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   store   Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
   variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
@@ -268,8 +268,8 @@ model StockBatch {
   storeId    String   @map("store_id")
   variantId  String   @map("variant_id")
   quantity   Decimal  @db.Decimal(15, 3)
-  costPrice  Decimal  @db.Decimal(15, 0)
-  receivedAt DateTime @default(now())
+  costPrice  Decimal  @db.Decimal(15, 0) @map("cost_price")
+  receivedAt DateTime @default(now()) @map("received_at")
   supplierId String?  @map("supplier_id")
 
   store   Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -288,8 +288,8 @@ model MovementDocument {
   type           String // receipt, transfer, return, writeoff, count
   notes          String?
   status         String    @default("draft")
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
   store Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
@@ -306,7 +306,7 @@ model MovementItem {
   documentId String   @map("document_id")
   variantId  String   @map("variant_id")
   quantity   Decimal  @db.Decimal(15, 3)
-  costPrice  Decimal? @db.Decimal(15, 0)
+  costPrice  Decimal? @db.Decimal(15, 0) @map("cost_price")
 
   document MovementDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
   variant  ProductVariant   @relation(fields: [variantId], references: [id], onDelete: Cascade)
@@ -328,14 +328,14 @@ model Receipt {
   customerId     String?   @map("customer_id")
   employeeId     String    @map("employee_id")
   subtotal       Decimal   @db.Decimal(15, 0)
-  discountAmount Decimal   @default(0) @db.Decimal(15, 0)
-  taxAmount      Decimal   @default(0) @db.Decimal(15, 0)
+  discountAmount Decimal   @default(0) @db.Decimal(15, 0) @map("discount_amount")
+  taxAmount      Decimal   @default(0) @db.Decimal(15, 0) @map("tax_amount")
   total          Decimal   @db.Decimal(15, 0)
   status         String    @default("draft") // draft, completed, refunded, partially_refunded
   fiscalData     Json?     @map("fiscal_data")
   comment        String?
-  createdAt      DateTime  @default(now())
-  completedAt    DateTime?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  completedAt    DateTime? @map("completed_at")
 
   store               Store                @relation(fields: [storeId], references: [id], onDelete: Cascade)
   terminal            Terminal             @relation(fields: [terminalId], references: [id], onDelete: Cascade)
@@ -359,8 +359,8 @@ model ReceiptItem {
   variantId      String  @map("variant_id")
   quantity       Decimal @db.Decimal(15, 3)
   price          Decimal @db.Decimal(15, 0)
-  discountAmount Decimal @default(0) @db.Decimal(15, 0)
-  taxRate        Decimal @db.Decimal(5, 2)
+  discountAmount Decimal @default(0) @db.Decimal(15, 0) @map("discount_amount")
+  taxRate        Decimal @db.Decimal(5, 2) @map("tax_rate")
   total          Decimal @db.Decimal(15, 0)
 
   receipt     Receipt        @relation(fields: [receiptId], references: [id], onDelete: Cascade)
@@ -377,7 +377,7 @@ model Payment {
   method    String // cash, card, transfer, installment
   amount    Decimal  @db.Decimal(15, 0)
   reference String?
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   receipt Receipt @relation(fields: [receiptId], references: [id], onDelete: Cascade)
 
@@ -391,10 +391,10 @@ model RefundItem {
   receiptId     String   @map("receipt_id")
   receiptItemId String   @map("receipt_item_id")
   quantity      Decimal  @db.Decimal(15, 3)
-  refundAmount  Decimal  @db.Decimal(15, 0)
+  refundAmount  Decimal  @db.Decimal(15, 0) @map("refund_amount")
   reason        String?
   refundedById  String   @map("refunded_by_id")
-  createdAt     DateTime @default(now())
+  createdAt     DateTime @default(now()) @map("created_at")
 
   receipt     Receipt     @relation(fields: [receiptId], references: [id], onDelete: Cascade)
   receiptItem ReceiptItem @relation(fields: [receiptItemId], references: [id], onDelete: Cascade)
@@ -420,8 +420,8 @@ model Customer {
   gender            String? // male, female, other
   dateOfBirth       DateTime? @map("date_of_birth")
   loyaltyCardNumber String?   @unique @map("loyalty_card_number")
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
   deletedAt         DateTime? @map("deleted_at")
 
   business            Business             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -441,7 +441,7 @@ model LoyaltyTransaction {
   points     Decimal  @db.Decimal(10, 2)
   type       String // earn, redeem
   externalId String?  @map("external_id")
-  createdAt  DateTime @default(now())
+  createdAt  DateTime @default(now()) @map("created_at")
 
   business Business @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -464,9 +464,9 @@ model Safe {
   type          String // cash, bank_account, card_account
   accountNumber String?   @map("account_number")
   balance       Decimal   @default(0) @db.Decimal(15, 0)
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  isActive      Boolean   @default(true) @map("is_active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
   deletedAt     DateTime? @map("deleted_at")
 
   paymentTypes PaymentType[]
@@ -483,8 +483,8 @@ model PaymentType {
   name      String
   icon      String?
   color     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
 
   safe                 Safe                  @relation(fields: [safeId], references: [id], onDelete: Cascade)
@@ -499,7 +499,7 @@ model TerminalPaymentType {
   id            String   @id @default(uuid())
   terminalId    String   @map("terminal_id")
   paymentTypeId String   @map("payment_type_id")
-  createdAt     DateTime @default(now())
+  createdAt     DateTime @default(now()) @map("created_at")
 
   paymentType PaymentType @relation(fields: [paymentTypeId], references: [id], onDelete: Cascade)
 
@@ -519,10 +519,10 @@ model Shift {
   terminalId  String    @map("terminal_id")
   employeeId  String    @map("employee_id")
   shiftNumber Int       @map("shift_number")
-  openedAt    DateTime  @default(now())
-  closedAt    DateTime?
-  openingCash Decimal   @db.Decimal(15, 0)
-  closingCash Decimal?  @db.Decimal(15, 0)
+  openedAt    DateTime  @default(now()) @map("opened_at")
+  closedAt    DateTime? @map("closed_at")
+  openingCash Decimal   @db.Decimal(15, 0) @map("opening_cash")
+  closingCash Decimal?  @db.Decimal(15, 0) @map("closing_cash")
   status      String    @default("open") // open, closed
 
   terminal       Terminal        @relation(fields: [terminalId], references: [id], onDelete: Cascade)
@@ -541,7 +541,7 @@ model CashOperation {
   type      String // in, out
   amount    Decimal  @db.Decimal(15, 0)
   reason    String
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   shift Shift @relation(fields: [shiftId], references: [id], onDelete: Cascade)
 
@@ -563,7 +563,7 @@ model AuditLog {
   entityId  String?  @map("entity_id")
   changes   Json? // Before/after values for updates
   metadata  Json? // Additional context (IP, user agent, etc.)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@index([tenantId])
   @@index([userId])
@@ -582,7 +582,7 @@ model Permission {
   resource    String // stores, customers, employees, reports, products, inventory, etc.
   action      String // view, create, update, delete, manage
   description String?
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("created_at")
 
   rolePermissions RolePermission[]
   userPermissions UserPermission[]
@@ -595,7 +595,7 @@ model RolePermission {
   id           String   @id @default(uuid())
   role         String // admin, manager, cashier, warehouse
   permissionId String   @map("permission_id")
-  createdAt    DateTime @default(now())
+  createdAt    DateTime @default(now()) @map("created_at")
 
   permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
 
@@ -609,8 +609,8 @@ model UserPermission {
   userId       String   @map("user_id")
   permissionId String   @map("permission_id")
   allowed      Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
@@ -625,8 +625,8 @@ model StoreAccess {
   userId      String   @map("user_id")
   storeId     String   @map("store_id")
   permissions Json     @default("{}") // { "view_pos": true, "manage_inventory": true, "view_reports": false }
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)

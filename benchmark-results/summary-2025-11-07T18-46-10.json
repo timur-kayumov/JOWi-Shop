@@ -1,0 +1,52 @@
+{
+  "timestamp": "2025-11-07T18:46:10.533Z",
+  "duration": 30,
+  "connections": 10,
+  "scenarios": [
+    {
+      "scenario": "Health Check",
+      "rps": "20372.67",
+      "latency_p50": 0,
+      "latency_p95": 1,
+      "latency_p99": 1,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Search - Global",
+      "rps": "610.04",
+      "latency_p50": 9,
+      "latency_p95": 66,
+      "latency_p99": 99,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Stores - List",
+      "rps": "10900.27",
+      "latency_p50": 0,
+      "latency_p95": 1,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Customers - List",
+      "rps": "11069.34",
+      "latency_p50": 0,
+      "latency_p95": 1,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    },
+    {
+      "scenario": "Receipts - Create (POST)",
+      "rps": "9707.67",
+      "latency_p50": 0,
+      "latency_p95": 2,
+      "latency_p99": 2,
+      "errors": 0,
+      "timeouts": 0
+    }
+  ]
+}

@@ -1,12 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { CacheService } from '../cache/cache.module';
+import { Cacheable, injectCacheService } from '@jowi/cache';
 import { SearchQueryDto } from './dto/search-query.dto';
 import { SearchResult, SearchResults } from './interfaces/search-result.interface';
 
 @Injectable()
-export class SearchService {
-  constructor(private prisma: DatabaseService) {}
+export class SearchService implements OnModuleInit {
+  constructor(
+    private prisma: DatabaseService,
+    private cacheService: CacheService,
+  ) {}
 
+  onModuleInit() {
+    injectCacheService(this, this.cacheService);
+  }
+
+  @Cacheable({
+    keyPrefix: 'search',
+    ttl: 30, // 30 seconds cache for search results
+    keyGenerator: (dto: SearchQueryDto, tenantId: string) => {
+      const types = dto.types && dto.types.length > 0 ? dto.types.sort().join(',') : 'all';
+      return `${tenantId}:${dto.query.toLowerCase().trim()}:${types}`;
+    },
+  })
   async globalSearch(dto: SearchQueryDto, tenantId: string): Promise<SearchResults> {
     const { query, types } = dto;
     const searchTerm = query.toLowerCase().trim();
@@ -129,16 +146,8 @@ export class SearchService {
       WHERE e.tenant_id = ${tenantId}
         AND e.deleted_at IS NULL
         AND (
-          -- Direct match (same alphabet)
           LOWER(u.first_name) LIKE ${searchPattern}
           OR LOWER(u.last_name) LIKE ${searchPattern}
-          -- Transliterated match (Cyrillic search → Latin data)
-          OR LOWER(u.first_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
-          OR LOWER(u.last_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
-          -- Transliterated match (Latin search → Cyrillic data)
-          OR LOWER(u.first_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
-          OR LOWER(u.last_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
-          -- Other fields
           OR LOWER(COALESCE(u.email, '')) LIKE ${searchPattern}
           OR LOWER(COALESCE(u.phone, '')) LIKE ${searchPattern}
         )
@@ -169,16 +178,8 @@ export class SearchService {
       WHERE tenant_id = ${tenantId}
         AND deleted_at IS NULL
         AND (
-          -- Direct match (same alphabet)
           LOWER(first_name) LIKE ${searchPattern}
           OR LOWER(last_name) LIKE ${searchPattern}
-          -- Transliterated match (Cyrillic search → Latin data)
-          OR LOWER(first_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
-          OR LOWER(last_name) LIKE '%' || cyrillic_to_latin(${normalizedTerm}) || '%'
-          -- Transliterated match (Latin search → Cyrillic data)
-          OR LOWER(first_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
-          OR LOWER(last_name) LIKE '%' || latin_to_cyrillic(${normalizedTerm}) || '%'
-          -- Other fields
           OR LOWER(COALESCE(phone, '')) LIKE ${searchPattern}
           OR LOWER(COALESCE(email, '')) LIKE ${searchPattern}
           OR LOWER(COALESCE(loyalty_card_number, '')) LIKE ${searchPattern}
