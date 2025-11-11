@@ -18,14 +18,24 @@ const badgeVariants = cva(
           'border-transparent bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))] hover:bg-[hsl(var(--success))]/80',
         'success-secondary':
           'border-transparent bg-[hsl(var(--success-secondary))] text-[hsl(var(--success))] hover:bg-[hsl(var(--success-secondary))]/80',
+        'success-light':
+          'border-green-200 bg-green-50 text-green-700 hover:bg-green-100 dark:border-green-800 dark:bg-green-950 dark:text-green-300 dark:hover:bg-green-900',
         warning:
           'border-transparent bg-[hsl(var(--warning))] text-[hsl(var(--warning-foreground))] hover:bg-[hsl(var(--warning))]/80',
         'warning-secondary':
           'border-transparent bg-[hsl(var(--warning-secondary))] text-[hsl(var(--warning))] hover:bg-[hsl(var(--warning-secondary))]/80',
+        'warning-light':
+          'border-yellow-200 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-300 dark:hover:bg-yellow-900',
         info:
           'border-transparent bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))] hover:bg-[hsl(var(--info))]/80',
         'info-secondary':
           'border-transparent bg-[hsl(var(--info-secondary))] text-[hsl(var(--info))] hover:bg-[hsl(var(--info-secondary))]/80',
+        'info-light':
+          'border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900',
+        'destructive-light':
+          'border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-800 dark:bg-red-950 dark:text-red-300 dark:hover:bg-red-900',
+        'neutral-light':
+          'border-gray-200 bg-gray-100 text-gray-700 hover:bg-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
       },
     },
     defaultVariants: {

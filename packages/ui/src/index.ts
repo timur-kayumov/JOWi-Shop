@@ -4,6 +4,7 @@
  */
 
 export * from './lib/utils';
+export * from './lib/format-date';
 
 // Form components
 export * from './components/button';
@@ -46,6 +47,8 @@ export * from './components/dropdown-menu';
 export * from './components/dialog';
 export * from './components/popover';
 export * from './components/badge';
+export * from './components/status-badge';
+export * from './lib/status-config';
 export * from './components/tabs';
 export * from './components/data-table';
 export * from './components/loader';
@@ -53,7 +56,14 @@ export * from './components/calendar';
 export * from './components/date-picker';
 export * from './components/checkbox';
 export * from './components/switch';
+export * from './components/tooltip';
 
 // Registration components
 export * from './components/step-indicator';
 export * from './components/business-type-card';
+
+// Shared components (reusable across detail pages)
+export * from './components/comments';
+export * from './components/activity-history';
+export type { Comment, CommentsProps } from './components/comments';
+export type { Activity, ActivityType, FieldChange, ActivityHistoryProps } from './components/activity-history';

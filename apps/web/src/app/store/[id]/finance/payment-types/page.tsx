@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Input,
@@ -54,11 +55,12 @@ interface PaymentType {
 }
 
 // Validation schema (shared with backend)
+// Note: Error messages are hardcoded here but will be overridden by form-level validation
 const createPaymentTypeSchema = z.object({
-  safeId: z.string().uuid('Некорректный ID сейфа'),
-  name: z.string().min(2, 'Минимум 2 символа').max(100, 'Максимум 100 символов'),
+  safeId: z.string().uuid('Invalid safe ID'),
+  name: z.string().min(2, 'Minimum 2 characters').max(100, 'Maximum 100 characters'),
   icon: z.string().optional(),
-  color: z.string().regex(/^#([A-Fa-f0-9]{6})$/, 'Цвет должен быть в формате #RRGGBB').optional(),
+  color: z.string().regex(/^#([A-Fa-f0-9]{6})$/, 'Color must be in #RRGGBB format').optional(),
 });
 
 type CreatePaymentTypeInput = z.infer<typeof createPaymentTypeSchema>;
@@ -132,6 +134,7 @@ const mockPaymentTypes: PaymentType[] = [
 export default function PaymentTypesPage() {
   const params = useParams();
   const storeId = params.id as string;
+  const { t } = useTranslation('common');
 
   const [data, setData] = useState<PaymentType[]>(mockPaymentTypes);
   const [search, setSearch] = useState('');
@@ -175,7 +178,7 @@ export default function PaymentTypesPage() {
       color: formData.color,
     };
     setData([...data, newPaymentType]);
-    toast.success('Сохранено', `${formData.name} успешно создан`);
+    toast.success(t('components.toast.success'), `${formData.name} ${t('messages.saved').toLowerCase()}`);
     setIsCreateDialogOpen(false);
     createForm.reset();
   };
@@ -196,16 +199,16 @@ export default function PaymentTypesPage() {
           : pt
       )
     );
-    toast.success('Сохранено', 'Тип оплаты успешно обновлён');
+    toast.success(t('components.toast.success'), t('finance.paymentTypes.deleteSuccess'));
     setIsEditDialogOpen(false);
     setSelectedPaymentType(null);
     editForm.reset();
   };
 
   const handleDelete = (paymentType: PaymentType) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот тип оплаты?')) {
+    if (window.confirm(t('finance.paymentTypes.deleteConfirm'))) {
       setData(data.filter((pt) => pt.id !== paymentType.id));
-      toast.success('Удалено', 'Тип оплаты успешно удалён');
+      toast.success(t('messages.deleted'), t('finance.paymentTypes.deleteSuccess'));
     }
   };
 
@@ -224,16 +227,19 @@ export default function PaymentTypesPage() {
     return mockSafes.find((s) => s.id === paymentType.safeId);
   };
 
-  const safeTypeLabels: Record<SafeType, string> = {
-    cash: 'Наличные',
-    bank_account: 'Банковский счёт',
-    card_account: 'Карточный счёт',
+  const getSafeTypeLabel = (type: SafeType): string => {
+    const labels: Record<SafeType, string> = {
+      cash: t('finance.safes.cash'),
+      bank_account: t('finance.safes.bankAccount'),
+      card_account: t('finance.safes.cardAccount'),
+    };
+    return labels[type];
   };
 
   const columns: Column<PaymentType>[] = [
     {
       key: 'name',
-      label: 'Название',
+      label: t('finance.paymentTypes.name'),
       sortable: true,
       render: (paymentType) => (
         <div className="flex items-center gap-2">
@@ -249,13 +255,13 @@ export default function PaymentTypesPage() {
     },
     {
       key: 'safe',
-      label: 'Сейф',
+      label: t('finance.paymentTypes.safe'),
       render: (paymentType) => {
         const safe = getSafeByPaymentType(paymentType);
         return safe ? (
           <div>
             <div className="text-sm font-medium">{safe.name}</div>
-            <div className="text-xs text-muted-foreground">{safeTypeLabels[safe.type]}</div>
+            <div className="text-xs text-muted-foreground">{getSafeTypeLabel(safe.type)}</div>
           </div>
         ) : (
           <span className="text-muted-foreground">-</span>
@@ -264,7 +270,7 @@ export default function PaymentTypesPage() {
     },
     {
       key: 'actions',
-      label: 'Действия',
+      label: t('fields.actions'),
       render: (paymentType) => (
         <div className="flex items-center gap-2">
           <Button
@@ -299,9 +305,9 @@ export default function PaymentTypesPage() {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Название</FormLabel>
+            <FormLabel>{t('finance.paymentTypes.name')}</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Например: Карта Uzcard" />
+              <Input {...field} placeholder={t('finance.paymentTypes.namePlaceholder')} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -313,17 +319,17 @@ export default function PaymentTypesPage() {
         name="safeId"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Сейф</FormLabel>
+            <FormLabel>{t('finance.paymentTypes.safe')}</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="Выберите сейф" />
+                  <SelectValue placeholder={t('finance.paymentTypes.safePlaceholder')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 {mockSafes.filter(s => s.isActive).map((safe) => (
                   <SelectItem key={safe.id} value={safe.id}>
-                    {safe.name} ({safeTypeLabels[safe.type]})
+                    {safe.name} ({getSafeTypeLabel(safe.type)})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -338,12 +344,12 @@ export default function PaymentTypesPage() {
         name="color"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Цвет</FormLabel>
+            <FormLabel>{t('finance.paymentTypes.color')}</FormLabel>
             <FormControl>
               <ColorPickerPopover
                 value={field.value}
                 onChange={field.onChange}
-                label="Выбрать цвет"
+                label={t('finance.paymentTypes.colorPlaceholder')}
               />
             </FormControl>
             <FormMessage />
@@ -356,17 +362,11 @@ export default function PaymentTypesPage() {
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Типы оплат</h1>
-            <p className="text-muted-foreground mt-2">
-              Управление типами оплат и привязка к сейфам
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Создать тип оплаты
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">{t('finance.paymentTypes.title')}</h1>
+          <p className="text-muted-foreground mt-2">
+            {t('finance.paymentTypes.description')}
+          </p>
         </div>
 
         <div className="flex gap-4">
@@ -374,7 +374,7 @@ export default function PaymentTypesPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Поиск по названию..."
+                placeholder={t('finance.paymentTypes.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -386,7 +386,7 @@ export default function PaymentTypesPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все сейфы</SelectItem>
+              <SelectItem value="all">{t('finance.paymentTypes.allSafes')}</SelectItem>
               {mockSafes.map((safe) => (
                 <SelectItem key={safe.id} value={safe.id}>
                   {safe.name}
@@ -394,6 +394,10 @@ export default function PaymentTypesPage() {
               ))}
             </SelectContent>
           </Select>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('finance.paymentTypes.createPaymentType')}
+          </Button>
         </div>
       </Card>
 
@@ -401,7 +405,7 @@ export default function PaymentTypesPage() {
         <DataTable
           data={filteredData}
           columns={columns}
-          emptyMessage="Нет типов оплат для отображения"
+          emptyMessage={t('finance.paymentTypes.emptyMessage')}
           pagination={{ enabled: true, pageSize: 15 }}
         />
       </Card>
@@ -410,8 +414,8 @@ export default function PaymentTypesPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Создать тип оплаты</DialogTitle>
-            <DialogDescription>Добавьте новый тип оплаты и привяжите его к сейфу</DialogDescription>
+            <DialogTitle>{t('finance.paymentTypes.createPaymentType')}</DialogTitle>
+            <DialogDescription>{t('finance.paymentTypes.createPaymentTypeDescription')}</DialogDescription>
           </DialogHeader>
           <Form {...createForm}>
             <form onSubmit={createForm.handleSubmit(handleCreate)} className="space-y-4">
@@ -422,9 +426,9 @@ export default function PaymentTypesPage() {
                   variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
-                <Button type="submit">Создать</Button>
+                <Button type="submit">{t('actions.create')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -435,8 +439,8 @@ export default function PaymentTypesPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Редактировать тип оплаты</DialogTitle>
-            <DialogDescription>Измените данные типа оплаты</DialogDescription>
+            <DialogTitle>{t('finance.paymentTypes.editPaymentType')}</DialogTitle>
+            <DialogDescription>{t('finance.paymentTypes.editPaymentTypeDescription')}</DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(handleEdit)} className="space-y-4">
@@ -447,9 +451,9 @@ export default function PaymentTypesPage() {
                   variant="outline"
                   onClick={() => setIsEditDialogOpen(false)}
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
-                <Button type="submit">Сохранить</Button>
+                <Button type="submit">{t('actions.save')}</Button>
               </DialogFooter>
             </form>
           </Form>

@@ -7,6 +7,7 @@ import {
   Button,
   Input,
   Badge,
+  StatusBadge,
   DataTable,
   Column,
   Select,
@@ -29,6 +30,7 @@ import {
   FormMessage,
   Checkbox,
 } from '@jowi/ui';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -54,8 +56,8 @@ interface Terminal {
 
 // Validation schema (matches backend Terminal model)
 const createTerminalSchema = z.object({
-  name: z.string().min(2, 'Минимум 2 символа').max(100, 'Максимум 100 символов'),
-  deviceId: z.string().min(1, 'Введите ID устройства'),
+  name: z.string().min(2, 'Minimum 2 characters').max(100, 'Maximum 100 characters'),
+  deviceId: z.string().min(1, 'Enter device ID'),
   fiscalProviderId: z.string().optional(),
   isActive: z.boolean().default(true),
 });
@@ -132,6 +134,7 @@ export default function CashRegistersPage() {
   const params = useParams();
   const router = useRouter();
   const storeId = params.id as string;
+  const { t } = useTranslation('common');
 
   const [data, setData] = useState<Terminal[]>(mockTerminals);
   const [search, setSearch] = useState('');
@@ -174,7 +177,7 @@ export default function CashRegistersPage() {
 
   const handleCreate = (formData: CreateTerminalInput) => {
     if (selectedPaymentTypes.length === 0) {
-      toast.error('Ошибка', 'Выберите хотя бы один тип оплаты');
+      toast.error(t('components.toast.error'), t('finance.cashRegisters.selectAtLeastOne'));
       return;
     }
 
@@ -187,7 +190,7 @@ export default function CashRegistersPage() {
       paymentTypeIds: selectedPaymentTypes,
     };
     setData([...data, newTerminal]);
-    toast.success('Сохранено', `${formData.name} успешно создана`);
+    toast.success(t('messages.saved'), `${formData.name} ${t('messages.success')}`);
     setIsCreateDialogOpen(false);
     setSelectedPaymentTypes([]);
     createForm.reset();
@@ -197,7 +200,7 @@ export default function CashRegistersPage() {
     if (!selectedTerminal) return;
 
     if (selectedPaymentTypes.length === 0) {
-      toast.error('Ошибка', 'Выберите хотя бы один тип оплаты');
+      toast.error(t('components.toast.error'), t('finance.cashRegisters.selectAtLeastOne'));
       return;
     }
 
@@ -215,7 +218,7 @@ export default function CashRegistersPage() {
           : terminal
       )
     );
-    toast.success('Сохранено', 'Касса успешно обновлена');
+    toast.success(t('messages.saved'), t('messages.success'));
     setIsEditDialogOpen(false);
     setSelectedTerminal(null);
     setSelectedPaymentTypes([]);
@@ -223,9 +226,9 @@ export default function CashRegistersPage() {
   };
 
   const handleDelete = (terminal: Terminal) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту кассу?')) {
+    if (window.confirm(t('finance.cashRegisters.deleteConfirm'))) {
       setData(data.filter((t) => t.id !== terminal.id));
-      toast.success('Удалено', 'Касса успешно удалена');
+      toast.success(t('messages.deleted'), t('finance.cashRegisters.deleteSuccess'));
     }
   };
 
@@ -256,7 +259,7 @@ export default function CashRegistersPage() {
   const columns: Column<Terminal>[] = [
     {
       key: 'name',
-      label: 'Название',
+      label: t('finance.cashRegisters.name'),
       sortable: true,
       render: (terminal) => (
         <div>
@@ -267,7 +270,7 @@ export default function CashRegistersPage() {
     },
     {
       key: 'fiscalProviderId',
-      label: 'Фискальный регистратор',
+      label: t('finance.cashRegisters.fiscalProvider'),
       render: (terminal) => (
         <span className="text-sm text-muted-foreground">
           {terminal.fiscalProviderId || '-'}
@@ -276,7 +279,7 @@ export default function CashRegistersPage() {
     },
     {
       key: 'paymentTypes',
-      label: 'Типы оплат',
+      label: t('finance.cashRegisters.paymentTypes'),
       render: (terminal) => {
         const paymentTypes = getPaymentTypesByIds(terminal.paymentTypeIds || []);
         return paymentTypes.length > 0 ? (
@@ -296,23 +299,25 @@ export default function CashRegistersPage() {
           </div>
         ) : (
           <span className="text-sm text-muted-foreground">
-            Нет типов оплат
+            {t('finance.cashRegisters.noPaymentTypes')}
           </span>
         );
       },
     },
     {
       key: 'isActive',
-      label: 'Статус',
+      label: t('fields.status'),
       render: (terminal) => (
-        <Badge variant={terminal.isActive ? 'default' : 'secondary'}>
-          {terminal.isActive ? 'Активна' : 'Неактивна'}
-        </Badge>
+        <StatusBadge
+          type="boolean"
+          status={terminal.isActive ? 'active' : 'inactive'}
+          t={t}
+        />
       ),
     },
     {
       key: 'actions',
-      label: 'Действия',
+      label: t('fields.actions'),
       render: (terminal) => (
         <div className="flex items-center gap-2">
           <Button
@@ -351,9 +356,9 @@ export default function CashRegistersPage() {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Название</FormLabel>
+            <FormLabel>{t('finance.cashRegisters.name')}</FormLabel>
             <FormControl>
-              <Input {...field} placeholder="Например: Касса 1" />
+              <Input {...field} placeholder={t('finance.cashRegisters.namePlaceholder')} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -366,9 +371,9 @@ export default function CashRegistersPage() {
           name="deviceId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ID устройства</FormLabel>
+              <FormLabel>{t('finance.cashRegisters.deviceId')}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="DEVICE-001" />
+                <Input {...field} placeholder={t('finance.cashRegisters.deviceIdPlaceholder')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -380,9 +385,9 @@ export default function CashRegistersPage() {
           name="fiscalProviderId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>ID фискального регистратора</FormLabel>
+              <FormLabel>{t('finance.cashRegisters.fiscalProviderId')}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="FISCAL-001" />
+                <Input {...field} placeholder={t('finance.cashRegisters.fiscalProviderIdPlaceholder')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -391,9 +396,9 @@ export default function CashRegistersPage() {
       </div>
 
       <div className="space-y-2">
-        <FormLabel>Типы оплат</FormLabel>
+        <FormLabel>{t('finance.cashRegisters.paymentTypes')}</FormLabel>
         <p className="text-sm text-muted-foreground">
-          Выберите типы оплат, которые будут доступны на этой кассе
+          {t('finance.cashRegisters.paymentTypesDescription')}
         </p>
         <div className="border rounded-lg p-4 space-y-2 max-h-60 overflow-y-auto">
           {mockPaymentTypes.map((paymentType) => (
@@ -420,7 +425,7 @@ export default function CashRegistersPage() {
         </div>
         {selectedPaymentTypes.length === 0 && (
           <p className="text-sm text-destructive">
-            Выберите хотя бы один тип оплаты
+            {t('finance.cashRegisters.selectAtLeastOne')}
           </p>
         )}
       </div>
@@ -430,17 +435,11 @@ export default function CashRegistersPage() {
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Кассы</h1>
-            <p className="text-muted-foreground mt-2">
-              Управление кассами и POS-терминалами магазина
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Создать кассу
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">{t('finance.cashRegisters.title')}</h1>
+          <p className="text-muted-foreground mt-2">
+            {t('finance.cashRegisters.description')}
+          </p>
         </div>
 
         <div className="flex gap-4">
@@ -448,7 +447,7 @@ export default function CashRegistersPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Поиск по названию или ID..."
+                placeholder={t('finance.cashRegisters.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -460,11 +459,15 @@ export default function CashRegistersPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все статусы</SelectItem>
-              <SelectItem value="active">Активные</SelectItem>
-              <SelectItem value="inactive">Неактивные</SelectItem>
+              <SelectItem value="all">{t('finance.cashRegisters.allStatuses')}</SelectItem>
+              <SelectItem value="active">{t('finance.cashRegisters.active')}</SelectItem>
+              <SelectItem value="inactive">{t('finance.cashRegisters.inactive')}</SelectItem>
             </SelectContent>
           </Select>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('finance.cashRegisters.createRegister')}
+          </Button>
         </div>
       </Card>
 
@@ -475,7 +478,7 @@ export default function CashRegistersPage() {
           onRowClick={(terminal) =>
             router.push(`/store/${storeId}/finance/cash-registers/${terminal.id}`)
           }
-          emptyMessage="Нет касс для отображения"
+          emptyMessage={t('finance.cashRegisters.emptyMessage')}
           pagination={{ enabled: true, pageSize: 15 }}
         />
       </Card>
@@ -484,9 +487,9 @@ export default function CashRegistersPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Создать кассу</DialogTitle>
+            <DialogTitle>{t('finance.cashRegisters.createRegister')}</DialogTitle>
             <DialogDescription>
-              Добавьте новую кассу и настройте доступные типы оплат
+              {t('finance.cashRegisters.createRegisterDescription')}
             </DialogDescription>
           </DialogHeader>
           <Form {...createForm}>
@@ -501,10 +504,10 @@ export default function CashRegistersPage() {
                     setSelectedPaymentTypes([]);
                   }}
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
                 <Button type="submit" disabled={selectedPaymentTypes.length === 0}>
-                  Создать
+                  {t('actions.create')}
                 </Button>
               </DialogFooter>
             </form>
@@ -516,9 +519,9 @@ export default function CashRegistersPage() {
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Редактировать кассу</DialogTitle>
+            <DialogTitle>{t('finance.cashRegisters.editRegister')}</DialogTitle>
             <DialogDescription>
-              Измените настройки кассы и типы оплат
+              {t('finance.cashRegisters.editRegisterDescription')}
             </DialogDescription>
           </DialogHeader>
           <Form {...editForm}>
@@ -533,10 +536,10 @@ export default function CashRegistersPage() {
                     setSelectedPaymentTypes([]);
                   }}
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
                 <Button type="submit" disabled={selectedPaymentTypes.length === 0}>
-                  Сохранить
+                  {t('actions.save')}
                 </Button>
               </DialogFooter>
             </form>

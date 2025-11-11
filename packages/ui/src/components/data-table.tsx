@@ -236,7 +236,7 @@ export function DataTable<T extends Record<string, any>>({
       </div>
 
       {/* Pagination Controls */}
-      {pagination?.enabled && totalPages > 1 && (
+      {pagination?.enabled && (
         <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/20">
           <div className="text-sm text-muted-foreground">
             Показано {startItem}–{endItem} из {totalItems}

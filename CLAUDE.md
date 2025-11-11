@@ -380,6 +380,11 @@ This approach was replaced with Flutter/Android to reduce hardware costs and imp
   4. **IMPORTANT (Windows):** Always use PowerShell to kill processes, NOT taskkill
      - ✅ Correct: `powershell -Command "Stop-Process -Id <PID> -Force"`
      - ❌ Incorrect: `taskkill /F /PID <PID>` (causes encoding issues)
+  5. **CRITICAL SAFETY RULE:** NEVER kill the process that Claude Code itself is running in
+     - Before killing any Node.js or terminal processes, verify it's not the current working shell/terminal
+     - Killing the current terminal process will terminate the Claude Code session
+     - Always check the process tree before terminating processes
+     - If in doubt, ask the user before terminating processes
 - **Rationale:** Multiple running instances on different ports cause confusion, resource waste, and potential conflicts
 
 ### Code Organization
@@ -387,6 +392,38 @@ This approach was replaced with Flutter/Android to reduce hardware costs and imp
 - **Shared Types:** Zod schemas shared between frontend and backend
 - **UI Package:** `@jowi/ui` for all reusable components
 - **No Hardcoding:** All text from i18n files, all config from environment variables
+
+### Internationalization (i18n)
+- **CRITICAL RULE:** When creating ANY new page or component, ALWAYS implement translations immediately
+- **Required Languages:** Russian (RU) and Uzbek (UZ) - both are mandatory
+- **Translation Files:**
+  - Web: `packages/i18n/src/locales/ru/common.json` and `packages/i18n/src/locales/uz/common.json`
+  - Flutter: `lib/l10n/ru.json` and `lib/l10n/uz.json`
+- **Implementation Steps:**
+  1. Add translation keys to BOTH language files simultaneously
+  2. Use `useTranslation('common')` hook in React components
+  3. Use `easy_localization` in Flutter components
+  4. Replace ALL hardcoded text with translation keys - no exceptions
+  5. Use semantic key naming: `section.subsection.element` (e.g., `finance.transactions.createButton`)
+- **What to Translate:**
+  - Page titles and descriptions
+  - Button labels and action text
+  - Form field labels and placeholders
+  - Dialog titles and messages
+  - Toast notifications
+  - Error messages
+  - Empty states
+  - Table column headers
+  - Filter and search placeholders
+- **What NOT to Translate:**
+  - Mock/test data values (these come from backend)
+  - Code comments (keep in Russian for team communication)
+  - Internal validation error messages in Zod schemas (use English for consistency)
+  - Environment variable names
+  - API endpoint paths
+- **Currency Format:** Use `t('currency')` for "сум" / "so'm" (UZS)
+- **Date Format:** Use `formatDate()` utility which respects locale (DD.MM.YYYY for both RU/UZ)
+- **Never Skip Translation:** Even for "small" changes or "temporary" pages - always add both languages
 
 ### Database Patterns
 - **Always include `tenant_id`:** Every table must have tenant_id column with RLS policy

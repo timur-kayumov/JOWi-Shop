@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Plus, Search, ArrowUpCircle, ArrowDownCircle, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import {
   Button,
   Input,
@@ -45,7 +46,7 @@ interface Safe {
 
 // Validation schema (shared with backend)
 const createSafeSchema = z.object({
-  name: z.string().min(2, 'Минимум 2 символа').max(100, 'Максимум 100 символов'),
+  name: z.string().min(2).max(100),
   type: z.enum(['cash', 'bank_account', 'card_account']),
   accountNumber: z.string().optional(),
   balance: z.number().default(0),
@@ -97,6 +98,7 @@ const mockTodayTransactions: Record<string, { income: number; expense: number }>
 };
 
 export default function SafesPage() {
+  const { t } = useTranslation('common');
   const params = useParams();
   const router = useRouter();
   const storeId = params.id as string;
@@ -133,7 +135,7 @@ export default function SafesPage() {
       isActive: formData.isActive,
     };
     setData([...data, newSafe]);
-    toast.success('Сохранено', `${formData.name} успешно создан`);
+    toast.success(t('messages.saved'), `${formData.name} ${t('messages.success')}`);
     setIsCreateDialogOpen(false);
     createForm.reset();
   };
@@ -143,31 +145,25 @@ export default function SafesPage() {
       style: 'decimal',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount) + ' сум';
+    }).format(amount) + ` ${t('currency')}`;
   };
 
   const watchedType = createForm.watch('type');
 
   const safeTypeLabels: Record<SafeType, string> = {
-    cash: 'Наличные',
-    bank_account: 'Банковский счёт',
-    card_account: 'Карточный счёт',
+    cash: t('finance.safes.cash'),
+    bank_account: t('finance.safes.bankAccount'),
+    card_account: t('finance.safes.cardAccount'),
   };
 
   return (
     <div className="space-y-6">
       <Card className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Сейфы</h1>
-            <p className="text-muted-foreground mt-2">
-              Управление сейфами и счетами магазина
-            </p>
-          </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Создать сейф
-          </Button>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold tracking-tight">{t('finance.safes.title')}</h1>
+          <p className="text-muted-foreground mt-2">
+            {t('finance.safes.description')}
+          </p>
         </div>
 
         <div className="flex gap-4">
@@ -175,7 +171,7 @@ export default function SafesPage() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Поиск по названию..."
+                placeholder={t('finance.safes.searchPlaceholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-9"
@@ -187,19 +183,23 @@ export default function SafesPage() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Все типы</SelectItem>
-              <SelectItem value="cash">Наличные</SelectItem>
-              <SelectItem value="bank_account">Банковский счёт</SelectItem>
-              <SelectItem value="card_account">Карточный счёт</SelectItem>
+              <SelectItem value="all">{t('finance.safes.allTypes')}</SelectItem>
+              <SelectItem value="cash">{t('finance.safes.cash')}</SelectItem>
+              <SelectItem value="bank_account">{t('finance.safes.bankAccount')}</SelectItem>
+              <SelectItem value="card_account">{t('finance.safes.cardAccount')}</SelectItem>
             </SelectContent>
           </Select>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            {t('finance.safes.createSafe')}
+          </Button>
         </div>
       </Card>
 
       {filteredData.length === 0 ? (
         <Card className="p-12">
           <div className="text-center text-muted-foreground">
-            Нет сейфов для отображения
+            {t('finance.safes.emptyMessage')}
           </div>
         </Card>
       ) : (
@@ -233,7 +233,7 @@ export default function SafesPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ArrowDownCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-muted-foreground">Доход за день</span>
+                    <span className="text-muted-foreground">{t('finance.safes.incomeToday')}</span>
                   </div>
                   <span className="font-medium">
                     {formatCurrency(mockTodayTransactions[safe.id]?.income || 0)}
@@ -242,7 +242,7 @@ export default function SafesPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ArrowUpCircle className="h-4 w-4 text-red-500" />
-                    <span className="text-muted-foreground">Расход за день</span>
+                    <span className="text-muted-foreground">{t('finance.safes.expenseToday')}</span>
                   </div>
                   <span className="font-medium">
                     {formatCurrency(mockTodayTransactions[safe.id]?.expense || 0)}
@@ -257,8 +257,8 @@ export default function SafesPage() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Создать сейф</DialogTitle>
-            <DialogDescription>Добавьте новый сейф или счёт для учёта финансов</DialogDescription>
+            <DialogTitle>{t('finance.safes.createSafe')}</DialogTitle>
+            <DialogDescription>{t('finance.safes.createSafeDescription')}</DialogDescription>
           </DialogHeader>
           <Form {...createForm}>
             <form onSubmit={createForm.handleSubmit(handleCreate)} className="space-y-4">
@@ -267,9 +267,9 @@ export default function SafesPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Название</FormLabel>
+                    <FormLabel>{t('finance.safes.name')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Например: Касса наличные" />
+                      <Input {...field} placeholder={t('finance.safes.namePlaceholder')} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -281,7 +281,7 @@ export default function SafesPage() {
                 name="type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Тип сейфа</FormLabel>
+                    <FormLabel>{t('finance.safes.safeType')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -289,9 +289,9 @@ export default function SafesPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="cash">Наличные</SelectItem>
-                        <SelectItem value="bank_account">Банковский счёт</SelectItem>
-                        <SelectItem value="card_account">Карточный счёт</SelectItem>
+                        <SelectItem value="cash">{t('finance.safes.cash')}</SelectItem>
+                        <SelectItem value="bank_account">{t('finance.safes.bankAccount')}</SelectItem>
+                        <SelectItem value="card_account">{t('finance.safes.cardAccount')}</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -304,7 +304,7 @@ export default function SafesPage() {
                 name="balance"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Начальный баланс</FormLabel>
+                    <FormLabel>{t('finance.safes.initialBalance')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -324,9 +324,9 @@ export default function SafesPage() {
                   name="accountNumber"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Номер счёта</FormLabel>
+                      <FormLabel>{t('finance.safes.accountNumber')}</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Введите номер счёта" />
+                        <Input {...field} placeholder={t('finance.safes.accountNumberPlaceholder')} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -340,9 +340,9 @@ export default function SafesPage() {
                   variant="outline"
                   onClick={() => setIsCreateDialogOpen(false)}
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
-                <Button type="submit">Создать</Button>
+                <Button type="submit">{t('actions.create')}</Button>
               </DialogFooter>
             </form>
           </Form>
