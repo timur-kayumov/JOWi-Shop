@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
@@ -47,7 +47,7 @@ const mockStores = [
     phone: '+998901234567',
     country: 'Uzbekistan',
     city: 'Ташкент',
-    logoUrl: undefined,
+    logoUrl: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=200&h=200&fit=crop',
     shiftTransitionTime: '00:00',
     isActive: true,
     createdAt: new Date('2024-01-15'),
@@ -59,7 +59,7 @@ const mockStores = [
     phone: '+998907654321',
     country: 'Uzbekistan',
     city: 'Ташкент',
-    logoUrl: undefined,
+    logoUrl: 'https://images.unsplash.com/photo-1555421689-d68471e189f2?w=200&h=200&fit=crop',
     shiftTransitionTime: '00:00',
     isActive: true,
     createdAt: new Date('2024-02-20'),
@@ -71,7 +71,7 @@ const mockStores = [
     phone: '+998905555555',
     country: 'Uzbekistan',
     city: 'Ташкент',
-    logoUrl: undefined,
+    logoUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=200&h=200&fit=crop',
     shiftTransitionTime: '00:00',
     isActive: false,
     createdAt: new Date('2024-03-10'),
@@ -100,9 +100,18 @@ export default function StoresPage() {
     },
   });
 
-  const filteredStores = stores.filter((store) =>
-    store.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredStores = useMemo(() => {
+    const filtered = stores.filter((store) =>
+      store.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [stores, search]);
 
   const onSubmit = (data: CreateStoreSchema) => {
     if (editingStore) {

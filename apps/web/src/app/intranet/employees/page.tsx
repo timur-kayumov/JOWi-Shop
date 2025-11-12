@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2, Mail, Phone } from 'lucide-react';
@@ -149,14 +149,23 @@ export default function EmployeesPage() {
     },
   });
 
-  const filteredEmployees = employees.filter((employee) => {
-    const matchesSearch =
-      employee.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      employee.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      employee.email.toLowerCase().includes(search.toLowerCase());
-    const matchesRole = roleFilter === 'all' || employee.role === roleFilter;
-    return matchesSearch && matchesRole;
-  });
+  const filteredEmployees = useMemo(() => {
+    const filtered = employees.filter((employee) => {
+      const matchesSearch =
+        employee.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        employee.lastName.toLowerCase().includes(search.toLowerCase()) ||
+        employee.email.toLowerCase().includes(search.toLowerCase());
+      const matchesRole = roleFilter === 'all' || employee.role === roleFilter;
+      return matchesSearch && matchesRole;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [employees, search, roleFilter]);
 
   const onSubmit = (data: EmployeeSchema) => {
     if (editingEmployee) {

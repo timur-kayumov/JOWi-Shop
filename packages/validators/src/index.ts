@@ -430,6 +430,16 @@ export const updateStorePosAccessSchema = z.object({
   permissions: storePosPermissionsSchema,
 });
 
+// Warehouse
+export const createWarehouseSchema = z.object({
+  name: z.string().min(2, 'Название должно содержать минимум 2 символа').max(200),
+  storeId: z.string().uuid('Выберите магазин'),
+  managerId: z.string().uuid('Выберите ответственного').optional(),
+  isActive: z.boolean().default(true),
+});
+
+export const updateWarehouseSchema = createWarehouseSchema.partial();
+
 // Permissions
 export const permissionResourceSchema = z.enum([
   'stores',
@@ -485,6 +495,8 @@ export type StoreWebPermissions = z.infer<typeof storeWebPermissionsSchema>;
 export type StorePosPermissions = z.infer<typeof storePosPermissionsSchema>;
 export type UpdateStoreWebAccessSchema = z.infer<typeof updateStoreWebAccessSchema>;
 export type UpdateStorePosAccessSchema = z.infer<typeof updateStorePosAccessSchema>;
+export type CreateWarehouseSchema = z.infer<typeof createWarehouseSchema>;
+export type UpdateWarehouseSchema = z.infer<typeof updateWarehouseSchema>;
 export type Gender = z.infer<typeof genderSchema>;
 export type UserRole = z.infer<typeof userRoleSchema>;
 export type PermissionResource = z.infer<typeof permissionResourceSchema>;
@@ -493,6 +505,125 @@ export type ReceiptStatus = z.infer<typeof receiptStatusSchema>;
 export type GetCustomerReceiptsSchema = z.infer<typeof getCustomerReceiptsSchema>;
 export type RefundReceiptItemSchema = z.infer<typeof refundReceiptItemSchema>;
 export type RefundReceiptSchema = z.infer<typeof refundReceiptSchema>;
+
+// Finance - Accruals
+export const accrualEntityTypeSchema = z.enum(['safe', 'cash_register', 'counterparty']);
+export const accrualStatusSchema = z.enum(['draft', 'published', 'canceled']);
+export const accrualTypeSchema = z.enum(['system', 'user']);
+
+export const accrualEntityReferenceSchema = z.object({
+  type: accrualEntityTypeSchema,
+  id: z.string().uuid(),
+  name: z.string(),
+});
+
+export const createAccrualSchema = z.object({
+  datetime: z.date(),
+  purposeId: z.string().uuid(),
+  purposeName: z.string().min(1).max(200),
+  source: accrualEntityReferenceSchema,
+  recipient: accrualEntityReferenceSchema,
+  amount: z.number().positive('Amount must be greater than 0'),
+  type: accrualTypeSchema,
+  status: accrualStatusSchema,
+});
+
+export const updateAccrualSchema = createAccrualSchema.partial();
+
+// Accrual TypeScript types
+export type AccrualEntityType = z.infer<typeof accrualEntityTypeSchema>;
+export type AccrualStatus = z.infer<typeof accrualStatusSchema>;
+export type AccrualType = z.infer<typeof accrualTypeSchema>;
+export type AccrualEntityReference = z.infer<typeof accrualEntityReferenceSchema>;
+export type CreateAccrualSchema = z.infer<typeof createAccrualSchema>;
+export type UpdateAccrualSchema = z.infer<typeof updateAccrualSchema>;
+
+// Finance - Transactions (same enums as accruals)
+export const transactionStatusSchema = accrualStatusSchema;
+export const transactionTypeSchema = accrualTypeSchema;
+export const transactionEntityTypeSchema = accrualEntityTypeSchema;
+export const transactionEntityReferenceSchema = accrualEntityReferenceSchema;
+
+export const createTransactionSchema = z.object({
+  datetime: z.date(),
+  purposeId: z.string().uuid(),
+  purposeName: z.string().min(1).max(200),
+  source: transactionEntityReferenceSchema,
+  recipient: transactionEntityReferenceSchema,
+  amount: z.number().positive('Amount must be greater than 0'),
+  type: transactionTypeSchema,
+  status: transactionStatusSchema,
+  fiscalData: z.record(z.any()).optional(), // Fiscal provider specific data
+  metadata: z.record(z.any()).optional(),
+});
+
+export const updateTransactionSchema = createTransactionSchema.partial();
+
+// Transaction TypeScript types
+export type TransactionStatus = z.infer<typeof transactionStatusSchema>;
+export type TransactionType = z.infer<typeof transactionTypeSchema>;
+export type TransactionEntityType = z.infer<typeof transactionEntityTypeSchema>;
+export type TransactionEntityReference = z.infer<typeof transactionEntityReferenceSchema>;
+export type CreateTransactionSchema = z.infer<typeof createTransactionSchema>;
+export type UpdateTransactionSchema = z.infer<typeof updateTransactionSchema>;
+
+// Finance - Purposes (справочник назначений операций)
+export const purposeCategorySchema = z.enum(['income', 'expense', 'transfer']);
+
+export const createPurposeSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(200),
+  category: purposeCategorySchema.optional(),
+  isSystem: z.boolean().default(false),
+  sortOrder: z.number().int().default(0),
+});
+
+export const updatePurposeSchema = createPurposeSchema.partial();
+
+// Purpose TypeScript types
+export type PurposeCategory = z.infer<typeof purposeCategorySchema>;
+export type CreatePurposeSchema = z.infer<typeof createPurposeSchema>;
+export type UpdatePurposeSchema = z.infer<typeof updatePurposeSchema>;
+
+// Document Activity History
+export const documentTypeSchema = z.enum(['transaction', 'accrual', 'movement_document']);
+export const activityTypeSchema = z.enum([
+  'created',
+  'updated',
+  'status_changed',
+  'amount_corrected',
+  'deleted',
+]);
+
+export const fieldChangeSchema = z.object({
+  field: z.string(),
+  fieldLabel: z.string(),
+  oldValue: z.string(),
+  newValue: z.string(),
+  oldValueRaw: z.any().optional(),
+  newValueRaw: z.any().optional(),
+});
+
+export const createDocumentActivitySchema = z.object({
+  documentType: documentTypeSchema,
+  documentId: z.string().uuid(),
+  type: activityTypeSchema,
+  userId: z.string().uuid().optional(),
+  userName: z.string().min(1),
+  userAvatar: z.string().url().optional(),
+  description: z.string().min(1),
+  changes: z.array(fieldChangeSchema).optional(),
+  oldStatus: z.string().optional(),
+  newStatus: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
+  ipAddress: z.string().ip().optional(),
+  userAgent: z.string().optional(),
+});
+
+// Document Activity TypeScript types
+export type DocumentType = z.infer<typeof documentTypeSchema>;
+export type ActivityType = z.infer<typeof activityTypeSchema>;
+export type FieldChange = z.infer<typeof fieldChangeSchema>;
+export type CreateDocumentActivitySchema = z.infer<typeof createDocumentActivitySchema>;
 
 // Export all schemas
 // TODO: Add auth and inventory schema modules when needed

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Package } from 'lucide-react';
@@ -37,6 +37,7 @@ const mockProducts = [
     stock: 150,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-01-15'),
   },
   {
     id: '2',
@@ -48,6 +49,7 @@ const mockProducts = [
     stock: 80,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-02-10'),
   },
   {
     id: '3',
@@ -59,6 +61,7 @@ const mockProducts = [
     stock: 200,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-03-05'),
   },
   {
     id: '4',
@@ -70,6 +73,7 @@ const mockProducts = [
     stock: 50,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-04-20'),
   },
   {
     id: '5',
@@ -81,6 +85,7 @@ const mockProducts = [
     stock: 120,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-05-15'),
   },
   {
     id: '6',
@@ -92,6 +97,7 @@ const mockProducts = [
     stock: 60,
     isActive: true,
     imageUrl: undefined,
+    createdAt: new Date('2024-06-10'),
   },
   {
     id: '7',
@@ -103,6 +109,7 @@ const mockProducts = [
     stock: 40,
     isActive: false,
     imageUrl: undefined,
+    createdAt: new Date('2024-07-01'),
   },
 ];
 
@@ -117,19 +124,28 @@ export default function StoreProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const filteredProducts = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(search.toLowerCase()) ||
-      product.sku.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      categoryFilter === 'all' || product.category === categoryFilter;
-    const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'active' && product.isActive) ||
-      (statusFilter === 'inactive' && !product.isActive);
+  const filteredProducts = useMemo(() => {
+    const filtered = products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.sku.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory =
+        categoryFilter === 'all' || product.category === categoryFilter;
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'active' && product.isActive) ||
+        (statusFilter === 'inactive' && !product.isActive);
 
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+      return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [products, search, categoryFilter, statusFilter]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('ru-RU', {

@@ -106,6 +106,17 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Custom text selection color - Primary violet with inverted text */
+  ::selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  ::-moz-selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
 }
 
 @layer utilities {

@@ -163,7 +163,7 @@ export default function StoreReceiptsPage() {
 
   // Filtered receipts
   const filteredReceipts = useMemo(() => {
-    return mockReceipts.filter((receipt) => {
+    const filtered = mockReceipts.filter((receipt) => {
       // Search filter
       if (
         searchQuery &&
@@ -200,6 +200,13 @@ export default function StoreReceiptsPage() {
       }
 
       return true;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
     });
   }, [searchQuery, selectedStatus, selectedEmployee, dateRange]);
 

@@ -30,8 +30,8 @@ import { toast } from '@/lib/toast';
 // ==================== TYPES ====================
 
 type EntityType = 'safe' | 'cash_register' | 'counterparty';
-type TransactionType = 'system' | 'user';
-type TransactionStatus = 'draft' | 'published' | 'canceled';
+type AccrualType = 'system' | 'user';
+type AccrualStatus = 'draft' | 'published' | 'canceled';
 
 interface EntityReference {
   type: EntityType;
@@ -40,7 +40,7 @@ interface EntityReference {
   balance?: number; // For display purposes
 }
 
-interface Transaction {
+interface Accrual {
   id: string;
   datetime: Date;
   purposeId: string;
@@ -48,21 +48,21 @@ interface Transaction {
   source: EntityReference;
   recipient: EntityReference;
   amount: number;
-  type: TransactionType;
-  status: TransactionStatus;
+  type: AccrualType;
+  status: AccrualStatus;
 }
 
 // ==================== MOCK DATA ====================
 
-// Mock transaction data (in real app, this would come from API)
-const mockTransaction: Transaction = {
+// Mock accrual data (in real app, this would come from API)
+const mockAccrual: Accrual = {
   id: '1',
-  datetime: new Date('2025-01-25T15:51:00'),
-  purposeId: '4',
-  purposeName: 'Оплата аренды',
-  source: { type: 'safe', id: '1', name: 'Сейф 1', balance: 5800000 },
-  recipient: { type: 'counterparty', id: '2', name: 'Контрагент X', balance: -5800000 },
-  amount: 4508544,
+  datetime: new Date('2025-11-10T10:30:00'),
+  purposeId: 'p1',
+  purposeName: 'Начисление зарплаты',
+  source: { type: 'safe', id: 's2', name: 'Расчетный счет', balance: 5800000 },
+  recipient: { type: 'counterparty', id: 'c2', name: 'ИП Иванов А.А.', balance: -5800000 },
+  amount: 8000000,
   type: 'system',
   status: 'draft',
 };
@@ -80,7 +80,7 @@ const mockComments: Comment[] = [
     id: '2',
     userId: '2',
     userName: 'Иван Петров',
-    text: 'Согласовано с руководством. Можно проводить оплату.',
+    text: 'Согласовано с руководством. Можно проводить начисление.',
     createdAt: new Date('2025-11-11T23:26:00'), // 2 hours before page load
   },
   {
@@ -102,7 +102,7 @@ const mockActivities: Activity[] = [
     userName: 'Имя Пользователя',
     userAvatar: undefined,
     timestamp: new Date('2025-02-12T07:00:00'),
-    newStatus: 'Отменена',
+    newStatus: 'Отменено',
   },
   {
     id: '6',
@@ -125,8 +125,8 @@ const mockActivities: Activity[] = [
       {
         field: 'amount',
         fieldLabel: 'Сумма',
-        oldValue: '175 000 сум',
-        newValue: '300 000 сум',
+        oldValue: '7 500 000 сум',
+        newValue: '8 000 000 сум',
       },
     ],
   },
@@ -137,7 +137,7 @@ const mockActivities: Activity[] = [
     userName: 'Имя Пользователя',
     userAvatar: undefined,
     timestamp: new Date('2025-02-12T12:06:00'),
-    newStatus: 'Опубликована',
+    newStatus: 'Опубликовано',
   },
   {
     id: '3',
@@ -163,36 +163,34 @@ const formatCurrency = (amount: number) => {
 const getEntityTypeLabel = (type: EntityType, t: any): string => {
   switch (type) {
     case 'safe':
-      return t('finance.transactions.safe');
+      return t('finance.accruals.safe');
     case 'cash_register':
-      return t('finance.transactions.cashRegister');
+      return t('finance.accruals.cashRegister');
     case 'counterparty':
-      return t('finance.transactions.counterparty');
+      return t('finance.accruals.counterparty');
   }
 };
 
-// Status handling is now done by StatusBadge component with i18n
-
-const getTypeLabel = (type: TransactionType, t: any): string => {
+const getTypeLabel = (type: AccrualType, t: any): string => {
   switch (type) {
     case 'system':
-      return t('finance.transactions.system');
+      return t('finance.accruals.system');
     case 'user':
-      return t('finance.transactions.user');
+      return t('finance.accruals.user');
   }
 };
 
 // ==================== MAIN COMPONENT ====================
 
-export default function TransactionDetailPage() {
+export default function AccrualDetailPage() {
   const params = useParams();
   const router = useRouter();
   const storeId = params.id as string;
-  const transactionId = params.transactionId as string;
+  const accrualId = params.accrualId as string;
   const { t } = useTranslation('common');
 
-  // In real app, fetch transaction by ID
-  const [transaction, setTransaction] = useState<Transaction>(mockTransaction);
+  // In real app, fetch accrual by ID
+  const [accrual, setAccrual] = useState<Accrual>(mockAccrual);
 
   // State for comments
   const [comments, setComments] = useState<Comment[]>(mockComments);
@@ -213,7 +211,7 @@ export default function TransactionDetailPage() {
       createdAt: new Date(),
     };
     setComments([newComment, ...comments]);
-    toast.success(t('messages.success'), t('finance.transactions.detail.commentAdded'));
+    toast.success(t('messages.success'), t('finance.accruals.detail.commentAdded'));
   };
 
   const handleEditComment = (commentId: string, text: string) => {
@@ -222,19 +220,19 @@ export default function TransactionDetailPage() {
         c.id === commentId ? { ...c, text, updatedAt: new Date() } : c
       )
     );
-    toast.success(t('messages.success'), t('finance.transactions.detail.commentEdited'));
+    toast.success(t('messages.success'), t('finance.accruals.detail.commentEdited'));
   };
 
   const handleDeleteComment = (commentId: string) => {
     setComments(comments.filter((c) => c.id !== commentId));
-    toast.success(t('messages.success'), t('finance.transactions.detail.commentDeleted'));
+    toast.success(t('messages.success'), t('finance.accruals.detail.commentDeleted'));
   };
 
-  // Transaction actions
+  // Accrual actions
   const handleEdit = () => {
-    toast.info(t('finance.transactions.detail.inDevelopment'), t('finance.transactions.editTransaction'));
+    toast.info(t('finance.accruals.detail.inDevelopment'), t('finance.accruals.editAccrual'));
     // TODO: Integrate with backend API
-    // PATCH /api/transactions/{id}
+    // PATCH /api/accruals/{id}
     // Open edit dialog or navigate to edit page
   };
 
@@ -244,9 +242,9 @@ export default function TransactionDetailPage() {
 
   const confirmDelete = () => {
     // TODO: Integrate with backend API
-    // DELETE /api/transactions/{id}
-    toast.success(t('messages.success'), t('finance.transactions.deleteSuccess'));
-    router.push(`/store/${storeId}/finance/transactions`);
+    // DELETE /api/accruals/{id}
+    toast.success(t('messages.success'), t('finance.accruals.deleteSuccess'));
+    router.push(`/store/${storeId}/finance/accruals`);
   };
 
   const handlePublish = () => {
@@ -255,9 +253,9 @@ export default function TransactionDetailPage() {
 
   const confirmPublish = () => {
     // TODO: Integrate with backend API
-    // POST /api/transactions/{id}/publish
-    setTransaction({ ...transaction, status: 'published' });
-    toast.success(t('messages.success'), t('finance.transactions.detail.statusUpdated'));
+    // POST /api/accruals/{id}/publish
+    setAccrual({ ...accrual, status: 'published' });
+    toast.success(t('messages.success'), t('finance.accruals.detail.statusUpdated'));
     setPublishDialogOpen(false);
   };
 
@@ -267,21 +265,21 @@ export default function TransactionDetailPage() {
 
   const confirmCancel = () => {
     // TODO: Integrate with backend API
-    // POST /api/transactions/{id}/cancel
-    setTransaction({ ...transaction, status: 'canceled' });
-    toast.success(t('messages.success'), t('finance.transactions.detail.statusUpdated'));
+    // POST /api/accruals/{id}/cancel
+    setAccrual({ ...accrual, status: 'canceled' });
+    toast.success(t('messages.success'), t('finance.accruals.detail.statusUpdated'));
     setCancelDialogOpen(false);
   };
 
   const handleBack = () => {
-    router.push(`/store/${storeId}/finance/transactions`);
+    router.push(`/store/${storeId}/finance/accruals`);
   };
 
   // Determine which buttons to show based on status
-  const canEdit = transaction.status !== 'canceled';
-  const canPublish = transaction.status === 'draft';
-  const canCancelTransaction = transaction.status === 'published';
-  const canDelete = transaction.status === 'draft';
+  const canEdit = accrual.status !== 'canceled';
+  const canPublish = accrual.status === 'draft';
+  const canCancelAccrual = accrual.status === 'published';
+  const canDelete = accrual.status === 'draft';
 
   return (
     <div className="space-y-6">
@@ -297,36 +295,36 @@ export default function TransactionDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column: Main info + Payment operations */}
         <div className="space-y-6">
-          {/* Transaction Details Card */}
+          {/* Accrual Details Card */}
           <Card className="p-6">
             <div className="space-y-4">
               {/* Purpose Name as first field (larger text) */}
               <div>
-                <p className="text-sm text-muted-foreground mb-1">{t('finance.transactions.detail.purpose')}</p>
-                <h2 className="text-2xl font-bold">{transaction.purposeName}</h2>
+                <p className="text-sm text-muted-foreground mb-1">{t('finance.accruals.detail.purpose')}</p>
+                <h2 className="text-2xl font-bold">{accrual.purposeName}</h2>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('finance.transactions.detail.date')}</p>
-                  <p className="text-sm font-medium">{formatDate(transaction.datetime)}</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('finance.accruals.detail.date')}</p>
+                  <p className="text-sm font-medium">{formatDate(accrual.datetime)}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('finance.transactions.detail.amount')}</p>
-                  <p className="text-lg font-semibold">{formatCurrency(transaction.amount)}</p>
+                  <p className="text-sm text-muted-foreground mb-1">{t('finance.accruals.detail.amount')}</p>
+                  <p className="text-lg font-semibold">{formatCurrency(accrual.amount)}</p>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('finance.transactions.detail.type')}</p>
-                  <Badge variant={transaction.type === 'system' ? 'secondary' : 'default'}>
-                    {getTypeLabel(transaction.type, t)}
+                  <p className="text-sm text-muted-foreground mb-1">{t('finance.accruals.detail.type')}</p>
+                  <Badge variant={accrual.type === 'system' ? 'secondary' : 'default'}>
+                    {getTypeLabel(accrual.type, t)}
                   </Badge>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">{t('finance.transactions.detail.status')}</p>
-                  <StatusBadge type="transaction" status={transaction.status} t={t} />
+                  <p className="text-sm text-muted-foreground mb-1">{t('finance.accruals.detail.status')}</p>
+                  <StatusBadge type="transaction" status={accrual.status} t={t} />
                 </div>
               </div>
 
@@ -348,7 +346,7 @@ export default function TransactionDetailPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('finance.transactions.detail.delete')}</p>
+                          <p>{t('finance.accruals.detail.delete')}</p>
                         </TooltipContent>
                       </Tooltip>
                     )}
@@ -365,7 +363,7 @@ export default function TransactionDetailPage() {
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('finance.transactions.detail.edit')}</p>
+                          <p>{t('finance.accruals.detail.edit')}</p>
                         </TooltipContent>
                       </Tooltip>
                     )}
@@ -375,13 +373,13 @@ export default function TransactionDetailPage() {
                   {canPublish && (
                     <Button onClick={handlePublish} size="sm" className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white">
                       <Check className="mr-2 h-4 w-4" />
-                      {t('finance.transactions.detail.publish')}
+                      {t('finance.accruals.detail.publish')}
                     </Button>
                   )}
-                  {canCancelTransaction && (
+                  {canCancelAccrual && (
                     <Button variant="outline" onClick={handleCancel} size="sm">
                       <XCircle className="mr-2 h-4 w-4" />
-                      {t('finance.transactions.detail.cancel')}
+                      {t('finance.accruals.detail.cancel')}
                     </Button>
                   )}
                 </div>
@@ -391,7 +389,7 @@ export default function TransactionDetailPage() {
 
           {/* Payment Operations Card - Compact Design */}
           <Card className="p-6">
-            <div className="text-lg font-semibold mb-4">{t('finance.transactions.detail.paymentOperations')}</div>
+            <div className="text-lg font-semibold mb-4">{t('finance.accruals.detail.paymentOperations')}</div>
 
             <div className="space-y-4">
               {/* Source */}
@@ -399,14 +397,14 @@ export default function TransactionDetailPage() {
                 <div className="space-y-2">
                   {/* Name and balance on same line */}
                   <div className="flex items-center justify-between gap-4">
-                    <p className="font-medium">{transaction.source.name}</p>
+                    <p className="font-medium">{accrual.source.name}</p>
                     <p className="text-lg font-semibold">
-                      {formatCurrency(transaction.source.balance || 0)}
+                      {formatCurrency(accrual.source.balance || 0)}
                     </p>
                   </div>
                   {/* Label below */}
                   <p className="text-xs text-muted-foreground">
-                    {t('finance.transactions.detail.source')}
+                    {t('finance.accruals.detail.source')}
                   </p>
                 </div>
               </div>
@@ -416,14 +414,14 @@ export default function TransactionDetailPage() {
                 <div className="space-y-2">
                   {/* Name and balance on same line */}
                   <div className="flex items-center justify-between gap-4">
-                    <p className="font-medium">{transaction.recipient.name}</p>
+                    <p className="font-medium">{accrual.recipient.name}</p>
                     <p className="text-lg font-semibold">
-                      {formatCurrency(transaction.recipient.balance || 0)}
+                      {formatCurrency(accrual.recipient.balance || 0)}
                     </p>
                   </div>
                   {/* Label below */}
                   <p className="text-xs text-muted-foreground">
-                    {t('finance.transactions.detail.recipient')}
+                    {t('finance.accruals.detail.recipient')}
                   </p>
                 </div>
               </div>
@@ -434,7 +432,7 @@ export default function TransactionDetailPage() {
         {/* Middle column: Comments */}
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">{t('finance.transactions.detail.comments')}</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('finance.accruals.detail.comments')}</h2>
             <Comments
               comments={comments}
               currentUserId={currentUserId}
@@ -448,7 +446,7 @@ export default function TransactionDetailPage() {
         {/* Right column: History */}
         <div className="space-y-6">
           <Card className="p-6">
-            <h2 className="text-lg font-semibold mb-4">{t('finance.transactions.detail.history')}</h2>
+            <h2 className="text-lg font-semibold mb-4">{t('finance.accruals.detail.history')}</h2>
             <ActivityHistory activities={mockActivities} />
           </Card>
         </div>
@@ -460,9 +458,9 @@ export default function TransactionDetailPage() {
       <Dialog open={publishDialogOpen} onOpenChange={setPublishDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('finance.transactions.detail.publishConfirm.title')}</DialogTitle>
+            <DialogTitle>{t('finance.accruals.detail.publishConfirm.title')}</DialogTitle>
             <DialogDescription>
-              {t('finance.transactions.detail.publishConfirm.message')}
+              {t('finance.accruals.detail.publishConfirm.message')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -470,7 +468,7 @@ export default function TransactionDetailPage() {
               {t('actions.cancel')}
             </Button>
             <Button onClick={confirmPublish} className="bg-green-600 hover:bg-green-700 active:bg-green-800 text-white">
-              {t('finance.transactions.detail.publish')}
+              {t('finance.accruals.detail.publish')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -480,9 +478,9 @@ export default function TransactionDetailPage() {
       <Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('finance.transactions.detail.cancelConfirm.title')}</DialogTitle>
+            <DialogTitle>{t('finance.accruals.detail.cancelConfirm.title')}</DialogTitle>
             <DialogDescription>
-              {t('finance.transactions.detail.cancelConfirm.message')}
+              {t('finance.accruals.detail.cancelConfirm.message')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -490,7 +488,7 @@ export default function TransactionDetailPage() {
               {t('actions.cancel')}
             </Button>
             <Button variant="destructive" onClick={confirmCancel}>
-              {t('finance.transactions.detail.cancel')}
+              {t('finance.accruals.detail.cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -500,9 +498,9 @@ export default function TransactionDetailPage() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('finance.transactions.detail.deleteConfirm.title')}</DialogTitle>
+            <DialogTitle>{t('finance.accruals.detail.deleteConfirm.title')}</DialogTitle>
             <DialogDescription>
-              {t('finance.transactions.detail.deleteConfirm.message')}
+              {t('finance.accruals.detail.deleteConfirm.message')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -510,7 +508,7 @@ export default function TransactionDetailPage() {
               {t('actions.cancel')}
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
-              {t('finance.transactions.detail.delete')}
+              {t('finance.accruals.detail.delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -67,12 +67,28 @@ export function DateRangePicker({
   className,
   disabled,
 }: DateRangePickerProps) {
+  const [open, setOpen] = React.useState(false);
+  const [tempDateRange, setTempDateRange] = React.useState<DateRange | undefined>(dateRange);
+
+  React.useEffect(() => {
+    setTempDateRange(dateRange);
+  }, [dateRange]);
+
   const handleSelect: SelectRangeEventHandler = (range) => {
-    onDateRangeChange?.(range);
+    setTempDateRange(range);
+  };
+
+  const handleReset = () => {
+    setTempDateRange(undefined);
+  };
+
+  const handleApply = () => {
+    onDateRangeChange?.(tempDateRange);
+    setOpen(false);
   };
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -99,14 +115,33 @@ export function DateRangePicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="range"
-          defaultMonth={dateRange?.from}
-          selected={dateRange}
-          onSelect={handleSelect}
-          numberOfMonths={2}
-          initialFocus
-        />
+        <div className="p-3">
+          <Calendar
+            mode="range"
+            defaultMonth={tempDateRange?.from || dateRange?.from}
+            selected={tempDateRange}
+            onSelect={handleSelect}
+            numberOfMonths={2}
+            initialFocus
+          />
+          <div className="flex items-center justify-between gap-2 pt-3 border-t mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="flex-1"
+            >
+              Сбросить
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleApply}
+              className="flex-1"
+            >
+              Применить
+            </Button>
+          </div>
+        </div>
       </PopoverContent>
     </Popover>
   );

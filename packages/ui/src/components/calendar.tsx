@@ -21,23 +21,23 @@ function Calendar({
       classNames={{
         months: 'flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0',
         month: 'space-y-4',
-        month_caption: 'flex justify-center pt-1 relative items-center',
+        month_caption: 'flex justify-center pt-1 relative items-center h-9',
         caption_label: 'text-sm font-medium',
-        nav: 'space-x-1 flex items-center',
+        nav: 'flex items-center gap-1',
         button_previous: cn(
-          'absolute left-1',
+          'absolute left-0',
           'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
           'disabled:pointer-events-none disabled:opacity-50',
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+          'hover:bg-accent hover:text-accent-foreground',
           'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
         button_next: cn(
-          'absolute right-1',
+          'absolute right-0',
           'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
           'disabled:pointer-events-none disabled:opacity-50',
-          'border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground',
+          'hover:bg-accent hover:text-accent-foreground',
           'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100'
         ),
         month_grid: 'w-full border-collapse space-y-1',
@@ -53,16 +53,16 @@ function Calendar({
           '[&:has([aria-selected].day-outside)]:bg-accent/50'
         ),
         day_button: cn(
-          'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors',
+          'inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors',
           'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
           'disabled:pointer-events-none disabled:opacity-50',
           'hover:bg-accent hover:text-accent-foreground',
-          'h-8 w-8 p-0 font-normal aria-selected:opacity-100'
+          'h-8 w-8 p-0 font-normal aria-selected:opacity-100 rounded-md'
         ),
-        range_start: 'day-range-start',
-        range_end: 'day-range-end',
+        range_start: 'day-range-start rounded-l-md',
+        range_end: 'day-range-end rounded-r-md',
         selected:
-          'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground',
+          'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-md',
         today: 'bg-accent text-accent-foreground',
         outside:
           'day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30',

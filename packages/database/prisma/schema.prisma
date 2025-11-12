@@ -54,6 +54,7 @@ model Store {
   business          Business           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   terminals         Terminal[]
   employees         Employee[]
+  warehouses        Warehouse[]
   stockLevels       StockLevel[]
   stockBatches      StockBatch[]
   receipts          Receipt[]
@@ -128,11 +129,12 @@ model Employee {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   deletedAt      DateTime? @map("deleted_at")
 
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  store       Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  shifts      Shift[]
-  receipts    Receipt[]
-  refundItems RefundItem[]
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store             Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  shifts            Shift[]
+  receipts          Receipt[]
+  refundItems       RefundItem[]
+  managedWarehouses Warehouse[]
 
   @@index([tenantId])
   @@index([storeId])
@@ -316,6 +318,30 @@ model MovementItem {
 }
 
 // ============================================
+// WAREHOUSES
+// ============================================
+
+model Warehouse {
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
+  storeId   String    @map("store_id")
+  name      String
+  managerId String?   @map("manager_id")
+  isActive  Boolean   @default(true) @map("is_active")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  store   Store     @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  manager Employee? @relation(fields: [managerId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([storeId])
+  @@index([managerId])
+  @@map("warehouses")
+}
+
+// ============================================
 // SALES & RECEIPTS
 // ============================================
 
@@ -457,17 +483,18 @@ model LoyaltyTransaction {
 // ============================================
 
 model Safe {
-  id            String    @id @default(uuid())
-  tenantId      String    @map("tenant_id")
-  storeId       String    @map("store_id")
-  name          String
-  type          String // cash, bank_account, card_account
-  accountNumber String?   @map("account_number")
-  balance       Decimal   @default(0) @db.Decimal(15, 0)
-  isActive      Boolean   @default(true) @map("is_active")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  deletedAt     DateTime? @map("deleted_at")
+  id             String    @id @default(uuid())
+  tenantId       String    @map("tenant_id")
+  storeId        String    @map("store_id")
+  name           String
+  type           String // cash, bank_account, card_account
+  accountNumber  String?   @map("account_number")
+  balance        Decimal   @default(0) @db.Decimal(15, 0)
+  initialBalance Decimal   @default(0) @db.Decimal(15, 0) @map("initial_balance")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
 
   paymentTypes PaymentType[]
 
@@ -635,4 +662,112 @@ model StoreAccess {
   @@index([userId])
   @@index([storeId])
   @@map("store_accesses")
+}
+
+// ============================================
+// FINANCE: TRANSACTIONS & ACCRUALS
+// ============================================
+
+model Purpose {
+  id        String    @id @default(uuid())
+  tenantId  String    @map("tenant_id")
+  name      String
+  category  String? // income, expense, transfer
+  isSystem  Boolean   @default(false) @map("is_system")
+  sortOrder Int       @default(0) @map("sort_order")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  transactions Transaction[]
+  accruals     Accrual[]
+
+  @@index([tenantId])
+  @@map("purposes")
+}
+
+model Transaction {
+  id            String    @id @default(uuid())
+  tenantId      String    @map("tenant_id")
+  datetime      DateTime
+  purposeId     String    @map("purpose_id")
+  purposeName   String    @map("purpose_name") // Денормализация для удобства
+  sourceType    String    @map("source_type") // safe, cash_register, counterparty
+  sourceId      String    @map("source_id")
+  recipientType String    @map("recipient_type") // safe, cash_register, counterparty
+  recipientId   String    @map("recipient_id")
+  amount        Decimal   @db.Decimal(15, 0)
+  type          String // system, user
+  status        String    @default("draft") // draft, published, canceled
+  fiscalData    Json?     @map("fiscal_data")
+  metadata      Json?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  purpose Purpose @relation(fields: [purposeId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId])
+  @@index([datetime])
+  @@index([status])
+  @@index([sourceType, sourceId])
+  @@index([recipientType, recipientId])
+  @@map("transactions")
+}
+
+model Accrual {
+  id            String    @id @default(uuid())
+  tenantId      String    @map("tenant_id")
+  datetime      DateTime
+  purposeId     String    @map("purpose_id")
+  purposeName   String    @map("purpose_name") // Денормализация для удобства
+  sourceType    String    @map("source_type") // safe, cash_register, counterparty
+  sourceId      String    @map("source_id")
+  recipientType String    @map("recipient_type") // safe, cash_register, counterparty
+  recipientId   String    @map("recipient_id")
+  amount        Decimal   @db.Decimal(15, 0)
+  type          String // system, user
+  status        String    @default("draft") // draft, published, canceled
+  metadata      Json?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  purpose Purpose @relation(fields: [purposeId], references: [id], onDelete: Restrict)
+
+  @@index([tenantId])
+  @@index([datetime])
+  @@index([status])
+  @@index([sourceType, sourceId])
+  @@index([recipientType, recipientId])
+  @@map("accruals")
+}
+
+// ============================================
+// DOCUMENT ACTIVITY HISTORY
+// ============================================
+
+model DocumentActivity {
+  id             String   @id @default(uuid())
+  tenantId       String   @map("tenant_id")
+  documentType   String   @map("document_type") // transaction, accrual, movement_document
+  documentId     String   @map("document_id")
+  type           String // created, updated, status_changed, amount_corrected, deleted
+  userId         String?  @map("user_id")
+  userName       String   @map("user_name")
+  userAvatar     String?  @map("user_avatar")
+  timestamp      DateTime @default(now())
+  description    String
+  changes        Json? // Array of field changes: [{ field, fieldLabel, oldValue, newValue, oldValueRaw, newValueRaw }]
+  oldStatus      String?  @map("old_status")
+  newStatus      String?  @map("new_status")
+  metadata       Json? // Additional context
+  ipAddress      String?  @map("ip_address")
+  userAgent      String?  @map("user_agent")
+
+  @@index([tenantId])
+  @@index([documentType, documentId])
+  @@index([timestamp])
+  @@index([userId])
+  @@map("document_activities")
 }

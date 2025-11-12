@@ -14,6 +14,16 @@ const MONTHS_UZ = [
   'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'
 ];
 
+const MONTHS_SHORT_RU = [
+  'янв.', 'фев.', 'мар.', 'апр.', 'мая', 'июн.',
+  'июл.', 'авг.', 'сен.', 'окт.', 'ноя.', 'дек.'
+];
+
+const MONTHS_SHORT_UZ = [
+  'yan.', 'fev.', 'mart', 'apr.', 'may', 'iyun',
+  'iyul', 'avg.', 'sen.', 'okt.', 'noy.', 'dek.'
+];
+
 /**
  * Format date to "10 ноября 2025, 23:00"
  */
@@ -58,6 +68,24 @@ export function formatTime(date: Date | string): string {
   const minutes = String(d.getMinutes()).padStart(2, '0');
 
   return `${hours}:${minutes}`;
+}
+
+/**
+ * Format date for activity history: "12 фев. · 07:00"
+ * Used in activity timelines with compact date format
+ */
+export function formatActivityDate(date: Date | string, locale: Locale = 'ru'): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+
+  const day = d.getDate();
+  const monthIndex = d.getMonth();
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+
+  const months = locale === 'ru' ? MONTHS_SHORT_RU : MONTHS_SHORT_UZ;
+  const month = months[monthIndex];
+
+  return `${day} ${month} · ${hours}:${minutes}`;
 }
 
 /**

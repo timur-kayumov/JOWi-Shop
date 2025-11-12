@@ -26,7 +26,22 @@
       "mcp__playwright__browser_evaluate",
       "mcp__playwright__browser_press_key",
       "Bash(netstat:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose logs:*)",
+      "Bash(pnpm db:studio:*)",
+      "Bash(pnpm dlx:*)",
+      "Bash(pnpm db:migrate:*)",
+      "Bash(pnpm db:generate:*)",
+      "mcp__nx-mcp__nx_workspace",
+      "Bash(pnpm db:migrate:dev:*)",
+      "Bash(dir:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "Bash(pnpm db:push:*)",
+      "Bash(timeout:*)"
     ],
     "deny": [],
     "ask": []

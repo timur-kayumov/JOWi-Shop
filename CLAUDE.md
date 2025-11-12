@@ -385,6 +385,10 @@ This approach was replaced with Flutter/Android to reduce hardware costs and imp
      - Killing the current terminal process will terminate the Claude Code session
      - Always check the process tree before terminating processes
      - If in doubt, ask the user before terminating processes
+- **Waiting/Sleep Commands (Windows):**
+  - ✅ Correct: `powershell -Command "Start-Sleep -Seconds <N>"`
+  - ❌ Incorrect: `timeout /t <N> /nobreak` (does not work, causes errors)
+  - Always use PowerShell's `Start-Sleep` command for delays in scripts or between operations
 - **Rationale:** Multiple running instances on different ports cause confusion, resource waste, and potential conflicts
 
 ### Code Organization

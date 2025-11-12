@@ -5,7 +5,7 @@
 export const i18nConfig = {
   defaultLocale: 'ru' as const,
   supportedLocales: ['ru', 'uz'] as const,
-  namespaces: ['common', 'pos', 'inventory', 'finance', 'errors'] as const,
+  namespaces: ['common', 'auth', 'pos', 'inventory', 'finance', 'errors'] as const,
   fallbackLng: 'ru',
   interpolation: {
     escapeValue: false,

@@ -160,7 +160,7 @@ export default function StoreLayout({
       children: [
         {
           title: t('storeNavigation.warehouses'),
-          href: `/store/${selectedStoreId}/warehouses`,
+          href: `/store/${selectedStoreId}/warehouses/warehouses-list`,
           icon: Building2,
         },
         {
@@ -276,6 +276,8 @@ export default function StoreLayout({
     ];
 
     const paths = pathname.split('/').filter(Boolean);
+
+    // Page mapping for all known routes
     const pageMap: Record<string, string> = {
       orders: t('storeNavigation.orders'),
       products: t('storeNavigation.products'),
@@ -291,35 +293,60 @@ export default function StoreLayout({
       reports: t('storeNavigation.reports'),
       integrations: t('storeNavigation.integrations'),
       settings: t('storeNavigation.settings'),
+      // Finance module
+      finance: t('storeNavigation.finance'),
+      accruals: t('storeNavigation.accruals'),
+      transactions: t('storeNavigation.transactions'),
+      safes: t('storeNavigation.safes'),
+      'cash-registers': t('storeNavigation.cashRegisters'),
+      counterparties: t('storeNavigation.counterparties'),
+      purposes: t('storeNavigation.purposes'),
+      'payment-types': t('storeNavigation.paymentTypes'),
     };
 
-    // Build breadcrumbs for nested routes
-    if (paths.length > 2) {
-      // Check if we're on categories page
-      if (paths.includes('categories')) {
-        const categoriesIndex = paths.indexOf('categories');
-        breadcrumbs.push({
-          label: t('storeNavigation.categories'),
-          href: `/store/${selectedStoreId}/categories`,
-        });
+    // Detail page labels for dynamic routes
+    const detailLabels: Record<string, string> = {
+      categories: t('pages.categories.category'),
+      accruals: t('finance.accruals.detail.title'),
+      transactions: t('finance.transactions.detail.title'),
+      safes: t('finance.safes.title'),
+      'cash-registers': t('finance.cashRegisters.title'),
+      counterparties: t('finance.counterparties.title'),
+      purposes: t('finance.purposes.title'),
+      'payment-types': t('finance.paymentTypes.title'),
+      orders: t('pages.receipts.receiptDetails'),
+      products: t('pages.products.productDetails'),
+    };
 
-        // If there's a category ID after 'categories'
-        if (paths.length > categoriesIndex + 1) {
-          const categoryId = paths[categoriesIndex + 1];
-          // For dynamic routes, show the page without translation
-          // In a real app, you'd fetch the category name from API
+    // Build breadcrumbs incrementally for nested routes
+    if (paths.length > 2) {
+      let currentPath = '';
+
+      for (let i = 0; i < paths.length; i++) {
+        const segment = paths[i];
+        currentPath += `/${segment}`;
+
+        // Skip 'store' and store ID segments (already in breadcrumbs)
+        if (segment === 'store' || (i === 1 && /^\d+$/.test(segment))) {
+          continue;
+        }
+
+        // Check if it's a known page segment
+        if (pageMap[segment]) {
           breadcrumbs.push({
-            label: `${t('pages.categories.category')} #${categoryId}`,
-            href: pathname,
+            label: pageMap[segment],
+            href: currentPath,
           });
         }
-      } else {
-        // For other pages, use the old logic
-        const currentPage = paths[paths.length - 1];
-        if (pageMap[currentPage]) {
+        // Check if it's a dynamic route (UUID or number at the end)
+        else if (i === paths.length - 1 && /^[0-9a-f-]+$|^\d+$/.test(segment)) {
+          // Get the parent segment to determine context
+          const parent = i > 0 ? paths[i - 1] : '';
+          const detailLabel = detailLabels[parent] || t('fields.actions');
+
           breadcrumbs.push({
-            label: pageMap[currentPage],
-            href: pathname,
+            label: detailLabel,
+            href: currentPath,
           });
         }
       }

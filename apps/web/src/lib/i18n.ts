@@ -2,21 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 // Import translations from @jowi/i18n package
-import ruCommon from '@jowi/i18n/src/locales/ru/common.json';
-import uzCommon from '@jowi/i18n/src/locales/uz/common.json';
-import ruAuth from '@jowi/i18n/src/locales/ru/auth.json';
-import uzAuth from '@jowi/i18n/src/locales/uz/auth.json';
-
-const resources = {
-  ru: {
-    common: ruCommon,
-    auth: ruAuth,
-  },
-  uz: {
-    common: uzCommon,
-    auth: uzAuth,
-  },
-};
+import { resources } from '@jowi/i18n';
 
 // Get initial language from cookie (client-side) or use fallback
 const getInitialLanguage = (): string => {
@@ -45,7 +31,7 @@ if (!i18n.isInitialized) {
       lng: initialLanguage, // Use language from cookie to match server
       fallbackLng: 'ru',
       defaultNS: 'common',
-      ns: ['common', 'auth'],
+      ns: ['common', 'auth', 'pos', 'inventory', 'finance', 'errors'],
       interpolation: {
         escapeValue: false, // React already escapes values
       },

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { Plus, Search, Pencil, Trash2, User } from 'lucide-react';
@@ -106,32 +106,41 @@ export default function CustomersPage() {
     },
   });
 
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      customer.phone.includes(search);
+  const filteredCustomers = useMemo(() => {
+    const filtered = customers.filter((customer) => {
+      const matchesSearch =
+        customer.firstName.toLowerCase().includes(search.toLowerCase()) ||
+        customer.lastName.toLowerCase().includes(search.toLowerCase()) ||
+        customer.phone.includes(search);
 
-    const matchesGender = genderFilter === 'all' || customer.gender === genderFilter;
+      const matchesGender = genderFilter === 'all' || customer.gender === genderFilter;
 
-    let matchesBirthYear = true;
-    if (birthYearFilter !== 'all') {
-      const birthYear = customer.dateOfBirth?.getFullYear();
-      if (birthYearFilter === '2000+' && birthYear) {
-        matchesBirthYear = birthYear >= 2000;
-      } else if (birthYearFilter === '1990-1999' && birthYear) {
-        matchesBirthYear = birthYear >= 1990 && birthYear < 2000;
-      } else if (birthYearFilter === '1980-1989' && birthYear) {
-        matchesBirthYear = birthYear >= 1980 && birthYear < 1990;
-      } else if (birthYearFilter === '1970-1979' && birthYear) {
-        matchesBirthYear = birthYear >= 1970 && birthYear < 1980;
-      } else if (birthYearFilter === '<1970' && birthYear) {
-        matchesBirthYear = birthYear < 1970;
+      let matchesBirthYear = true;
+      if (birthYearFilter !== 'all') {
+        const birthYear = customer.dateOfBirth?.getFullYear();
+        if (birthYearFilter === '2000+' && birthYear) {
+          matchesBirthYear = birthYear >= 2000;
+        } else if (birthYearFilter === '1990-1999' && birthYear) {
+          matchesBirthYear = birthYear >= 1990 && birthYear < 2000;
+        } else if (birthYearFilter === '1980-1989' && birthYear) {
+          matchesBirthYear = birthYear >= 1980 && birthYear < 1990;
+        } else if (birthYearFilter === '1970-1979' && birthYear) {
+          matchesBirthYear = birthYear >= 1970 && birthYear < 1980;
+        } else if (birthYearFilter === '<1970' && birthYear) {
+          matchesBirthYear = birthYear < 1970;
+        }
       }
-    }
 
-    return matchesSearch && matchesGender && matchesBirthYear;
-  });
+      return matchesSearch && matchesGender && matchesBirthYear;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [customers, search, genderFilter, birthYearFilter]);
 
   const onSubmit = (data: CreateCustomerSchema) => {
     if (editingCustomer) {

@@ -1,9 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Clock, Edit, FileText, CheckCircle, XCircle, User } from 'lucide-react';
-import { formatDate } from '../lib/format-date';
-import { Avatar } from './avatar';
+import { Plus, Edit, XCircle, FileText } from 'lucide-react';
+import { formatActivityDate } from '../lib/format-date';
 import { Badge } from './badge';
 import { cn } from '../lib/utils';
 
@@ -50,7 +49,7 @@ export interface ActivityHistoryProps {
 function getActivityIcon(type: ActivityType) {
   switch (type) {
     case 'created':
-      return <User className="h-4 w-4" />;
+      return <Plus className="h-4 w-4" />;
     case 'updated':
       return <Edit className="h-4 w-4" />;
     case 'status_changed':
@@ -58,23 +57,51 @@ function getActivityIcon(type: ActivityType) {
     case 'comment_added':
       return <FileText className="h-4 w-4" />;
     default:
-      return <Clock className="h-4 w-4" />;
+      return <FileText className="h-4 w-4" />;
   }
 }
 
-function getActivityColor(type: ActivityType) {
+function getActivityIconColor(type: ActivityType) {
   switch (type) {
     case 'created':
-      return 'bg-green-500';
+      return 'bg-gray-400';
     case 'updated':
-      return 'bg-blue-500';
+      return 'bg-yellow-500';
     case 'status_changed':
-      return 'bg-purple-500';
+      return 'bg-green-500';
     case 'comment_added':
-      return 'bg-gray-500';
+      return 'bg-gray-400';
     default:
       return 'bg-gray-400';
   }
+}
+
+function getActivityBorderColor(activity: Activity): string {
+  // Определяем цвет бордера на основе типа действия и контекста
+  if (activity.type === 'created') {
+    return 'border-gray-400';
+  }
+
+  if (activity.type === 'status_changed') {
+    // Публикация - зелёный
+    if (activity.newStatus === 'Опубликовано' || activity.newStatus === 'Опубликована') {
+      return 'border-green-500';
+    }
+    // Отмена - красный
+    if (activity.newStatus === 'Отменено' || activity.newStatus === 'Отменена') {
+      return 'border-red-500';
+    }
+    // Остальные смены статуса - жёлтый
+    return 'border-yellow-500';
+  }
+
+  if (activity.type === 'updated') {
+    // Изменения после публикации - жёлтый
+    return 'border-yellow-500';
+  }
+
+  // По умолчанию - без бордера
+  return '';
 }
 
 export function ActivityHistory({
@@ -116,73 +143,84 @@ export function ActivityHistory({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {activities.map((activity, index) => (
-        <div key={activity.id} className="flex gap-4">
-          {/* Timeline line */}
-          <div className="flex flex-col items-center">
-            <div
-              className={cn(
-                'rounded-full p-2 text-white',
-                getActivityColor(activity.type)
-              )}
-            >
-              {getActivityIcon(activity.type)}
-            </div>
-            {index < activities.length - 1 && (
-              <div className="w-0.5 flex-1 bg-border mt-2" />
-            )}
-          </div>
+      {activities.map((activity, index) => {
+        const borderColor = getActivityBorderColor(activity);
+        const hasContentBlock =
+          activity.description ||
+          (activity.type === 'status_changed' && activity.newStatus) ||
+          (activity.type === 'updated' && activity.changes && activity.changes.length > 0);
 
-          {/* Activity content */}
-          <div className="flex-1 pb-6">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm font-medium">{activity.userName}</span>
-                <span className="text-sm text-muted-foreground">
-                  {getActivityLabel(activity)}
-                </span>
+        return (
+          <div key={activity.id} className="flex gap-3">
+            {/* Left side: Icon + Timeline line */}
+            <div className="flex flex-col items-center">
+              {/* Activity icon */}
+              <div
+                className={cn(
+                  'rounded-full p-2 text-white flex-shrink-0',
+                  getActivityIconColor(activity.type)
+                )}
+              >
+                {getActivityIcon(activity.type)}
               </div>
-              <span className="text-xs text-muted-foreground whitespace-nowrap">
-                {formatDate(activity.timestamp, locale)}
-              </span>
+
+              {/* Timeline line */}
+              {index < activities.length - 1 && (
+                <div className="w-0.5 flex-1 bg-border mt-2" />
+              )}
             </div>
 
-            {/* Activity details */}
-            <div className="mt-2 space-y-2">
-              {activity.description && (
-                <p className="text-sm text-foreground">{activity.description}</p>
-              )}
+            {/* Right side: Content */}
+            <div className="flex-1 pb-6">
+              {/* Header: Username · Date · Time */}
+              <div className="text-sm text-muted-foreground mb-2">
+                <span className="font-medium text-foreground">{activity.userName}</span>
+                {' · '}
+                <span>{formatActivityDate(activity.timestamp, locale)}</span>
+              </div>
 
-              {/* Status change */}
-              {activity.type === 'status_changed' && activity.oldStatus && activity.newStatus && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="outline">{activity.oldStatus}</Badge>
-                  <span className="text-muted-foreground">→</span>
-                  <Badge variant="outline">{activity.newStatus}</Badge>
-                </div>
-              )}
+              {/* Content block with border */}
+              {hasContentBlock && (
+                <div
+                  className={cn(
+                    'bg-muted/50 p-3 rounded-lg space-y-2',
+                    borderColor && `border-l-4 ${borderColor}`
+                  )}
+                >
+                  {/* Description or action label */}
+                  {activity.description && (
+                    <p className="text-sm text-foreground">{activity.description}</p>
+                  )}
 
-              {/* Field changes */}
-              {activity.type === 'updated' && activity.changes && activity.changes.length > 0 && (
-                <div className="space-y-1">
-                  {activity.changes.map((change, idx) => (
-                    <div key={idx} className="text-sm bg-muted/50 p-2 rounded">
-                      <span className="font-medium">{change.fieldLabel}:</span>{' '}
-                      <span className="text-muted-foreground line-through">
-                        {change.oldValue}
-                      </span>{' '}
-                      <span className="text-muted-foreground">→</span>{' '}
-                      <span className="text-foreground font-medium">
-                        {change.newValue}
-                      </span>
+                  {/* Status change with badge */}
+                  {activity.type === 'status_changed' && activity.newStatus && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-foreground">Статус изменён на:</span>
+                      <Badge variant="outline">{activity.newStatus}</Badge>
                     </div>
-                  ))}
+                  )}
+
+                  {/* Field changes */}
+                  {activity.type === 'updated' && activity.changes && activity.changes.length > 0 && (
+                    <div className="space-y-1">
+                      {activity.changes.map((change, idx) => (
+                        <div key={idx} className="text-sm">
+                          <span className="font-medium text-foreground">{change.fieldLabel}:</span>{' '}
+                          <span className="text-muted-foreground line-through">
+                            {change.oldValue}
+                          </span>{' '}
+                          <span className="text-muted-foreground">→</span>{' '}
+                          <span className="text-amber-700 font-medium">{change.newValue}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

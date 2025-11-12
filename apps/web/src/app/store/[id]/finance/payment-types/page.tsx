@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +52,7 @@ interface PaymentType {
   name: string;
   icon?: string;
   color?: string;
+  createdAt: Date;
 }
 
 // Validation schema (shared with backend)
@@ -100,6 +101,7 @@ const mockPaymentTypes: PaymentType[] = [
     name: 'Наличные',
     icon: 'Wallet',
     color: '#10B981',
+    createdAt: new Date('2024-01-10'),
   },
   {
     id: '2',
@@ -107,6 +109,7 @@ const mockPaymentTypes: PaymentType[] = [
     name: 'Карта Uzcard',
     icon: 'CreditCard',
     color: '#3B82F6',
+    createdAt: new Date('2024-02-15'),
   },
   {
     id: '3',
@@ -114,6 +117,7 @@ const mockPaymentTypes: PaymentType[] = [
     name: 'Карта Humo',
     icon: 'CreditCard',
     color: '#EF4444',
+    createdAt: new Date('2024-03-20'),
   },
   {
     id: '4',
@@ -121,6 +125,7 @@ const mockPaymentTypes: PaymentType[] = [
     name: 'Payme',
     icon: 'Smartphone',
     color: '#06B6D4',
+    createdAt: new Date('2024-04-25'),
   },
   {
     id: '5',
@@ -128,6 +133,7 @@ const mockPaymentTypes: PaymentType[] = [
     name: 'Click',
     icon: 'Smartphone',
     color: '#8B5CF6',
+    createdAt: new Date('2024-05-30'),
   },
 ];
 
@@ -163,11 +169,20 @@ export default function PaymentTypesPage() {
     },
   });
 
-  const filteredData = data.filter((paymentType) => {
-    const matchesSearch = paymentType.name.toLowerCase().includes(search.toLowerCase());
-    const matchesSafe = safeFilter === 'all' || paymentType.safeId === safeFilter;
-    return matchesSearch && matchesSafe;
-  });
+  const filteredData = useMemo(() => {
+    const filtered = data.filter((paymentType) => {
+      const matchesSearch = paymentType.name.toLowerCase().includes(search.toLowerCase());
+      const matchesSafe = safeFilter === 'all' || paymentType.safeId === safeFilter;
+      return matchesSearch && matchesSafe;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [data, search, safeFilter]);
 
   const handleCreate = (formData: CreatePaymentTypeInput) => {
     const newPaymentType: PaymentType = {
@@ -176,6 +191,7 @@ export default function PaymentTypesPage() {
       name: formData.name,
       icon: formData.icon,
       color: formData.color,
+      createdAt: new Date(),
     };
     setData([...data, newPaymentType]);
     toast.success(t('components.toast.success'), `${formData.name} ${t('messages.saved').toLowerCase()}`);

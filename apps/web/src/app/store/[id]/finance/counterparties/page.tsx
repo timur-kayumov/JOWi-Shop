@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Plus, Search, Trash2 } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import {
   Button,
   Input,
@@ -28,6 +28,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  DatePicker,
+  Switch,
 } from '@jowi/ui';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
@@ -38,6 +40,7 @@ import { toast } from '@/lib/toast';
 // Types
 type CounterpartyType = 'system' | 'custom';
 type AutoChargeStatus = 'enabled' | 'disabled';
+type PeriodUnit = 'days' | 'months';
 
 interface Counterparty {
   id: string;
@@ -45,19 +48,47 @@ interface Counterparty {
   balance: number;
   type: CounterpartyType;
   autoChargeStatus: AutoChargeStatus;
-  autoChargePeriod?: number; // в днях
+  autoChargePeriod?: number;
+  autoChargePeriodUnit?: PeriodUnit;
   autoChargeAmount?: number;
+  autoChargeStartDate?: Date;
+  autoChargeStartTime?: string; // HH:MM format
+  createdAt: Date;
 }
 
 // Validation schema
-const createCounterpartySchema = z.object({
-  name: z.string().min(2, 'finance.counterparties.validation.nameMin').max(100, 'finance.counterparties.validation.nameMax'),
-  type: z.enum(['system', 'custom']),
-  balance: z.number().default(0),
-  autoChargeStatus: z.enum(['enabled', 'disabled']).default('disabled'),
-  autoChargePeriod: z.number().optional(),
-  autoChargeAmount: z.number().optional(),
-});
+const createCounterpartySchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, 'finance.counterparties.validation.nameMin')
+      .max(100, 'finance.counterparties.validation.nameMax'),
+    type: z.enum(['system', 'custom']),
+    balance: z.number().default(0),
+    autoChargeStatus: z.enum(['enabled', 'disabled']).default('disabled'),
+    autoChargePeriod: z.number().min(1).max(365).optional(),
+    autoChargePeriodUnit: z.enum(['days', 'months']).optional(),
+    autoChargeAmount: z.number().positive().optional(),
+    autoChargeStartDate: z.date().optional(),
+    autoChargeStartTime: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.autoChargeStatus === 'enabled') {
+        return (
+          data.autoChargePeriod !== undefined &&
+          data.autoChargePeriodUnit !== undefined &&
+          data.autoChargeAmount !== undefined &&
+          data.autoChargeAmount > 0
+        );
+      }
+      return true;
+    },
+    {
+      message: 'Период и сумма обязательны при включенном автоначислении',
+      path: ['autoChargeAmount'],
+    }
+  );
 
 type CreateCounterpartyInput = z.infer<typeof createCounterpartySchema>;
 
@@ -70,7 +101,11 @@ const mockCounterparties: Counterparty[] = [
     type: 'custom',
     autoChargeStatus: 'enabled',
     autoChargePeriod: 30,
+    autoChargePeriodUnit: 'days',
     autoChargeAmount: 1000000,
+    autoChargeStartDate: new Date('2025-11-15'),
+    autoChargeStartTime: '09:00',
+    createdAt: new Date('2024-01-10'),
   },
   {
     id: '2',
@@ -78,6 +113,7 @@ const mockCounterparties: Counterparty[] = [
     balance: 2500000,
     type: 'custom',
     autoChargeStatus: 'disabled',
+    createdAt: new Date('2024-02-15'),
   },
   {
     id: '3',
@@ -85,6 +121,7 @@ const mockCounterparties: Counterparty[] = [
     balance: 0,
     type: 'system',
     autoChargeStatus: 'disabled',
+    createdAt: new Date('2024-03-20'),
   },
   {
     id: '4',
@@ -92,8 +129,12 @@ const mockCounterparties: Counterparty[] = [
     balance: -15000000,
     type: 'custom',
     autoChargeStatus: 'enabled',
-    autoChargePeriod: 30,
+    autoChargePeriod: 1,
+    autoChargePeriodUnit: 'months',
     autoChargeAmount: 5000000,
+    autoChargeStartDate: new Date('2025-11-20'),
+    autoChargeStartTime: '10:00',
+    createdAt: new Date('2024-04-25'),
   },
   {
     id: '5',
@@ -102,7 +143,11 @@ const mockCounterparties: Counterparty[] = [
     type: 'custom',
     autoChargeStatus: 'enabled',
     autoChargePeriod: 7,
+    autoChargePeriodUnit: 'days',
     autoChargeAmount: 500000,
+    autoChargeStartDate: new Date('2025-11-13'),
+    autoChargeStartTime: '08:00',
+    createdAt: new Date('2024-05-30'),
   },
   {
     id: '6',
@@ -110,6 +155,7 @@ const mockCounterparties: Counterparty[] = [
     balance: 0,
     type: 'system',
     autoChargeStatus: 'disabled',
+    createdAt: new Date('2024-06-15'),
   },
   {
     id: '7',
@@ -117,8 +163,12 @@ const mockCounterparties: Counterparty[] = [
     balance: -3000000,
     type: 'custom',
     autoChargeStatus: 'enabled',
-    autoChargePeriod: 30,
+    autoChargePeriod: 1,
+    autoChargePeriodUnit: 'months',
     autoChargeAmount: 1500000,
+    autoChargeStartDate: new Date('2025-12-01'),
+    autoChargeStartTime: '00:00',
+    createdAt: new Date('2024-07-20'),
   },
 ];
 
@@ -141,18 +191,30 @@ export default function CounterpartiesPage() {
       type: 'custom',
       balance: 0,
       autoChargeStatus: 'disabled',
-      autoChargePeriod: undefined,
-      autoChargeAmount: undefined,
+      autoChargePeriod: 1,
+      autoChargePeriodUnit: 'days',
+      autoChargeAmount: 0,
+      autoChargeStartDate: undefined,
+      autoChargeStartTime: '',
     },
   });
 
-  const filteredData = data.filter((counterparty) => {
-    const matchesSearch = counterparty.name.toLowerCase().includes(search.toLowerCase());
-    const matchesType = typeFilter === 'all' || counterparty.type === typeFilter;
-    const matchesStatus =
-      statusFilter === 'all' || counterparty.autoChargeStatus === statusFilter;
-    return matchesSearch && matchesType && matchesStatus;
-  });
+  const filteredData = useMemo(() => {
+    const filtered = data.filter((counterparty) => {
+      const matchesSearch = counterparty.name.toLowerCase().includes(search.toLowerCase());
+      const matchesType = typeFilter === 'all' || counterparty.type === typeFilter;
+      const matchesStatus =
+        statusFilter === 'all' || counterparty.autoChargeStatus === statusFilter;
+      return matchesSearch && matchesType && matchesStatus;
+    });
+
+    // Sort by createdAt descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA;
+    });
+  }, [data, search, typeFilter, statusFilter]);
 
   const handleCreate = (formData: CreateCounterpartyInput) => {
     const newCounterparty: Counterparty = {
@@ -162,19 +224,16 @@ export default function CounterpartiesPage() {
       type: formData.type,
       autoChargeStatus: formData.autoChargeStatus,
       autoChargePeriod: formData.autoChargePeriod,
+      autoChargePeriodUnit: formData.autoChargePeriodUnit,
       autoChargeAmount: formData.autoChargeAmount,
+      autoChargeStartDate: formData.autoChargeStartDate,
+      autoChargeStartTime: formData.autoChargeStartTime,
+      createdAt: new Date(),
     };
     setData([...data, newCounterparty]);
     toast.success(t('components.toast.success'), `${formData.name} ${t('finance.counterparties.createSuccess')}`);
     setIsCreateDialogOpen(false);
     createForm.reset();
-  };
-
-  const handleDelete = (counterparty: Counterparty) => {
-    if (window.confirm(t('finance.counterparties.deleteConfirm'))) {
-      setData(data.filter((c) => c.id !== counterparty.id));
-      toast.success(t('actions.delete'), t('finance.counterparties.deleteSuccess'));
-    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -232,37 +291,23 @@ export default function CounterpartiesPage() {
     {
       key: 'autoChargePeriod',
       label: t('finance.counterparties.period'),
-      render: (counterparty) => (
-        <span className="text-sm text-muted-foreground">
-          {counterparty.autoChargePeriod ? `${counterparty.autoChargePeriod} ${t('finance.counterparties.periodDays')}` : '-'}
-        </span>
-      ),
+      render: (counterparty) => {
+        if (!counterparty.autoChargePeriod) return <span className="text-sm text-muted-foreground">-</span>;
+        const unitKey = counterparty.autoChargePeriodUnit === 'months' ? 'periodMonths' : 'periodDays';
+        return (
+          <span className="text-sm text-muted-foreground">
+            {counterparty.autoChargePeriod} {t(`finance.counterparties.${unitKey}`)}
+          </span>
+        );
+      },
     },
     {
       key: 'autoChargeAmount',
-      label: t('finance.counterparties.amount'),
+      label: t('finance.counterparties.autoChargeAmount'),
       render: (counterparty) => (
         <span className="text-sm">
           {counterparty.autoChargeAmount ? formatCurrency(counterparty.autoChargeAmount) : '-'}
         </span>
-      ),
-    },
-    {
-      key: 'actions',
-      label: t('fields.actions'),
-      render: (counterparty) => (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDelete(counterparty);
-            }}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
       ),
     },
   ];
@@ -384,10 +429,10 @@ export default function CounterpartiesPage() {
                       <FormLabel>{t('finance.counterparties.initialBalance')}</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
                           type="number"
                           placeholder="0"
-                          onChange={(e) => field.onChange(Number(e.target.value))}
+                          value={field.value ?? 0}
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : 0)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -395,6 +440,136 @@ export default function CounterpartiesPage() {
                   )}
                 />
               </div>
+
+              {/* Auto-charge section */}
+              <FormField
+                control={createForm.control}
+                name="autoChargeStatus"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        {t('finance.counterparties.autoCharge')}
+                      </FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value === 'enabled'}
+                        onCheckedChange={(checked) =>
+                          field.onChange(checked ? 'enabled' : 'disabled')
+                        }
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* Conditional auto-charge fields */}
+              {createForm.watch('autoChargeStatus') === 'enabled' && (
+                <div className="space-y-4 rounded-lg border p-4">
+                  {/* Period fields */}
+                  <FormField
+                    control={createForm.control}
+                    name="autoChargePeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('finance.counterparties.periodValue')}</FormLabel>
+                        <div className="flex gap-2">
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min="1"
+                              max="365"
+                              placeholder="7"
+                              className="flex-1"
+                              value={field.value ?? ''}
+                              onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                          </FormControl>
+                          <FormField
+                            control={createForm.control}
+                            name="autoChargePeriodUnit"
+                            render={({ field: unitField }) => (
+                              <Select onValueChange={unitField.onChange} value={unitField.value}>
+                                <FormControl>
+                                  <SelectTrigger className="w-auto">
+                                    <SelectValue placeholder={t('finance.counterparties.selectUnit')} />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="days">{t('finance.counterparties.days')}</SelectItem>
+                                  <SelectItem value="months">{t('finance.counterparties.months')}</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            )}
+                          />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Amount field */}
+                  <FormField
+                    control={createForm.control}
+                    name="autoChargeAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('finance.counterparties.autoChargeAmount')}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            value={field.value ?? ''}
+                            onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Date and time fields */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={createForm.control}
+                      name="autoChargeStartDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('finance.counterparties.autoChargeStartDate')}</FormLabel>
+                          <FormControl>
+                            <DatePicker
+                              date={field.value}
+                              onDateChange={field.onChange}
+                              placeholder={t('finance.counterparties.startDatePlaceholder')}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={createForm.control}
+                      name="autoChargeStartTime"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t('finance.counterparties.autoChargeStartTime')}</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="time"
+                              placeholder={t('finance.counterparties.startTimePlaceholder')}
+                              value={field.value ?? ''}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              )}
 
               <DialogFooter>
                 <Button

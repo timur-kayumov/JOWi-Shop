@@ -4,3 +4,4 @@
 
 export * from './locales';
 export * from './config';
+export * from './lib/pluralization';

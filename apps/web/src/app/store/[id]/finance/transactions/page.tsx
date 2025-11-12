@@ -371,7 +371,7 @@ export default function TransactionsPage() {
 
   // Filtered data
   const filteredData = useMemo(() => {
-    return data.filter((transaction) => {
+    const filtered = data.filter((transaction) => {
       // Search filter
       const matchesSearch =
         search === '' ||
@@ -392,6 +392,13 @@ export default function TransactionsPage() {
       const matchesPurpose = purposeFilter === 'all' || transaction.purposeId === purposeFilter;
 
       return matchesSearch && matchesDateRange && matchesStatus && matchesPurpose;
+    });
+
+    // Sort by datetime descending (newest first)
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.datetime).getTime();
+      const dateB = new Date(b.datetime).getTime();
+      return dateB - dateA;
     });
   }, [data, search, dateRange, statusFilter, purposeFilter]);
 
