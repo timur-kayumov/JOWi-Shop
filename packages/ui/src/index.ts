@@ -10,12 +10,15 @@ export * from './lib/format-date';
 export * from './components/button';
 export * from './components/card';
 export * from './components/input';
+export * from './components/input-group';
 export * from './components/phone-input';
 export * from './components/otp-input';
+export * from './components/password-input';
 export * from './components/time-input';
 export * from './components/label';
 export * from './components/textarea';
 export * from './components/select';
+export * from './components/multi-select';
 export * from './components/form';
 export * from './components/image-upload';
 

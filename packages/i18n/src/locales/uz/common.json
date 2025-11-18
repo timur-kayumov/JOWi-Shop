@@ -72,6 +72,7 @@
     "categories": "Kategoriyalar",
     "inventory": "Ombor",
     "warehouses": "Omborlar ro'yxati",
+    "inventoryCheck": "Inventarizatsiya",
     "warehouseMonitoring": "Monitoring",
     "writeoffs": "Hisobdan chiqarish",
     "documents": "Hujjatlar",
@@ -219,6 +220,8 @@
     "price": "Narx",
     "total": "Jami",
     "status": "Holat",
+    "sku": "Artikul",
+    "stock": "Qoldiq",
     "createdAt": "Yaratilgan",
     "updatedAt": "Yangilangan",
     "parentCategory": "Ota-ona kategoriya",
@@ -728,9 +731,13 @@
       },
       "fields": {
         "receiptNumber": "Chek raqami",
+        "fiscalNumber": "Fiskal raqam",
+        "fiscalDate": "Fiskalizatsiya sanasi",
         "date": "Sana va vaqt",
         "employee": "Kassir",
         "customer": "Mijoz",
+        "customerPhone": "Mijoz telefoni",
+        "loyaltyCard": "Sodiqlik kartasi",
         "discount": "Chegirma",
         "amount": "Hisob summasi",
         "status": "Status",
@@ -739,6 +746,7 @@
         "noCustomer": "Mijoz yo'q",
         "createdAt": "Yaratildi",
         "completedAt": "Tugallandi",
+        "cancelledAt": "Bekor qilindi",
         "terminal": "Kassa",
         "subtotal": "Oraliq jami",
         "tax": "QQS",
@@ -747,7 +755,8 @@
       "statuses": {
         "draft": "Qoralama",
         "completed": "Tugallandi",
-        "refunded": "Qaytarildi"
+        "refunded": "Qaytarildi",
+        "cancelled": "Bekor qilindi"
       },
       "details": {
         "aboutReceipt": "Chek haqida",
@@ -761,7 +770,7 @@
       "items": {
         "product": "Mahsulot",
         "quantity": "Miqdor",
-        "price": "Narx",
+        "price": "Narx / Chegirma",
         "discount": "Chegirma",
         "total": "Jami",
         "noItems": "Mahsulotlar yo'q"
@@ -774,6 +783,55 @@
         "cancel": "Bekor qilish",
         "success": "Chek muvaffaqiyatli qaytarildi",
         "error": "Chekni qaytarishda xatolik"
+      },
+      "cancel": {
+        "button": "Chekni bekor qilish",
+        "title": "Chekni bekor qilish",
+        "message": "Chekni bekor qilish sababini ko'rsating",
+        "reason": "Bekor qilish sababi",
+        "reasonPlaceholder": "Sababni tanlang",
+        "comment": "Qo'shimcha izoh",
+        "commentPlaceholder": "Ixtiyoriy",
+        "confirm": "Bekor qilishni tasdiqlash",
+        "confirmButton": "Chekni bekor qilish",
+        "cancelButton": "Bekor qilish",
+        "success": "Chek muvaffaqiyatli bekor qilindi",
+        "error": "Chekni bekor qilishda xatolik"
+      },
+      "cancelReasons": {
+        "cashier_error": "Kassir xatosi",
+        "technical_failure": "Texnik nosozlik",
+        "customer_request": "Mijoz talabi",
+        "fiscal_error": "Fiskal xato",
+        "other": "Boshqa"
+      },
+      "refundItems": {
+        "button": "Tanlanganlarni qaytarish",
+        "title": "Mahsulotlarni qaytarish",
+        "message": "Qaytarish uchun mahsulot miqdorini ko'rsating",
+        "reason": "Qaytarish sababi",
+        "reasonPlaceholder": "Sababni tanlang",
+        "comment": "Izoh",
+        "commentPlaceholder": "Ixtiyoriy",
+        "quantity": "Qaytarish miqdori",
+        "totalRefund": "Qaytarish summasi",
+        "confirm": "Qaytarishni tasdiqlash",
+        "cancel": "Bekor qilish",
+        "success": "Mahsulotlar muvaffaqiyatli qaytarildi",
+        "error": "Mahsulotlarni qaytarishda xatolik",
+        "selectedItems": "Tanlangan pozitsiyalar",
+        "maxQuantity": "Maksimum"
+      },
+      "refundReasons": {
+        "customer_request": "Mijoz talabi",
+        "product_defect": "Mahsulot nuqsoni",
+        "wrong_item": "Noto'g'ri mahsulot",
+        "price_error": "Narxda xato",
+        "other": "Boshqa"
+      },
+      "history": {
+        "title": "O'zgarishlar tarixi",
+        "noHistory": "Tarix bo'sh"
       }
     },
     "categories": {
@@ -793,12 +851,30 @@
       "userCategories": "Foydalanuvchi kategoriyalari",
       "noCategories": "Kategoriyalar yo'q",
       "addProduct": "Mahsulot qo'shish",
+      "addProducts": "Mahsulotlar qo'shish",
       "totalProducts": "Jami mahsulotlar",
       "inStock": "Mavjud",
       "totalValue": "Umumiy qiymat",
       "productsInCategory": "Kategoriyada mahsulotlar",
       "noProducts": "Bu kategoriyada hali mahsulotlar yo'q",
-      "addFirstProduct": "Birinchi mahsulotni qo'shing"
+      "addFirstProduct": "Birinchi mahsulotni qo'shing",
+      "deleteCategory": "Kategoriyani o'chirish",
+      "confirmDelete": "Haqiqatan ham kategoriyani o'chirmoqchimisiz?",
+      "cannotDeleteSystem": "Tizim kategoriyasini o'chirish mumkin emas",
+      "categoryHasProducts": "Kategoriyada {{count}} mahsulot",
+      "attachProducts": "Tanlanganlarni qo'shish",
+      "detachProduct": "Ajratish",
+      "currentCategory": "Joriy kategoriya",
+      "categoryWillChange": "Mahsulot kategoriyasi o'zgaradi",
+      "selectProducts": "Mahsulotlarni tanlang",
+      "searchProducts": "Mahsulotlarni qidirish...",
+      "noCategory": "Kategoriyasiz",
+      "productsSelected": "{{count}} tanlangan",
+      "backToList": "Kategoriyalarga qaytish",
+      "productsRemoved": "Mahsulotlar kategoriyadan o'chirildi",
+      "productsAttached": "Mahsulotlar kategoriyaga qo'shildi",
+      "categoryUpdated": "Kategoriya yangilandi",
+      "categoryDeleted": "Kategoriya o'chirildi"
     }
   },
   "paymentMethods": {
@@ -1117,7 +1193,7 @@
       "name": "Nomi",
       "balance": "Balans",
       "namePlaceholder": "Masalan: Asosiy kassa",
-      "safeType": "Seyf turi",
+      "safeType": "To'lov shakli",
       "accountNumber": "Hisob raqami",
       "accountNumberPlaceholder": "Hisob raqamini kiriting",
       "initialBalance": "Boshlang'ich balans",
@@ -1264,6 +1340,420 @@
       }
     }
   },
+  "documents": {
+    "suppliers": {
+      "title": "Yetkazib beruvchilar",
+      "description": "Yetkazib beruvchilar va ular bilan hisob-kitoblarni boshqarish",
+      "searchPlaceholder": "Nom bo'yicha qidirish...",
+      "createSupplier": "Yetkazib beruvchi yaratish",
+      "createSupplierDescription": "Tizimga yangi yetkazib beruvchi qo'shing",
+      "editSupplier": "Yetkazib beruvchini tahrirlash",
+      "editSupplierDescription": "Yetkazib beruvchi ma'lumotlarini o'zgartiring",
+      "name": "Nomi",
+      "namePlaceholder": "Masalan: OOO Yetkazib beruvchi",
+      "entityType": "Turi",
+      "individual": "Jismoniy shaxs",
+      "legal": "Yuridik shaxs",
+      "phone": "Telefon",
+      "phonePlaceholder": "+998 XX XXX-XX-XX",
+      "email": "Email",
+      "emailPlaceholder": "example@mail.ru",
+      "address": "Manzil",
+      "addressPlaceholder": "Shahar, ko'cha, uy",
+      "balance": "Balans",
+      "startingBalance": "Boshlang'ich balans",
+      "contacts": "Kontaktlar",
+      "legalName": "Yuridik nomi",
+      "legalNamePlaceholder": "OOO Kompaniya nomi",
+      "bankAccount": "Hisob raqami",
+      "bankAccountPlaceholder": "20208000000000000000",
+      "inn": "INN/PINFL",
+      "innPlaceholder": "123456789",
+      "mfo": "MFO",
+      "mfoPlaceholder": "00123",
+      "bankName": "Bank nomi",
+      "bankNamePlaceholder": "Bank nomi",
+      "companyData": "Kompaniya ma'lumotlari",
+      "emptyMessage": "Ko'rsatish uchun yetkazib beruvchilar yo'q",
+      "deleteConfirm": "Ushbu yetkazib beruvchini o'chirishga ishonchingiz komilmi?",
+      "deleteSuccess": "Yetkazib beruvchi muvaffaqiyatli o'chirildi",
+      "createSuccess": "Yetkazib beruvchi muvaffaqiyatli yaratildi",
+      "updateSuccess": "Yetkazib beruvchi muvaffaqiyatli yangilandi",
+      "validation": {
+        "nameMin": "Minimal 2 belgi",
+        "nameMax": "Maksimal 100 belgi",
+        "phoneInvalid": "Telefon formati noto'g'ri",
+        "emailInvalid": "Email formati noto'g'ri",
+        "innInvalid": "INN/PINFL noto'g'ri",
+        "mfoInvalid": "MFO noto'g'ri"
+      },
+      "detail": {
+        "title": "Yetkazib beruvchi tafsilotlari",
+        "basicInfo": "Asosiy ma'lumot",
+        "information": "Ma'lumot",
+        "history": "Amallar tarixi",
+        "comments": "Izohlar",
+        "edit": "Tahrirlash",
+        "delete": "O'chirish",
+        "noHistory": "Amallar tarixi bo'sh",
+        "commentAdded": "Izoh qo'shildi",
+        "commentEdited": "Izoh o'zgartirildi",
+        "commentDeleted": "Izoh o'chirildi",
+        "monitoring": "Monitoring",
+        "balanceAtStart": "Boshlang'ich balans",
+        "balanceAtEnd": "Yakuniy balans",
+        "incomeForPeriod": "Davr uchun kirim",
+        "expenseForPeriod": "Davr uchun chiqim",
+        "invoicesTab": "Hisob-fakturalar",
+        "transactionsTab": "Tranzaksiyalar",
+        "accrualsTab": "Hisob-kitoblar",
+        "noInvoices": "Hisob-fakturalar topilmadi"
+      },
+      "selectDateRange": "Davrni tanlang"
+    },
+    "invoices": {
+      "title": "Hujjatlar",
+      "description": "Ta'minotchilardan tovar kelishi bo'yicha hujjatlarni boshqarish",
+      "searchPlaceholder": "Hujjat raqami bo'yicha qidirish...",
+      "createInvoice": "Hujjat yaratish",
+      "createInvoiceDescription": "Tovar kelishi uchun yangi hujjat yarating",
+      "editInvoice": "Hujjatni tahrirlash",
+      "editInvoiceDescription": "Hujjat ma'lumotlarini o'zgartiring",
+      "direction": {
+        "label": "Yo'nalish",
+        "outgoing": "Qo'lda yaratilgan",
+        "incoming": "Ta'minotchilardan"
+      },
+      "columns": {
+        "number": "Raqam",
+        "date": "Nashr sanasi",
+        "supplier": "Ta'minotchi",
+        "warehouse": "Ombor",
+        "itemsCount": "Pozitsiyalar",
+        "total": "Summa",
+        "status": "Holat"
+      },
+      "filters": {
+        "allSuppliers": "Barcha ta'minotchilar",
+        "allWarehouses": "Barcha omborlar",
+        "allStatuses": "Barcha holatlar",
+        "selectDateRange": "Davr tanlang"
+      },
+      "fields": {
+        "supplier": "Ta'minotchi",
+        "supplierPlaceholder": "Ta'minotchini tanlang",
+        "warehouse": "Ombor",
+        "warehousePlaceholder": "Omborni tanlang",
+        "notes": "Eslatmalar",
+        "notesPlaceholder": "Qo'shimcha ma'lumot..."
+      },
+      "emptyMessage": "Ko'rsatish uchun hujjatlar yo'q",
+      "deleteConfirm": "Ushbu hujjatni o'chirishga ishonchingiz komilmi?",
+      "deleteSuccess": "Hujjat muvaffaqiyatli o'chirildi",
+      "createSuccess": "Hujjat muvaffaqiyatli yaratildi",
+      "updateSuccess": "Hujjat muvaffaqiyatli yangilandi",
+      "validation": {
+        "supplierRequired": "Ta'minotchi majburiy",
+        "warehouseRequired": "Ombor majburiy",
+        "itemsEmpty": "Kamida bitta tovar qo'shing"
+      },
+      "detail": {
+        "title": "Hujjat",
+        "backToList": "Hujjatlarga qaytish",
+        "basicInfo": "Asosiy ma'lumot",
+        "items": "Mahsulotlar",
+        "comments": "Izohlar",
+        "history": "Tarix",
+        "number": "Raqam",
+        "date": "Sana",
+        "supplier": "Ta'minotchi",
+        "warehouse": "Ombor",
+        "direction": "Yo'nalish",
+        "status": "Holat",
+        "created": "Yaratilgan sana",
+        "published": "Nashr sanasi",
+        "responsible": "Mas'ul",
+        "notes": "Eslatmalar",
+        "noNotes": "Eslatmalar yo'q",
+        "itemsCount": "Pozitsiyalar",
+        "totalAmount": "Summa",
+        "searchProducts": "Mahsulotlarni qidirish...",
+        "addProducts": "Mahsulotlar qo'shish",
+        "deleteSelected": "Tanlanganlarni o'chirish",
+        "saveChanges": "O'zgarishlarni saqlash",
+        "table": {
+          "product": "Mahsulot",
+          "quantity": "Miqdori",
+          "price": "Narx",
+          "total": "Summa",
+          "noProducts": "Mahsulotlar qo'shilmagan"
+        },
+        "actions": {
+          "edit": "Tahrirlash",
+          "delete": "Hujjatni o'chirish",
+          "publish": "Nashr qilish",
+          "cancel": "Hujjatni bekor qilish"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Hujjatni nashr qilish?",
+            "message": "Nashr qilingandan so'ng hujjat o'tkaziladi, tovarlar omborga tushadi. Faqat miqdor va narxlarni o'zgartirish mumkin bo'ladi."
+          },
+          "cancel": {
+            "title": "Hujjatni bekor qilish?",
+            "message": "Hujjat bekor qilinadi, tovarlar ombordan hisobdan chiqariladi. Bu amalni qaytarib bo'lmaydi."
+          },
+          "delete": {
+            "title": "Hujjatni o'chirish?",
+            "message": "Hujjat butunlay o'chiriladi. Bu amalni qaytarib bo'lmaydi."
+          },
+          "addProducts": {
+            "title": "Mahsulotlar qo'shish",
+            "description": "Hujjatga qo'shish uchun mahsulotlarni tanlang",
+            "noProductsFound": "Mahsulotlar topilmadi",
+            "noProductsAvailable": "Mavjud mahsulotlar yo'q",
+            "selectedProducts": "{{count}} tanlangan",
+            "addSelected": "Tanlanganlarni qo'shish"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Hujjat muvaffaqiyatli nashr qilindi",
+          "cancelSuccess": "Hujjat muvaffaqiyatli bekor qilindi",
+          "deleteSuccess": "Hujjat muvaffaqiyatli o'chirildi",
+          "saveSuccess": "O'zgarishlar muvaffaqiyatli saqlandi",
+          "commentAdded": "Izoh qo'shildi",
+          "commentUpdated": "Izoh yangilandi",
+          "commentDeleted": "Izoh o'chirildi"
+        },
+        "validation": {
+          "exceedsAvailable": "Miqdor mavjud bo'lganidan oshib ketadi"
+        }
+      }
+    },
+    "warehouseTransfers": {
+      "title": "Omborlar orasida ko'chirish",
+      "description": "Omborlar orasida tovarlarni ko'chirishni boshqarish",
+      "searchPlaceholder": "Hujjat raqami bo'yicha qidirish...",
+      "createTransfer": "Ko'chirish yaratish",
+      "createTransferDescription": "Omborlar orasida tovarlarni ko'chirish yarating",
+      "editTransfer": "Ko'chirishni tahrirlash",
+      "editTransferDescription": "Ko'chirish ma'lumotlarini o'zgartiring",
+      "columns": {
+        "number": "Raqam",
+        "date": "Nashr sanasi",
+        "sourceWarehouse": "Jo'natuvchi",
+        "destinationWarehouse": "Qabul qiluvchi",
+        "itemsCount": "Pozitsiyalar",
+        "total": "Summa",
+        "status": "Holat"
+      },
+      "filters": {
+        "allWarehouses": "Barcha omborlar",
+        "allStatuses": "Barcha holatlar",
+        "selectDateRange": "Davrni tanlang",
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "destinationWarehouse": "Ombor qabul qiluvchi"
+      },
+      "fields": {
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "sourceWarehousePlaceholder": "Ombor jo'natuvchini tanlang",
+        "destinationWarehouse": "Ombor qabul qiluvchi",
+        "destinationWarehousePlaceholder": "Ombor qabul qiluvchini tanlang",
+        "notes": "Izohlar",
+        "notesPlaceholder": "Qo'shimcha ma'lumot..."
+      },
+      "emptyMessage": "Ko'rsatish uchun ko'chirishlar yo'q",
+      "deleteConfirm": "Ushbu ko'chirishni o'chirishni xohlaysizmi?",
+      "deleteSuccess": "Ko'chirish muvaffaqiyatli o'chirildi",
+      "createSuccess": "Ko'chirish muvaffaqiyatli yaratildi",
+      "updateSuccess": "Ko'chirish muvaffaqiyatli yangilandi",
+      "validation": {
+        "sourceWarehouseRequired": "Ombor jo'natuvchi majburiy",
+        "destinationWarehouseRequired": "Ombor qabul qiluvchi majburiy",
+        "sameWarehouse": "Ombor jo'natuvchi va qabul qiluvchi bir xil bo'lishi mumkin emas",
+        "itemsEmpty": "Kamida bitta tovar qo'shing"
+      },
+      "detail": {
+        "backToList": "Ko'chirishlarga qaytish",
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "destinationWarehouse": "Ombor qabul qiluvchi",
+        "created": "Yaratildi",
+        "published": "Nashr etildi",
+        "responsible": "Mas'ul",
+        "itemsCount": "Pozitsiyalar",
+        "totalAmount": "Umumiy summa",
+        "notes": "Izohlar",
+        "comments": "Izohlar",
+        "history": "Tarix",
+        "kpi": {
+          "costPrice": "Tannarx",
+          "total": "Summa",
+          "profit": "Foyda"
+        },
+        "table": {
+          "product": "Mahsulot",
+          "available": "Mavjud",
+          "quantity": "Miqdori",
+          "price": "Narx",
+          "amount": "Summa",
+          "noProducts": "Ko'chirishda tovarlar yo'q"
+        },
+        "searchProducts": "Mahsulotlarni qidirish...",
+        "addProducts": "Mahsulotlar qo'shish",
+        "deleteSelected": "Tanlanganlarni o'chirish",
+        "saveChanges": "O'zgarishlarni saqlash",
+        "actions": {
+          "publish": "Nashr etish",
+          "cancel": "Bekor qilish",
+          "delete": "O'chirish"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Nashr etishni tasdiqlash",
+            "message": "Ushbu ko'chirishni nashr etishni xohlaysizmi? Nashr etilgandan keyin tovarlar omborlar orasida ko'chiriladi."
+          },
+          "cancel": {
+            "title": "Ko'chirishni bekor qilish",
+            "message": "Ushbu ko'chirishni bekor qilishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi."
+          },
+          "delete": {
+            "title": "Ko'chirishni o'chirish",
+            "message": "Ushbu ko'chirishni o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi."
+          },
+          "addProducts": {
+            "title": "Mahsulotlar qo'shish",
+            "description": "Ko'chirishga qo'shish uchun mahsulotlarni tanlang",
+            "noProductsAvailable": "Mavjud mahsulotlar yo'q",
+            "addSelected": "Tanlanganlarni qo'shish"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Ko'chirish muvaffaqiyatli nashr etildi",
+          "cancelSuccess": "Ko'chirish muvaffaqiyatli bekor qilindi",
+          "deleteSuccess": "Ko'chirish muvaffaqiyatli o'chirildi",
+          "saveSuccess": "O'zgarishlar muvaffaqiyatli saqlandi",
+          "commentAdded": "Izoh qo'shildi",
+          "commentUpdated": "Izoh yangilandi",
+          "commentDeleted": "Izoh o'chirildi"
+        }
+      }
+    },
+    "storeTransfers": {
+      "title": "Do'konlar orasida ko'chirish",
+      "description": "Do'konlar orasida tovarlarni ko'chirishni boshqarish",
+      "searchPlaceholder": "Hujjat raqami bo'yicha qidirish...",
+      "createTransfer": "Ko'chirish yaratish",
+      "createTransferDescription": "Do'konlar orasida tovarlarni ko'chirish yarating",
+      "editTransfer": "Ko'chirishni tahrirlash",
+      "editTransferDescription": "Ko'chirish ma'lumotlarini o'zgartiring",
+      "columns": {
+        "number": "Raqam",
+        "date": "Nashr sanasi",
+        "sender": "Jo'natuvchi",
+        "recipient": "Qabul qiluvchi",
+        "itemsCount": "Pozitsiyalar",
+        "total": "Summa",
+        "status": "Holat"
+      },
+      "filters": {
+        "allWarehouses": "Barcha omborlar",
+        "allStores": "Barcha do'konlar",
+        "allStatuses": "Barcha holatlar",
+        "selectDateRange": "Davrni tanlang",
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "destinationStore": "Do'kon qabul qiluvchi"
+      },
+      "fields": {
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "sourceWarehousePlaceholder": "Ombor jo'natuvchini tanlang",
+        "destinationStore": "Do'kon qabul qiluvchi",
+        "destinationStorePlaceholder": "Do'kon qabul qiluvchini tanlang",
+        "destinationWarehouse": "Ombor qabul qiluvchi",
+        "destinationWarehousePlaceholder": "Ombor qabul qiluvchini tanlang",
+        "notes": "Izohlar",
+        "notesPlaceholder": "Qo'shimcha ma'lumot..."
+      },
+      "emptyMessage": "Ko'rsatish uchun ko'chirishlar yo'q",
+      "deleteConfirm": "Ushbu ko'chirishni o'chirishni xohlaysizmi?",
+      "deleteSuccess": "Ko'chirish muvaffaqiyatli o'chirildi",
+      "createSuccess": "Ko'chirish muvaffaqiyatli yaratildi",
+      "updateSuccess": "Ko'chirish muvaffaqiyatli yangilandi",
+      "validation": {
+        "sourceWarehouseRequired": "Ombor jo'natuvchi majburiy",
+        "destinationStoreRequired": "Do'kon qabul qiluvchi majburiy",
+        "destinationWarehouseRequired": "Ombor qabul qiluvchi majburiy",
+        "sameStore": "Bir xil do'konga ko'chirish yaratish mumkin emas",
+        "warehouseNotBelongsToStore": "Ombor tanlangan do'konga tegishli emas",
+        "itemsEmpty": "Kamida bitta tovar qo'shing"
+      },
+      "detail": {
+        "backToList": "Ko'chirishlarga qaytish",
+        "sourceWarehouse": "Ombor jo'natuvchi",
+        "destinationStore": "Do'kon qabul qiluvchi",
+        "destinationWarehouse": "Ombor qabul qiluvchi",
+        "created": "Yaratildi",
+        "published": "Nashr etildi",
+        "responsible": "Mas'ul",
+        "itemsCount": "Pozitsiyalar",
+        "totalAmount": "Umumiy summa",
+        "notes": "Izohlar",
+        "comments": "Izohlar",
+        "history": "Tarix",
+        "kpi": {
+          "costPrice": "Tannarx",
+          "total": "Summa",
+          "profit": "Foyda"
+        },
+        "table": {
+          "product": "Mahsulot",
+          "available": "Mavjud",
+          "quantity": "Miqdori",
+          "price": "Narx",
+          "amount": "Summa",
+          "noProducts": "Ko'chirishda tovarlar yo'q"
+        },
+        "searchProducts": "Mahsulotlarni qidirish...",
+        "addProducts": "Mahsulotlar qo'shish",
+        "deleteSelected": "Tanlanganlarni o'chirish",
+        "saveChanges": "O'zgarishlarni saqlash",
+        "actions": {
+          "publish": "Nashr etish",
+          "cancel": "Bekor qilish",
+          "delete": "O'chirish",
+          "edit": "Tahrirlash"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Nashr etishni tasdiqlash",
+            "message": "Ushbu ko'chirishni nashr etishni xohlaysizmi? Nashr etilgandan keyin tovarlar do'konlar orasida ko'chiriladi."
+          },
+          "cancel": {
+            "title": "Ko'chirishni bekor qilish",
+            "message": "Ushbu ko'chirishni bekor qilishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi."
+          },
+          "delete": {
+            "title": "Ko'chirishni o'chirish",
+            "message": "Ushbu ko'chirishni o'chirishni xohlaysizmi? Bu amalni qaytarib bo'lmaydi."
+          },
+          "addProducts": {
+            "title": "Mahsulotlar qo'shish",
+            "description": "Ko'chirishga qo'shish uchun mahsulotlarni tanlang",
+            "noProductsAvailable": "Mavjud mahsulotlar yo'q",
+            "addSelected": "Tanlanganlarni qo'shish"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Ko'chirish muvaffaqiyatli nashr etildi",
+          "cancelSuccess": "Ko'chirish muvaffaqiyatli bekor qilindi",
+          "deleteSuccess": "Ko'chirish muvaffaqiyatli o'chirildi",
+          "saveSuccess": "O'zgarishlar muvaffaqiyatli saqlandi",
+          "commentAdded": "Izoh qo'shildi",
+          "commentUpdated": "Izoh yangilandi",
+          "commentDeleted": "Izoh o'chirildi"
+        }
+      }
+    }
+  },
   "warehouses": {
     "title": "Omborlar",
     "description": "Omborlarni va tovar qoldiqlarini boshqarish",
@@ -1306,6 +1796,312 @@
       "quantity": "Miqdori",
       "totalCost": "Summa",
       "noProducts": "Omborda tovarlar yo'q"
+    },
+    "monitoring": {
+      "title": "Ombor monitoringi",
+      "description": "Mahsulot qoldiqlari, xarid va sotish narxlarini real vaqtda kuzatish",
+      "searchPlaceholder": "Nomi, SKU yoki shtrix-kod bo'yicha qidirish...",
+      "noProducts": "Ko'rsatish uchun mahsulotlar yo'q",
+      "columns": {
+        "product": "Mahsulot",
+        "sku": "Artikul",
+        "category": "Kategoriya",
+        "stock": "Qoldiq",
+        "warehouses": "Omborlar",
+        "sellingPrice": "Sotish narxi",
+        "purchasePrice": "Xarid narxi",
+        "margin": "Marja",
+        "lastReceived": "So'nggi kelgan"
+      },
+      "filters": {
+        "allCategories": "Barcha kategoriyalar",
+        "allWarehouses": "Barcha omborlar",
+        "selectAll": "Hammasini tanlash",
+        "clearAll": "Tozalash",
+        "allStock": "Barcha mahsulotlar",
+        "inStock": "Mavjud",
+        "lowStock": "Kam",
+        "outOfStock": "Mavjud emas"
+      },
+      "tooltips": {
+        "warehouseStock": "{{warehouse}}: {{quantity}} {{unit}}"
+      },
+      "units": {
+        "pcs": "dona",
+        "kg": "kg",
+        "l": "l"
+      },
+      "detail": {
+        "title": "Mahsulot tafsilotlari",
+        "backToMonitoring": "Monitoringga qaytish",
+        "productInfo": "Mahsulot haqida ma'lumot",
+        "monitoring": "Monitoring",
+        "warehousesWithStock": "Omborlarda qoldiqlar",
+        "searchWarehouse": "Ombor bo'yicha qidirish...",
+        "productName": "Mahsulot nomi",
+        "category": "Kategoriya",
+        "sku": "Artikul",
+        "barcode": "Shtrix-kod",
+        "unit": "O'lchov birligi",
+        "totalStockAllWarehouses": "Barcha ombordagi umumiy qoldiq",
+        "totalValueAllWarehouses": "Barcha ombordagi umumiy qiymat",
+        "warehousesCount": "Mahsulot bo'lgan omborlar",
+        "lastPurchasePrice": "Oxirgi xarid narxi",
+        "lastReceivedQuantity": "So'nggi kelgan miqdori",
+        "lastReceivedDate": "So'nggi kelgan sana",
+        "selectDateRange": "Davr tanlang",
+        "stockAtStart": "Boshlanishda qoldiq",
+        "stockAtEnd": "Tugashda qoldiq",
+        "receivedForPeriod": "Davr uchun kelib tushgan",
+        "writtenOffForPeriod": "Davr uchun chiqarilgan",
+        "warehouseName": "Ombor",
+        "stockQuantity": "Qoldiq",
+        "stockValue": "Qoldiqlar summasi",
+        "emptyWarehouses": "Qoldiq bo'lgan omborlar yo'q",
+        "noBarcode": "Shtrix-kod yo'q",
+        "notReceived": "Kelganlar bo'lmagan"
+      }
+    },
+    "inventory": {
+      "title": "Inventarizatsiya",
+      "description": "Inventarizatsiya hujjatlarini boshqarish va mahsulot qoldiqlarini nazorat qilish",
+      "searchPlaceholder": "Raqam yoki ombor bo'yicha qidirish...",
+      "createInventory": "Inventarizatsiya yaratish",
+      "createInventoryDescription": "Inventarizatsiya o'tkazish uchun tur va omborni tanlang",
+      "editInventory": "Inventarizatsiyani tahrirlash",
+      "editInventoryDescription": "Inventarizatsiya hujjatiga o'zgartirishlar kiriting",
+      "noInventories": "Inventarizatsiya hujjatlari yo'q",
+      "columns": {
+        "date": "Sana",
+        "number": "Raqam",
+        "responsible": "Mas'ul",
+        "warehouse": "Ombor",
+        "discrepancy": "Farq",
+        "type": "Tur",
+        "status": "Holat"
+      },
+      "filters": {
+        "allResponsible": "Barcha mas'ullar",
+        "allTypes": "Barcha turlar",
+        "allWarehouses": "Barcha omborlar",
+        "selectAll": "Hammasini tanlash",
+        "clearAll": "Tozalash",
+        "dateFrom": "Sanadan",
+        "dateTo": "Sanagacha"
+      },
+      "types": {
+        "full": "To'liq",
+        "partial": "Qisman"
+      },
+      "fields": {
+        "type": "Inventarizatsiya turi",
+        "typePlaceholder": "Turni tanlang",
+        "warehouse": "Ombor",
+        "warehousePlaceholder": "Omborni tanlang",
+        "responsible": "Mas'ul"
+      },
+      "discrepancy": {
+        "none": "Farq yo'q",
+        "positive": "+{{amount}}",
+        "negative": "−{{amount}}"
+      },
+      "createSuccess": "Inventarizatsiya yaratildi",
+      "updateSuccess": "Inventarizatsiya yangilandi",
+      "deleteSuccess": "Inventarizatsiya o'chirildi",
+      "deleteConfirm": "Ushbu inventarizatsiyani o'chirishga ishonchingiz komilmi?",
+      "validation": {
+        "typeRequired": "Inventarizatsiya turini tanlang",
+        "warehouseRequired": "Omborni tanlang"
+      },
+      "detail": {
+        "title": "Inventarizatsiya",
+        "backToList": "Ro'yxatga qaytish",
+        "information": "Ma'lumot",
+        "status": "Holat",
+        "number": "Raqam",
+        "type": "Tur",
+        "createdDate": "Yaratilgan sana",
+        "publishDate": "Nashr qilingan sana",
+        "warehouse": "Ombor",
+        "responsible": "Mas'ul",
+        "notes": "Izohlar",
+        "comments": "Sharhlar",
+        "history": "Tarix",
+        "inventory": "Inventarizatsiya",
+        "documents": "Hujjatlar",
+        "totalShortage": "Umumiy kamchiliklar summasi",
+        "totalSurplus": "Umumiy ortiqchalar summasi",
+        "searchProducts": "Mahsulotlarni qidirish...",
+        "addProduct": "Mahsulot qo'shish",
+        "selectProducts": "Mahsulotlarni tanlash",
+        "selectProductsDescription": "Qisman inventarizatsiya uchun mahsulotlarni tanlang",
+        "selectedProducts": "Tanlangan mahsulotlar",
+        "addSelectedProducts": "Tanlanganlarni qo'shish",
+        "noProductsFound": "Mahsulotlar topilmadi",
+        "noProductsAvailable": "Mavjud mahsulotlar yo'q",
+        "removeProduct": "Ro'yxatdan o'chirish",
+        "removeProducts": "Mahsulotlar ro'yxatdan o'chirildi",
+        "productAdded": "Mahsulotlar inventarizatsiya ro'yxatiga qo'shildi",
+        "receiptDocument": "Qabul qilish hujjati",
+        "writeoffDocument": "Hisobdan chiqarish hujjati",
+        "openDocument": "Hujjatni ochish",
+        "noDocuments": "Hujjatlar inventarizatsiya nashr qilingandan keyin yaratiladi",
+        "documentNumber": "Hujjat raqami",
+        "documentDate": "Yaratilgan sana",
+        "itemsCount": "Pozitsiyalar",
+        "totalAmount": "Summa",
+        "actions": {
+          "edit": "Tahrirlash",
+          "delete": "O'chirish",
+          "publish": "Nashr qilish",
+          "cancel": "Bekor qilish"
+        },
+        "table": {
+          "product": "Mahsulot",
+          "sku": "Artikul",
+          "category": "Kategoriya",
+          "currentStock": "Joriy qoldiq",
+          "expected": "Joriy miqdor",
+          "actual": "Haqiqiy miqdor",
+          "actualPlaceholder": "Miqdorni kiriting",
+          "discrepancy": "Farq",
+          "discrepancyAmount": "Farq summasi",
+          "unit": "birlik"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Inventarizatsiyani nashr qilish",
+            "message": "Nashr qilingandan keyin farqlarni qoplash uchun qabul qilish va hisobdan chiqarish hujjatlari avtomatik yaratiladi. Davom ettirilsinmi?"
+          },
+          "cancel": {
+            "title": "Inventarizatsiyani bekor qilish",
+            "message": "Ushbu inventarizatsiyani bekor qilishga ishonchingiz komilmi? Bu harakat qaytarilmaydi."
+          },
+          "delete": {
+            "title": "Inventarizatsiyani o'chirish",
+            "message": "Ushbu inventarizatsiyani o'chirishga ishonchingiz komilmi? Bu harakat qaytarilmaydi."
+          }
+        },
+        "publishSuccess": "Inventarizatsiya nashr qilindi",
+        "cancelSuccess": "Inventarizatsiya bekor qilindi",
+        "saveSuccess": "O'zgarishlar saqlandi",
+        "saveChanges": "O'zgarishlarni saqlash",
+        "statusUpdated": "Holat yangilandi"
+      }
+    },
+    "writeoffs": {
+      "title": "Hisobdan chiqarish",
+      "description": "Ombordan mahsulot hisobdan chiqarish hujjatlarini boshqarish",
+      "searchPlaceholder": "Raqam yoki ombor bo'yicha qidirish...",
+      "createWriteoff": "Hisobdan chiqarish yaratish",
+      "createWriteoffDescription": "Mahsulotlarni hisobdan chiqarish hujjatini yarating",
+      "noWriteoffs": "Hisobdan chiqarish hujjatlari yo'q",
+      "createSuccess": "Hisobdan chiqarish yaratildi",
+      "columns": {
+        "date": "Nashr qilingan sana",
+        "number": "Hujjat raqami",
+        "warehouse": "Ombor",
+        "reason": "Sabab",
+        "itemsCount": "Pozitsiyalar",
+        "totalAmount": "Hisobdan chiqarish summasi",
+        "responsible": "Mas'ul",
+        "status": "Holat"
+      },
+      "filters": {
+        "allReasons": "Barcha sabablar",
+        "allWarehouses": "Barcha omborlar",
+        "allStatuses": "Barcha holatlar",
+        "selectAll": "Hammasini tanlash",
+        "clearAll": "Tozalash",
+        "selectDateRange": "Davrni tanlang"
+      },
+      "reasons": {
+        "expired": "Muddati o'tgan",
+        "damaged": "Shikastlangan",
+        "lost": "Yo'qotilgan",
+        "shortage": "Kamchilik",
+        "other": "Boshqa"
+      },
+      "fields": {
+        "warehouse": "Ombor",
+        "warehousePlaceholder": "Omborni tanlang",
+        "reason": "Hisobdan chiqarish sababi",
+        "reasonPlaceholder": "Sababni tanlang",
+        "notes": "Izohlar",
+        "notesPlaceholder": "Qo'shimcha ma'lumot..."
+      },
+      "validation": {
+        "warehouseRequired": "Omborni tanlang",
+        "reasonRequired": "Hisobdan chiqarish sababini tanlang",
+        "exceedsAvailable": "Hisobdan chiqarish miqdori omborda mavjud miqdordan oshib ketishi mumkin emas"
+      },
+      "detail": {
+        "backToList": "Hisobdan chiqarishlarga qaytish",
+        "status": "Holat",
+        "reason": "Hisobdan chiqarish sababi",
+        "createdDate": "Yaratilgan sana",
+        "publishDate": "Nashr etilgan sana",
+        "warehouse": "Ombor",
+        "responsible": "Mas'ul",
+        "itemsCount": "Pozitsiyalar soni",
+        "totalAmount": "Umumiy hisobdan chiqarish summasi",
+        "notes": "Izohlar",
+        "comments": "Sharhlar",
+        "history": "Tarix",
+        "searchProducts": "Mahsulotlarni qidirish",
+        "addProduct": "Mahsulotlar qo'shish",
+        "removeProducts": "Tanlanganlarni o'chirish",
+        "saveChanges": "O'zgarishlarni saqlash",
+        "productAdded": "Mahsulotlar qo'shildi",
+        "commentAdded": "Sharh qo'shildi",
+        "deleteSuccess": "Hisobdan chiqarish o'chirildi",
+        "publishSuccess": "Hisobdan chiqarish nashr etildi",
+        "cancelSuccess": "Hisobdan chiqarish bekor qilindi",
+        "saveSuccess": "O'zgarishlar saqlandi",
+        "table": {
+          "product": "Mahsulot",
+          "available": "Mavjud",
+          "writeoffQty": "Hisobdan chiqarish miqdori",
+          "costPrice": "Tan narxi",
+          "totalAmount": "Summa",
+          "sku": "Artikul",
+          "category": "Kategoriya",
+          "currentStock": "Joriy qoldiq"
+        },
+        "reasons": {
+          "expired": "Muddati o'tgan",
+          "damaged": "Shikastlangan",
+          "lost": "Yo'qolgan",
+          "shortage": "Yetishmovchilik",
+          "other": "Boshqa"
+        },
+        "actions": {
+          "edit": "Tahrirlash",
+          "delete": "O'chirish",
+          "publish": "Nashr qilish",
+          "cancel": "Bekor qilish"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Hisobdan chiqarishni nashr qilish",
+            "message": "Nashr etilgandan so'ng mahsulotlar ombordan hisobdan chiqariladi. Davom ettirilsinmi?"
+          },
+          "cancel": {
+            "title": "Hisobdan chiqarishni bekor qilish",
+            "message": "Ushbu hisobdan chiqarishni bekor qilishga ishonchingiz komilmi? Bu amalni qaytarib bo'lmaydi."
+          },
+          "delete": {
+            "title": "Hisobdan chiqarishni o'chirish",
+            "message": "Ushbu hisobdan chiqarishni o'chirishga ishonchingiz komilmi? Bu amalni qaytarib bo'lmaydi."
+          }
+        },
+        "selectProducts": "Mahsulotlarni tanlash",
+        "selectProductsDescription": "Hisobdan chiqarishga qo'shish uchun mahsulotlarni tanlang",
+        "noProductsFound": "Mahsulotlar topilmadi",
+        "noProductsAvailable": "Mavjud mahsulotlar yo'q",
+        "selectedProducts": "Tanlangan mahsulotlar",
+        "addSelectedProducts": "Tanlanganlarni qo'shish"
+      }
     }
   },
   "components": {

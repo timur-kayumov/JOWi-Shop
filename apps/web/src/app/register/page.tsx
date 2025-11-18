@@ -7,8 +7,10 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
   PhoneInput,
+  PasswordInput,
   OTPInput,
   BusinessTypeCard,
   Button,
@@ -24,11 +26,13 @@ import {
   type RegisterStep2Schema,
   type RegisterStep3Schema,
 } from '@jowi/validators';
+import { authApi } from '../../lib/api-client';
 
 export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userName, setUserName] = useState('');
+  const [userPassword, setUserPassword] = useState('');
   const { t } = useTranslation('auth');
 
   return (
@@ -74,6 +78,7 @@ export default function RegisterPage() {
               onNext={(data) => {
                 setPhoneNumber(data.phone);
                 setUserName(data.name);
+                setUserPassword(data.password);
                 setCurrentStep(2);
               }}
             />
@@ -89,6 +94,7 @@ export default function RegisterPage() {
             <Step3
               phone={phoneNumber}
               name={userName}
+              password={userPassword}
               onBack={() => setCurrentStep(2)}
             />
           )}
@@ -120,17 +126,33 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
     defaultValues: {
       phone: '',
       name: '',
+      password: '',
+      confirmPassword: '',
       agreedToTerms: false,
     },
   });
 
   const phone = watch('phone');
+  const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
 
   const onSubmit = async (data: RegisterStep1Schema) => {
-    // TODO: Call API to send OTP
-    console.log('Step 1 data:', data);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-    onNext(data);
+    try {
+      // Send OTP to phone number
+      await authApi.sendOtp(data.phone);
+
+      // Show success message
+      toast.success(t('register.step1.otpSent'));
+
+      // Move to next step
+      onNext(data);
+    } catch (error: any) {
+      console.error('Send OTP error:', error);
+
+      // Show error message
+      const errorMessage = error?.data?.message || error?.message || t('register.step1.otpError');
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -161,6 +183,35 @@ function Step1({ onNext }: { onNext: (data: RegisterStep1Schema) => void }) {
         {errors.name && (
           <p className="mt-1 text-sm text-destructive">{errors.name.message}</p>
         )}
+      </div>
+
+      <div>
+        <label htmlFor="password" className="mb-2 block text-sm font-medium">
+          {t('register.step1.passwordLabel')}
+        </label>
+        <PasswordInput
+          id="password"
+          value={password}
+          onChange={(e) => setValue('password', e.target.value)}
+          error={errors.password?.message}
+          disabled={isSubmitting}
+        />
+        <p className="mt-1 text-xs text-muted-foreground">
+          {t('register.step1.passwordHint')}
+        </p>
+      </div>
+
+      <div>
+        <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium">
+          {t('register.step1.confirmPasswordLabel')}
+        </label>
+        <PasswordInput
+          id="confirmPassword"
+          value={confirmPassword}
+          onChange={(e) => setValue('confirmPassword', e.target.value)}
+          error={errors.confirmPassword?.message}
+          disabled={isSubmitting}
+        />
       </div>
 
       <div className="flex items-start gap-2">
@@ -231,16 +282,41 @@ function Step2({
   }, [resendTimer]);
 
   const onSubmit = async (data: RegisterStep2Schema) => {
-    // TODO: Call API to verify OTP
-    console.log('Step 2 data:', data);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-    onNext();
+    try {
+      // Verify OTP code
+      await authApi.verifyOtp(data.phone, data.otp);
+
+      // Show success message
+      toast.success(t('register.step2.otpVerified'));
+
+      // Move to next step
+      onNext();
+    } catch (error: any) {
+      console.error('Verify OTP error:', error);
+
+      // Show error message
+      const errorMessage = error?.data?.message || error?.message || t('register.step2.otpError');
+      toast.error(errorMessage);
+    }
   };
 
   const handleResend = async () => {
-    // TODO: Call API to resend OTP
-    console.log('Resending OTP to:', phone);
-    setResendTimer(60);
+    try {
+      // Resend OTP to phone number
+      await authApi.sendOtp(phone);
+
+      // Show success message
+      toast.success(t('register.step2.otpResent'));
+
+      // Reset timer
+      setResendTimer(60);
+    } catch (error: any) {
+      console.error('Resend OTP error:', error);
+
+      // Show error message
+      const errorMessage = error?.data?.message || error?.message || t('register.step2.resendError');
+      toast.error(errorMessage);
+    }
   };
 
   return (
@@ -287,10 +363,12 @@ function Step2({
 function Step3({
   phone,
   name,
+  password,
   onBack,
 }: {
   phone: string;
   name: string;
+  password: string;
   onBack: () => void;
 }) {
   const { t } = useTranslation(['auth', 'common']);
@@ -312,21 +390,38 @@ function Step3({
   const businessType = watch('businessType');
 
   const onSubmit = async (data: RegisterStep3Schema) => {
-    // TODO: Call API to create account
-    const fullData = {
-      phone,
-      name,
-      ...data,
-    };
-    console.log('Registration data:', fullData);
+    try {
+      // Prepare registration data
+      const registrationData = {
+        phone,
+        name,
+        password,
+        businessType: data.businessType,
+        businessName: data.businessName,
+      };
 
-    // Show fullscreen loader
-    setIsCreatingBusiness(true);
+      // Show fullscreen loader
+      setIsCreatingBusiness(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      // Call API to register user
+      const response = await authApi.register(registrationData);
 
-    // Redirect to intranet
-    window.location.href = '/intranet/stores';
+      // Show success message
+      toast.success(t('register.step3.accountCreated'));
+
+      // Redirect to intranet (response contains accessToken and user data)
+      // The middleware will handle the redirect based on auth cookie
+      window.location.href = '/intranet/stores';
+    } catch (error: any) {
+      console.error('Registration error:', error);
+
+      // Hide loader
+      setIsCreatingBusiness(false);
+
+      // Show error message
+      const errorMessage = error?.data?.message || error?.message || t('register.step3.registrationError');
+      toast.error(errorMessage);
+    }
   };
 
   // Show fullscreen loader while creating business

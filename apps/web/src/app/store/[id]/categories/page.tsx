@@ -648,24 +648,6 @@ export default function CategoriesPage() {
       ),
     },
     {
-      key: 'parentId',
-      label: t('fields.parentCategory'),
-      render: (category) => {
-        if (!category.parentId) return <span className="text-muted-foreground">-</span>;
-        const parent = data.find((c) => c.id === category.parentId);
-        return parent ? (
-          <CategoryBadge
-            name={parent.name}
-            icon={parent.icon}
-            color={parent.color}
-            size="sm"
-          />
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        );
-      },
-    },
-    {
       key: 'productCount',
       label: t('pages.categories.productCount'),
       sortable: true,

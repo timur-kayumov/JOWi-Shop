@@ -105,6 +105,13 @@ export class OtpService {
   }
 
   /**
+   * Get Redis key for password reset OTP
+   */
+  private getPasswordResetKey(phone: string): string {
+    return `password-reset:${phone}`;
+  }
+
+  /**
    * Check if OTP is expired
    */
   async isOtpExpired(phone: string): Promise<boolean> {
@@ -120,5 +127,86 @@ export class OtpService {
     const key = this.getOtpKey(phone);
     const ttl = await this.redis.ttl(key);
     return Math.max(0, ttl);
+  }
+
+  // ============= Password Reset Methods =============
+
+  /**
+   * Save password reset OTP request to Redis
+   */
+  async savePasswordResetRequest(phone: string, requestId: string): Promise<void> {
+    const key = this.getPasswordResetKey(phone);
+    const data: OTPData = {
+      phone,
+      requestId,
+      attempts: 0,
+      createdAt: Date.now(),
+    };
+
+    await this.redis.setex(key, this.OTP_TTL, JSON.stringify(data));
+    this.logger.log(`Password reset OTP request saved for phone: +${phone}`);
+  }
+
+  /**
+   * Get password reset OTP request data from Redis
+   */
+  async getPasswordResetRequest(phone: string): Promise<OTPData | null> {
+    const key = this.getPasswordResetKey(phone);
+    const data = await this.redis.get(key);
+
+    if (!data) {
+      return null;
+    }
+
+    return JSON.parse(data);
+  }
+
+  /**
+   * Increment password reset verification attempts
+   */
+  async incrementPasswordResetAttempts(phone: string): Promise<number> {
+    const otpData = await this.getPasswordResetRequest(phone);
+
+    if (!otpData) {
+      throw new Error('Password reset request not found');
+    }
+
+    otpData.attempts += 1;
+
+    const key = this.getPasswordResetKey(phone);
+    const ttl = await this.redis.ttl(key);
+    await this.redis.setex(key, ttl, JSON.stringify(otpData));
+
+    this.logger.log(
+      `Password reset OTP attempts for +${phone}: ${otpData.attempts}/${this.MAX_ATTEMPTS}`,
+    );
+
+    return otpData.attempts;
+  }
+
+  /**
+   * Check if max password reset attempts exceeded
+   */
+  async hasExceededPasswordResetAttempts(phone: string): Promise<boolean> {
+    const otpData = await this.getPasswordResetRequest(phone);
+    return otpData ? otpData.attempts >= this.MAX_ATTEMPTS : false;
+  }
+
+  /**
+   * Delete password reset OTP request from Redis
+   */
+  async deletePasswordResetRequest(phone: string): Promise<void> {
+    const key = this.getPasswordResetKey(phone);
+    await this.redis.del(key);
+    this.logger.log(`Password reset OTP request deleted for phone: +${phone}`);
+  }
+
+  /**
+   * Check if password reset OTP is expired
+   */
+  async isPasswordResetOtpExpired(phone: string): Promise<boolean> {
+    const key = this.getPasswordResetKey(phone);
+    const ttl = await this.redis.ttl(key);
+    return ttl <= 0;
   }
 }

@@ -4,6 +4,9 @@ import { AuthService } from './auth.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Public } from '../../common/decorators/public.decorator';
 
 @ApiTags('auth')
@@ -42,10 +45,39 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login existing user' })
+  @ApiOperation({ summary: 'Login existing user with phone and password' })
   @ApiResponse({ status: 200, description: 'User logged in successfully' })
-  @ApiResponse({ status: 401, description: 'Unauthorized - user not found or inactive' })
-  async login(@Body() dto: VerifyOtpDto) {
+  @ApiResponse({ status: 401, description: 'Unauthorized - invalid credentials or inactive account' })
+  async login(@Body() dto: LoginDto) {
     return this.authService.login(dto);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send OTP code for password reset' })
+  @ApiResponse({ status: 200, description: 'Password reset code sent successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - user not found or account inactive' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @Post('verify-reset-otp')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify OTP code for password reset' })
+  @ApiResponse({ status: 200, description: 'OTP code verified successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - invalid or expired code' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - incorrect code' })
+  async verifyPasswordResetOtp(@Body() dto: VerifyOtpDto) {
+    return this.authService.verifyPasswordResetOtp(dto);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password with new password' })
+  @ApiResponse({ status: 200, description: 'Password reset successfully' })
+  @ApiResponse({ status: 400, description: 'Bad request - invalid code or user not found' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - invalid code' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
 }

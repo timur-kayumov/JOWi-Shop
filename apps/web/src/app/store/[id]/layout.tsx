@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useParams } from 'next/navigation';
-import { LayoutDashboard, ShoppingCart, Package, Warehouse, BarChart3, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, Users, FileText, ArrowRightLeft, Building2, Network, Wallet, Vault, CreditCard, DollarSign, Tag, Receipt, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, Warehouse, Settings, ChevronDown, FolderTree, List, Activity, FileX, ClipboardList, ClipboardCheck, Users, FileText, ArrowRightLeft, Building2, Wallet, Vault, CreditCard, DollarSign, Tag, Receipt, TrendingUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
   AppShell,
@@ -135,7 +135,7 @@ export default function StoreLayout({
     },
     {
       title: t('storeNavigation.orders'),
-      href: `/store/${selectedStoreId}/orders`,
+      href: `/store/${selectedStoreId}/receipts`,
       icon: ShoppingCart,
     },
     {
@@ -172,6 +172,11 @@ export default function StoreLayout({
           title: t('storeNavigation.writeoffs'),
           href: `/store/${selectedStoreId}/warehouses/writeoffs`,
           icon: FileX,
+        },
+        {
+          title: t('storeNavigation.inventoryCheck'),
+          href: `/store/${selectedStoreId}/warehouses/inventory`,
+          icon: ClipboardCheck,
         },
       ],
     },
@@ -243,16 +248,6 @@ export default function StoreLayout({
       ],
     },
     {
-      title: t('storeNavigation.reports'),
-      href: `/store/${selectedStoreId}/reports`,
-      icon: BarChart3,
-    },
-    {
-      title: t('storeNavigation.integrations'),
-      href: `/store/${selectedStoreId}/integrations`,
-      icon: Network,
-    },
-    {
       title: t('storeNavigation.settings'),
       href: `/store/${selectedStoreId}/settings`,
       icon: Settings,
@@ -290,8 +285,6 @@ export default function StoreLayout({
       'warehouse-transfers': t('storeNavigation.warehouseTransfers'),
       'store-transfers': t('storeNavigation.storeTransfers'),
       inventory: t('storeNavigation.inventory'),
-      reports: t('storeNavigation.reports'),
-      integrations: t('storeNavigation.integrations'),
       settings: t('storeNavigation.settings'),
       // Finance module
       finance: t('storeNavigation.finance'),

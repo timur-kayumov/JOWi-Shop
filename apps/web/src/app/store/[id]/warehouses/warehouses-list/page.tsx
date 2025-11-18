@@ -247,7 +247,7 @@ export default function WarehousesListPage() {
           data={filteredData}
           columns={columns}
           onRowClick={(warehouse) =>
-            router.push(`/store/${storeId}/warehouses/${warehouse.id}`)
+            router.push(`/store/${storeId}/warehouses/warehouses-list/${warehouse.id}`)
           }
           emptyMessage={t('warehouses.emptyMessage')}
           pagination={{ enabled: true, pageSize: 15 }}

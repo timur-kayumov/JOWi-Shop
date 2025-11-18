@@ -133,7 +133,14 @@ export function ActivityHistory({
     }
   };
 
-  if (activities.length === 0) {
+  // Sort activities by timestamp descending (newest first)
+  const sortedActivities = React.useMemo(() => {
+    return [...activities].sort((a, b) => {
+      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+    });
+  }, [activities]);
+
+  if (sortedActivities.length === 0) {
     return (
       <div className={cn('text-center py-8', className)}>
         <p className="text-sm text-muted-foreground">{labels.noActivities}</p>
@@ -143,7 +150,7 @@ export function ActivityHistory({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {activities.map((activity, index) => {
+      {sortedActivities.map((activity, index) => {
         const borderColor = getActivityBorderColor(activity);
         const hasContentBlock =
           activity.description ||
@@ -165,7 +172,7 @@ export function ActivityHistory({
               </div>
 
               {/* Timeline line */}
-              {index < activities.length - 1 && (
+              {index < sortedActivities.length - 1 && (
                 <div className="w-0.5 flex-1 bg-border mt-2" />
               )}
             </div>

@@ -6,20 +6,31 @@ interface SendVerificationMessageRequest {
   code_length?: number;
 }
 
-interface SendVerificationMessageResponse {
-  request_id: string;
-  success: boolean;
+interface DeliveryStatus {
+  status: 'sent' | 'delivered' | 'read' | 'expired' | 'revoked';
+  updated_at: number;
 }
 
-interface CheckVerificationStatusRequest {
-  request_id: string;
-  code: string;
+interface VerificationStatus {
+  status: 'code_valid' | 'code_invalid' | 'code_max_attempts_exceeded' | 'expired';
+  updated_at: number;
+  code_entered?: string;
 }
 
-interface CheckVerificationStatusResponse {
+interface RequestStatus {
   request_id: string;
-  success: boolean;
-  verification_status: 'code_valid' | 'code_invalid' | 'expired' | 'code_max_attempts_exceeded';
+  phone_number: string;
+  request_cost: number;
+  remaining_balance?: number;
+  delivery_status?: DeliveryStatus;
+  verification_status?: VerificationStatus;
+  payload?: string;
+}
+
+interface TelegramGatewayResponse<T = any> {
+  ok: boolean;
+  result?: T;
+  error?: string;
 }
 
 @Injectable()
@@ -73,17 +84,18 @@ export class TelegramService {
         throw new Error(`Failed to send verification code: ${response.statusText}`);
       }
 
-      const data = (await response.json()) as SendVerificationMessageResponse;
+      const data = (await response.json()) as TelegramGatewayResponse<RequestStatus>;
 
-      if (!data.success) {
-        throw new Error('Telegram Gateway returned success=false');
+      if (!data.ok || !data.result) {
+        this.logger.error(`Telegram Gateway returned error: ${data.error || 'Unknown error'}`);
+        throw new Error(data.error || 'Failed to send verification code');
       }
 
       this.logger.log(
-        `Verification code sent successfully. Request ID: ${data.request_id}`
+        `Verification code sent successfully. Request ID: ${data.result.request_id}, Cost: ${data.result.request_cost}`
       );
 
-      return data.request_id;
+      return data.result.request_id;
     } catch (error) {
       const err = error as Error;
       this.logger.error(`Error sending verification code: ${err.message}`, err.stack);
@@ -102,7 +114,7 @@ export class TelegramService {
     }
 
     try {
-      const payload: CheckVerificationStatusRequest = {
+      const payload = {
         request_id: requestId,
         code,
       };
@@ -126,12 +138,18 @@ export class TelegramService {
         throw new Error(`Failed to verify code: ${response.statusText}`);
       }
 
-      const data = (await response.json()) as CheckVerificationStatusResponse;
+      const data = (await response.json()) as TelegramGatewayResponse<RequestStatus>;
 
-      const isValid = data.verification_status === 'code_valid';
+      if (!data.ok || !data.result) {
+        this.logger.error(`Telegram Gateway returned error: ${data.error || 'Unknown error'}`);
+        throw new Error(data.error || 'Failed to verify code');
+      }
+
+      const verificationStatus = data.result.verification_status?.status;
+      const isValid = verificationStatus === 'code_valid';
 
       this.logger.log(
-        `Code verification result: ${data.verification_status} (valid=${isValid})`
+        `Code verification result: ${verificationStatus} (valid=${isValid})`
       );
 
       return isValid;

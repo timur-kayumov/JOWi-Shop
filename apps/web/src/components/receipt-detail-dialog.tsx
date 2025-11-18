@@ -69,7 +69,7 @@ export function ReceiptDetailDialog({
   };
 
   const handleGoToReceipt = () => {
-    window.open(`/store/${receipt.storeId}/orders/${receipt.id}`, '_blank');
+    window.open(`/store/${receipt.storeId}/receipts/${receipt.id}`, '_blank');
     onOpenChange(false);
   };
 

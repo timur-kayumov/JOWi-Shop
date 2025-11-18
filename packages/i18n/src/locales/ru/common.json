@@ -72,6 +72,7 @@
     "categories": "Категории",
     "inventory": "Склад",
     "warehouses": "Список складов",
+    "inventoryCheck": "Инвентаризация",
     "warehouseMonitoring": "Мониторинг",
     "writeoffs": "Списания",
     "documents": "Накладные",
@@ -219,6 +220,8 @@
     "price": "Цена",
     "total": "Итого",
     "status": "Статус",
+    "sku": "Артикул",
+    "stock": "Остаток",
     "createdAt": "Создано",
     "updatedAt": "Обновлено",
     "parentCategory": "Родительская категория",
@@ -750,9 +753,13 @@
       },
       "fields": {
         "receiptNumber": "Номер чека",
+        "fiscalNumber": "Фискальный номер",
+        "fiscalDate": "Дата фискализации",
         "date": "Дата и время",
         "employee": "Кассир",
         "customer": "Клиент",
+        "customerPhone": "Телефон клиента",
+        "loyaltyCard": "Карта лояльности",
         "discount": "Скидка",
         "amount": "Сумма счета",
         "status": "Статус",
@@ -761,6 +768,7 @@
         "noCustomer": "Без клиента",
         "createdAt": "Создан",
         "completedAt": "Завершен",
+        "cancelledAt": "Отменён",
         "terminal": "Касса",
         "subtotal": "Подытог",
         "tax": "НДС",
@@ -769,7 +777,8 @@
       "statuses": {
         "draft": "Черновик",
         "completed": "Завершен",
-        "refunded": "Возврат"
+        "refunded": "Возврат",
+        "cancelled": "Отменён"
       },
       "details": {
         "aboutReceipt": "О чеке",
@@ -783,7 +792,7 @@
       "items": {
         "product": "Товар",
         "quantity": "Количество",
-        "price": "Цена",
+        "price": "Цена / Скидка",
         "discount": "Скидка",
         "total": "Итого",
         "noItems": "Нет товаров"
@@ -796,6 +805,55 @@
         "cancel": "Отмена",
         "success": "Чек успешно возвращен",
         "error": "Ошибка при возврате чека"
+      },
+      "cancel": {
+        "button": "Отменить чек",
+        "title": "Отмена чека",
+        "message": "Укажите причину отмены чека",
+        "reason": "Причина отмены",
+        "reasonPlaceholder": "Выберите причину",
+        "comment": "Дополнительный комментарий",
+        "commentPlaceholder": "Опционально",
+        "confirm": "Подтвердить отмену",
+        "confirmButton": "Отменить чек",
+        "cancelButton": "Отмена",
+        "success": "Чек успешно отменён",
+        "error": "Ошибка при отмене чека"
+      },
+      "cancelReasons": {
+        "cashier_error": "Ошибка кассира",
+        "technical_failure": "Технический сбой",
+        "customer_request": "Запрос клиента",
+        "fiscal_error": "Фискальная ошибка",
+        "other": "Другое"
+      },
+      "refundItems": {
+        "button": "Вернуть выбранное",
+        "title": "Возврат товаров",
+        "message": "Укажите количество товаров для возврата",
+        "reason": "Причина возврата",
+        "reasonPlaceholder": "Выберите причину",
+        "comment": "Комментарий",
+        "commentPlaceholder": "Опционально",
+        "quantity": "Количество для возврата",
+        "totalRefund": "Сумма возврата",
+        "confirm": "Подтвердить возврат",
+        "cancel": "Отмена",
+        "success": "Товары успешно возвращены",
+        "error": "Ошибка при возврате товаров",
+        "selectedItems": "Выбрано позиций",
+        "maxQuantity": "Максимум"
+      },
+      "refundReasons": {
+        "customer_request": "Запрос клиента",
+        "product_defect": "Дефект товара",
+        "wrong_item": "Неправильный товар",
+        "price_error": "Ошибка в цене",
+        "other": "Другое"
+      },
+      "history": {
+        "title": "История изменений",
+        "noHistory": "История пуста"
       }
     },
     "storeWebAccess": {
@@ -845,12 +903,30 @@
       "userCategories": "Пользовательские категории",
       "noCategories": "Нет категорий",
       "addProduct": "Добавить товар",
+      "addProducts": "Добавить товары",
       "totalProducts": "Всего товаров",
       "inStock": "В наличии",
       "totalValue": "Общая стоимость",
       "productsInCategory": "Товары в категории",
       "noProducts": "В этой категории пока нет товаров",
-      "addFirstProduct": "Добавить первый товар"
+      "addFirstProduct": "Добавить первый товар",
+      "deleteCategory": "Удалить категорию",
+      "confirmDelete": "Вы уверены, что хотите удалить категорию?",
+      "cannotDeleteSystem": "Системную категорию нельзя удалить",
+      "categoryHasProducts": "В категории {{count}} товаров",
+      "attachProducts": "Добавить выбранные",
+      "detachProduct": "Отвязать",
+      "currentCategory": "Текущая категория",
+      "categoryWillChange": "Категория товара будет изменена",
+      "selectProducts": "Выберите товары",
+      "searchProducts": "Поиск товаров...",
+      "noCategory": "Без категории",
+      "productsSelected": "{{count}} выбрано",
+      "backToList": "Назад к категориям",
+      "productsRemoved": "Товары удалены из категории",
+      "productsAttached": "Товары добавлены в категорию",
+      "categoryUpdated": "Категория обновлена",
+      "categoryDeleted": "Категория удалена"
     }
   },
   "paymentMethods": {
@@ -1157,7 +1233,7 @@
       "name": "Название",
       "balance": "Баланс",
       "namePlaceholder": "Например: Основная касса",
-      "safeType": "Тип сейфа",
+      "safeType": "Форма платежа",
       "accountNumber": "Номер счёта",
       "accountNumberPlaceholder": "Введите номер счёта",
       "initialBalance": "Начальный баланс",
@@ -1303,6 +1379,420 @@
       }
     }
   },
+  "documents": {
+    "suppliers": {
+      "title": "Поставщики",
+      "description": "Управление поставщиками и расчётами с ними",
+      "searchPlaceholder": "Поиск по названию...",
+      "createSupplier": "Создать поставщика",
+      "createSupplierDescription": "Добавьте нового поставщика в систему",
+      "editSupplier": "Редактировать поставщика",
+      "editSupplierDescription": "Измените данные поставщика",
+      "name": "Название",
+      "namePlaceholder": "Например: ООО Поставщик",
+      "entityType": "Тип",
+      "individual": "Физическое лицо",
+      "legal": "Юридическое лицо",
+      "phone": "Телефон",
+      "phonePlaceholder": "+998 XX XXX-XX-XX",
+      "email": "Email",
+      "emailPlaceholder": "example@mail.ru",
+      "address": "Адрес",
+      "addressPlaceholder": "Город, улица, дом",
+      "balance": "Баланс",
+      "startingBalance": "Начальный баланс",
+      "contacts": "Контакты",
+      "legalName": "Юридическое название",
+      "legalNamePlaceholder": "ООО Название компании",
+      "bankAccount": "Расчётный счёт",
+      "bankAccountPlaceholder": "20208000000000000000",
+      "inn": "ИНН/ПИНФЛ",
+      "innPlaceholder": "123456789",
+      "mfo": "МФО",
+      "mfoPlaceholder": "00123",
+      "bankName": "Название банка",
+      "bankNamePlaceholder": "Название банка",
+      "companyData": "Данные компании",
+      "emptyMessage": "Нет поставщиков для отображения",
+      "deleteConfirm": "Вы уверены, что хотите удалить этого поставщика?",
+      "deleteSuccess": "Поставщик успешно удалён",
+      "createSuccess": "Поставщик успешно создан",
+      "updateSuccess": "Поставщик успешно обновлён",
+      "validation": {
+        "nameMin": "Минимум 2 символа",
+        "nameMax": "Максимум 100 символов",
+        "phoneInvalid": "Некорректный формат телефона",
+        "emailInvalid": "Некорректный формат email",
+        "innInvalid": "Некорректный ИНН/ПИНФЛ",
+        "mfoInvalid": "Некорректный МФО"
+      },
+      "detail": {
+        "title": "Детали поставщика",
+        "basicInfo": "Основная информация",
+        "information": "Информация",
+        "history": "История операций",
+        "comments": "Комментарии",
+        "edit": "Редактировать",
+        "delete": "Удалить",
+        "noHistory": "История операций пуста",
+        "commentAdded": "Комментарий добавлен",
+        "commentEdited": "Комментарий изменён",
+        "commentDeleted": "Комментарий удалён",
+        "monitoring": "Мониторинг",
+        "balanceAtStart": "Баланс на начало",
+        "balanceAtEnd": "Баланс на конец",
+        "incomeForPeriod": "Приход за период",
+        "expenseForPeriod": "Расход за период",
+        "invoicesTab": "Накладные",
+        "transactionsTab": "Транзакции",
+        "accrualsTab": "Начисления",
+        "noInvoices": "Накладные не найдены"
+      },
+      "selectDateRange": "Выберите период"
+    },
+    "invoices": {
+      "title": "Накладные",
+      "description": "Управление накладными на поступление товаров от поставщиков",
+      "searchPlaceholder": "Поиск по номеру документа...",
+      "createInvoice": "Создать накладную",
+      "createInvoiceDescription": "Создайте новую накладную на поступление товара",
+      "editInvoice": "Редактировать накладную",
+      "editInvoiceDescription": "Измените данные накладной",
+      "direction": {
+        "label": "Направление",
+        "outgoing": "Созданные вручную",
+        "incoming": "От поставщиков"
+      },
+      "columns": {
+        "number": "Номер",
+        "date": "Дата публикации",
+        "supplier": "Поставщик",
+        "warehouse": "Склад",
+        "itemsCount": "Позиций",
+        "total": "Сумма",
+        "status": "Статус"
+      },
+      "filters": {
+        "allSuppliers": "Все поставщики",
+        "allWarehouses": "Все склады",
+        "allStatuses": "Все статусы",
+        "selectDateRange": "Выберите период"
+      },
+      "fields": {
+        "supplier": "Поставщик",
+        "supplierPlaceholder": "Выберите поставщика",
+        "warehouse": "Склад",
+        "warehousePlaceholder": "Выберите склад",
+        "notes": "Примечания",
+        "notesPlaceholder": "Дополнительная информация..."
+      },
+      "emptyMessage": "Нет накладных для отображения",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту накладную?",
+      "deleteSuccess": "Накладная успешно удалена",
+      "createSuccess": "Накладная успешно создана",
+      "updateSuccess": "Накладная успешно обновлена",
+      "validation": {
+        "supplierRequired": "Поставщик обязателен",
+        "warehouseRequired": "Склад обязателен",
+        "itemsEmpty": "Добавьте хотя бы один товар"
+      },
+      "detail": {
+        "title": "Накладная",
+        "backToList": "Назад к накладным",
+        "basicInfo": "Основная информация",
+        "items": "Товары",
+        "comments": "Комментарии",
+        "history": "История",
+        "number": "Номер",
+        "date": "Дата",
+        "supplier": "Поставщик",
+        "warehouse": "Склад",
+        "direction": "Направление",
+        "status": "Статус",
+        "created": "Дата создания",
+        "published": "Дата публикации",
+        "responsible": "Ответственный",
+        "notes": "Примечания",
+        "noNotes": "Примечаний нет",
+        "itemsCount": "Позиций",
+        "totalAmount": "Сумма",
+        "searchProducts": "Поиск товаров...",
+        "addProducts": "Добавить товары",
+        "deleteSelected": "Удалить выбранные",
+        "saveChanges": "Сохранить изменения",
+        "table": {
+          "product": "Товар",
+          "quantity": "Количество",
+          "price": "Цена",
+          "total": "Сумма",
+          "noProducts": "Товары не добавлены"
+        },
+        "actions": {
+          "edit": "Редактировать",
+          "delete": "Удалить накладную",
+          "publish": "Опубликовать",
+          "cancel": "Отменить накладную"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Опубликовать накладную?",
+            "message": "После публикации накладная будет проведена, товары поступят на склад. Изменить можно будет только количество и цены."
+          },
+          "cancel": {
+            "title": "Отменить накладную?",
+            "message": "Накладная будет отменена, товары будут списаны со склада. Это действие необратимо."
+          },
+          "delete": {
+            "title": "Удалить накладную?",
+            "message": "Накладная будет удалена безвозвратно. Это действие необратимо."
+          },
+          "addProducts": {
+            "title": "Добавить товары",
+            "description": "Выберите товары для добавления в накладную",
+            "noProductsFound": "Товары не найдены",
+            "noProductsAvailable": "Нет доступных товаров",
+            "selectedProducts": "{{count}} выбрано",
+            "addSelected": "Добавить выбранные"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Накладная успешно опубликована",
+          "cancelSuccess": "Накладная успешно отменена",
+          "deleteSuccess": "Накладная успешно удалена",
+          "saveSuccess": "Изменения успешно сохранены",
+          "commentAdded": "Комментарий добавлен",
+          "commentUpdated": "Комментарий обновлен",
+          "commentDeleted": "Комментарий удален"
+        },
+        "validation": {
+          "exceedsAvailable": "Количество превышает доступное"
+        }
+      }
+    },
+    "warehouseTransfers": {
+      "title": "Перемещение между складами",
+      "description": "Управление перемещениями товаров между складами",
+      "searchPlaceholder": "Поиск по номеру документа...",
+      "createTransfer": "Создать перемещение",
+      "createTransferDescription": "Создайте новое перемещение товаров между складами",
+      "editTransfer": "Редактировать перемещение",
+      "editTransferDescription": "Измените данные перемещения",
+      "columns": {
+        "number": "Номер",
+        "date": "Дата публикации",
+        "sourceWarehouse": "Отправитель",
+        "destinationWarehouse": "Получатель",
+        "itemsCount": "Позиций",
+        "total": "Сумма",
+        "status": "Статус"
+      },
+      "filters": {
+        "allWarehouses": "Все склады",
+        "allStatuses": "Все статусы",
+        "selectDateRange": "Выберите период",
+        "sourceWarehouse": "Склад отправитель",
+        "destinationWarehouse": "Склад получатель"
+      },
+      "fields": {
+        "sourceWarehouse": "Склад отправитель",
+        "sourceWarehousePlaceholder": "Выберите склад отправитель",
+        "destinationWarehouse": "Склад получатель",
+        "destinationWarehousePlaceholder": "Выберите склад получатель",
+        "notes": "Примечания",
+        "notesPlaceholder": "Дополнительная информация..."
+      },
+      "emptyMessage": "Нет перемещений для отображения",
+      "deleteConfirm": "Вы уверены, что хотите удалить это перемещение?",
+      "deleteSuccess": "Перемещение успешно удалено",
+      "createSuccess": "Перемещение успешно создано",
+      "updateSuccess": "Перемещение успешно обновлено",
+      "validation": {
+        "sourceWarehouseRequired": "Склад отправитель обязателен",
+        "destinationWarehouseRequired": "Склад получатель обязателен",
+        "sameWarehouse": "Склад отправитель и получатель не могут быть одинаковыми",
+        "itemsEmpty": "Добавьте хотя бы один товар"
+      },
+      "detail": {
+        "backToList": "Назад к перемещениям",
+        "sourceWarehouse": "Склад отправитель",
+        "destinationWarehouse": "Склад получатель",
+        "created": "Создано",
+        "published": "Опубликовано",
+        "responsible": "Ответственный",
+        "itemsCount": "Позиций",
+        "totalAmount": "Общая сумма",
+        "notes": "Примечания",
+        "comments": "Комментарии",
+        "history": "История",
+        "kpi": {
+          "costPrice": "Себестоимость",
+          "total": "Сумма",
+          "profit": "Прибыль"
+        },
+        "table": {
+          "product": "Товар",
+          "available": "Доступно",
+          "quantity": "Количество",
+          "price": "Цена",
+          "amount": "Сумма",
+          "noProducts": "Нет товаров в перемещении"
+        },
+        "searchProducts": "Поиск товаров...",
+        "addProducts": "Добавить товары",
+        "deleteSelected": "Удалить выбранное",
+        "saveChanges": "Сохранить изменения",
+        "actions": {
+          "publish": "Опубликовать",
+          "cancel": "Отменить",
+          "delete": "Удалить"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Подтвердить публикацию",
+            "message": "Вы уверены, что хотите опубликовать это перемещение? После публикации товары будут перемещены между складами."
+          },
+          "cancel": {
+            "title": "Отменить перемещение",
+            "message": "Вы уверены, что хотите отменить это перемещение? Это действие нельзя отменить."
+          },
+          "delete": {
+            "title": "Удалить перемещение",
+            "message": "Вы уверены, что хотите удалить это перемещение? Это действие нельзя отменить."
+          },
+          "addProducts": {
+            "title": "Добавить товары",
+            "description": "Выберите товары для добавления в перемещение",
+            "noProductsAvailable": "Нет доступных товаров",
+            "addSelected": "Добавить выбранное"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Перемещение успешно опубликовано",
+          "cancelSuccess": "Перемещение успешно отменено",
+          "deleteSuccess": "Перемещение успешно удалено",
+          "saveSuccess": "Изменения успешно сохранены",
+          "commentAdded": "Комментарий добавлен",
+          "commentUpdated": "Комментарий обновлен",
+          "commentDeleted": "Комментарий удален"
+        }
+      }
+    },
+    "storeTransfers": {
+      "title": "Перемещение между магазинами",
+      "description": "Управление перемещениями товаров между магазинами",
+      "searchPlaceholder": "Поиск по номеру документа...",
+      "createTransfer": "Создать перемещение",
+      "createTransferDescription": "Создайте новое перемещение товаров между магазинами",
+      "editTransfer": "Редактировать перемещение",
+      "editTransferDescription": "Измените данные перемещения",
+      "columns": {
+        "number": "Номер",
+        "date": "Дата публикации",
+        "sender": "Отправитель",
+        "recipient": "Получатель",
+        "itemsCount": "Позиций",
+        "total": "Сумма",
+        "status": "Статус"
+      },
+      "filters": {
+        "allWarehouses": "Все склады",
+        "allStores": "Все магазины",
+        "allStatuses": "Все статусы",
+        "selectDateRange": "Выберите период",
+        "sourceWarehouse": "Склад-отправитель",
+        "destinationStore": "Магазин-получатель"
+      },
+      "fields": {
+        "sourceWarehouse": "Склад-отправитель",
+        "sourceWarehousePlaceholder": "Выберите склад-отправитель",
+        "destinationStore": "Магазин-получатель",
+        "destinationStorePlaceholder": "Выберите магазин-получатель",
+        "destinationWarehouse": "Склад-получатель",
+        "destinationWarehousePlaceholder": "Выберите склад-получатель",
+        "notes": "Примечания",
+        "notesPlaceholder": "Дополнительная информация..."
+      },
+      "emptyMessage": "Нет перемещений для отображения",
+      "deleteConfirm": "Вы уверены, что хотите удалить это перемещение?",
+      "deleteSuccess": "Перемещение успешно удалено",
+      "createSuccess": "Перемещение успешно создано",
+      "updateSuccess": "Перемещение успешно обновлено",
+      "validation": {
+        "sourceWarehouseRequired": "Склад-отправитель обязателен",
+        "destinationStoreRequired": "Магазин-получатель обязателен",
+        "destinationWarehouseRequired": "Склад-получатель обязателен",
+        "sameStore": "Невозможно создать перемещение в тот же магазин",
+        "warehouseNotBelongsToStore": "Склад не принадлежит выбранному магазину",
+        "itemsEmpty": "Добавьте хотя бы один товар"
+      },
+      "detail": {
+        "backToList": "Назад к перемещениям",
+        "sourceWarehouse": "Склад-отправитель",
+        "destinationStore": "Магазин-получатель",
+        "destinationWarehouse": "Склад-получатель",
+        "created": "Создано",
+        "published": "Опубликовано",
+        "responsible": "Ответственный",
+        "itemsCount": "Позиций",
+        "totalAmount": "Общая сумма",
+        "notes": "Примечания",
+        "comments": "Комментарии",
+        "history": "История",
+        "kpi": {
+          "costPrice": "Себестоимость",
+          "total": "Сумма",
+          "profit": "Прибыль"
+        },
+        "table": {
+          "product": "Товар",
+          "available": "Доступно",
+          "quantity": "Количество",
+          "price": "Цена",
+          "amount": "Сумма",
+          "noProducts": "Нет товаров в перемещении"
+        },
+        "searchProducts": "Поиск товаров...",
+        "addProducts": "Добавить товары",
+        "deleteSelected": "Удалить выбранное",
+        "saveChanges": "Сохранить изменения",
+        "actions": {
+          "publish": "Опубликовать",
+          "cancel": "Отменить",
+          "delete": "Удалить",
+          "edit": "Редактировать"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Подтвердить публикацию",
+            "message": "Вы уверены, что хотите опубликовать это перемещение? После публикации товары будут перемещены между магазинами."
+          },
+          "cancel": {
+            "title": "Отменить перемещение",
+            "message": "Вы уверены, что хотите отменить это перемещение? Это действие нельзя отменить."
+          },
+          "delete": {
+            "title": "Удалить перемещение",
+            "message": "Вы уверены, что хотите удалить это перемещение? Это действие нельзя отменить."
+          },
+          "addProducts": {
+            "title": "Добавить товары",
+            "description": "Выберите товары для добавления в перемещение",
+            "noProductsAvailable": "Нет доступных товаров",
+            "addSelected": "Добавить выбранное"
+          }
+        },
+        "toasts": {
+          "publishSuccess": "Перемещение успешно опубликовано",
+          "cancelSuccess": "Перемещение успешно отменено",
+          "deleteSuccess": "Перемещение успешно удалено",
+          "saveSuccess": "Изменения успешно сохранены",
+          "commentAdded": "Комментарий добавлен",
+          "commentUpdated": "Комментарий обновлен",
+          "commentDeleted": "Комментарий удален"
+        }
+      }
+    }
+  },
   "warehouses": {
     "title": "Склады",
     "description": "Управление складами и остатками товаров",
@@ -1345,6 +1835,312 @@
       "quantity": "Количество",
       "totalCost": "Сумма",
       "noProducts": "Нет товаров на складе"
+    },
+    "monitoring": {
+      "title": "Мониторинг склада",
+      "description": "Отслеживание остатков товаров, закупочных и продажных цен в режиме реального времени",
+      "searchPlaceholder": "Поиск по названию, SKU или штрихкоду...",
+      "noProducts": "Нет товаров для отображения",
+      "columns": {
+        "product": "Товар",
+        "sku": "Артикул",
+        "category": "Категория",
+        "stock": "Остаток",
+        "warehouses": "Склады",
+        "sellingPrice": "Цена продажи",
+        "purchasePrice": "Цена закупки",
+        "margin": "Маржа",
+        "lastReceived": "Последний приход"
+      },
+      "filters": {
+        "allCategories": "Все категории",
+        "allWarehouses": "Все склады",
+        "selectAll": "Выбрать все",
+        "clearAll": "Снять все",
+        "allStock": "Все товары",
+        "inStock": "В наличии",
+        "lowStock": "Мало",
+        "outOfStock": "Нет в наличии"
+      },
+      "tooltips": {
+        "warehouseStock": "{{warehouse}}: {{quantity}} {{unit}}"
+      },
+      "units": {
+        "pcs": "шт",
+        "kg": "кг",
+        "l": "л"
+      },
+      "detail": {
+        "title": "Детали товара",
+        "backToMonitoring": "Назад к мониторингу",
+        "productInfo": "Информация о товаре",
+        "monitoring": "Мониторинг",
+        "warehousesWithStock": "Остатки на складах",
+        "searchWarehouse": "Поиск по складу...",
+        "productName": "Название товара",
+        "category": "Категория",
+        "sku": "Артикул",
+        "barcode": "Штрихкод",
+        "unit": "Единица измерения",
+        "totalStockAllWarehouses": "Общий остаток на всех складах",
+        "totalValueAllWarehouses": "Общая стоимость на всех складах",
+        "warehousesCount": "Складов с товаром",
+        "lastPurchasePrice": "Последняя цена закупки",
+        "lastReceivedQuantity": "Количество последнего прихода",
+        "lastReceivedDate": "Дата последнего прихода",
+        "selectDateRange": "Выберите период",
+        "stockAtStart": "Остаток на начало",
+        "stockAtEnd": "Остаток на конец",
+        "receivedForPeriod": "Поступило за период",
+        "writtenOffForPeriod": "Списалось за период",
+        "warehouseName": "Склад",
+        "stockQuantity": "Остаток",
+        "stockValue": "Сумма остатков",
+        "emptyWarehouses": "Нет складов с остатками",
+        "noBarcode": "Нет штрихкода",
+        "notReceived": "Не было поступлений"
+      }
+    },
+    "inventory": {
+      "title": "Инвентаризация",
+      "description": "Управление документами инвентаризации и контроль остатков товаров",
+      "searchPlaceholder": "Поиск по номеру или складу...",
+      "createInventory": "Создать инвентаризацию",
+      "createInventoryDescription": "Выберите тип и склад для проведения инвентаризации",
+      "editInventory": "Редактировать инвентаризацию",
+      "editInventoryDescription": "Внесите изменения в документ инвентаризации",
+      "noInventories": "Нет документов инвентаризации",
+      "columns": {
+        "date": "Дата",
+        "number": "Номер",
+        "responsible": "Ответственный",
+        "warehouse": "Склад",
+        "discrepancy": "Расхождение",
+        "type": "Тип",
+        "status": "Статус"
+      },
+      "filters": {
+        "allResponsible": "Все ответственные",
+        "allTypes": "Все типы",
+        "allWarehouses": "Все склады",
+        "selectAll": "Выбрать все",
+        "clearAll": "Снять все",
+        "dateFrom": "Дата от",
+        "dateTo": "Дата до"
+      },
+      "types": {
+        "full": "Полная",
+        "partial": "Частичная"
+      },
+      "fields": {
+        "type": "Тип инвентаризации",
+        "typePlaceholder": "Выберите тип",
+        "warehouse": "Склад",
+        "warehousePlaceholder": "Выберите склад",
+        "responsible": "Ответственный"
+      },
+      "discrepancy": {
+        "none": "Нет расхождения",
+        "positive": "+{{amount}}",
+        "negative": "−{{amount}}"
+      },
+      "createSuccess": "Инвентаризация создана",
+      "updateSuccess": "Инвентаризация обновлена",
+      "deleteSuccess": "Инвентаризация удалена",
+      "deleteConfirm": "Вы уверены, что хотите удалить эту инвентаризацию?",
+      "validation": {
+        "typeRequired": "Выберите тип инвентаризации",
+        "warehouseRequired": "Выберите склад"
+      },
+      "detail": {
+        "title": "Инвентаризация",
+        "backToList": "Назад к списку",
+        "information": "Информация",
+        "status": "Статус",
+        "number": "Номер",
+        "type": "Тип",
+        "createdDate": "Дата создания",
+        "publishDate": "Дата публикации",
+        "warehouse": "Склад",
+        "responsible": "Ответственный",
+        "notes": "Примечания",
+        "comments": "Комментарии",
+        "history": "История",
+        "inventory": "Инвентаризация",
+        "documents": "Документы",
+        "totalShortage": "Общая сумма недостатков",
+        "totalSurplus": "Общая сумма излишек",
+        "searchProducts": "Поиск по товарам...",
+        "addProduct": "Добавить товар",
+        "selectProducts": "Выбрать товары",
+        "selectProductsDescription": "Выберите товары для частичной инвентаризации",
+        "selectedProducts": "Выбрано товаров",
+        "addSelectedProducts": "Добавить выбранные",
+        "noProductsFound": "Товары не найдены",
+        "noProductsAvailable": "Нет доступных товаров",
+        "removeProduct": "Удалить из списка",
+        "removeProducts": "Товары удалены из списка",
+        "productAdded": "Товары добавлены в список инвентаризации",
+        "receiptDocument": "Документ прихода",
+        "writeoffDocument": "Документ списания",
+        "openDocument": "Открыть документ",
+        "noDocuments": "Документы будут созданы после публикации инвентаризации",
+        "documentNumber": "Номер документа",
+        "documentDate": "Дата создания",
+        "itemsCount": "Позиций",
+        "totalAmount": "Сумма",
+        "actions": {
+          "edit": "Изменить",
+          "delete": "Удалить",
+          "publish": "Опубликовать",
+          "cancel": "Отменить"
+        },
+        "table": {
+          "product": "Товар",
+          "sku": "Артикул",
+          "category": "Категория",
+          "currentStock": "Текущий остаток",
+          "expected": "Текущее количество",
+          "actual": "Фактическое количество",
+          "actualPlaceholder": "Введите количество",
+          "discrepancy": "Расхождение",
+          "discrepancyAmount": "Сумма расхождения",
+          "unit": "ед."
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Опубликовать инвентаризацию",
+            "message": "После публикации будут автоматически созданы документы прихода и списания для компенсации расхождений. Продолжить?"
+          },
+          "cancel": {
+            "title": "Отменить инвентаризацию",
+            "message": "Вы уверены, что хотите отменить эту инвентаризацию? Это действие необратимо."
+          },
+          "delete": {
+            "title": "Удалить инвентаризацию",
+            "message": "Вы уверены, что хотите удалить эту инвентаризацию? Это действие необратимо."
+          }
+        },
+        "publishSuccess": "Инвентаризация опубликована",
+        "cancelSuccess": "Инвентаризация отменена",
+        "saveSuccess": "Изменения сохранены",
+        "saveChanges": "Сохранить изменения",
+        "statusUpdated": "Статус обновлён"
+      }
+    },
+    "writeoffs": {
+      "title": "Списания",
+      "description": "Управление документами списания товаров со склада",
+      "searchPlaceholder": "Поиск по номеру или складу...",
+      "createWriteoff": "Создать списание",
+      "createWriteoffDescription": "Создайте новый документ списания товаров",
+      "noWriteoffs": "Нет документов списания",
+      "createSuccess": "Списание создано",
+      "columns": {
+        "date": "Дата публикации",
+        "number": "Номер документа",
+        "warehouse": "Склад",
+        "reason": "Причина",
+        "itemsCount": "Позиций",
+        "totalAmount": "Сумма списания",
+        "responsible": "Ответственный",
+        "status": "Статус"
+      },
+      "filters": {
+        "allReasons": "Все причины",
+        "allWarehouses": "Все склады",
+        "allStatuses": "Все статусы",
+        "selectAll": "Выбрать все",
+        "clearAll": "Снять все",
+        "selectDateRange": "Выберите период"
+      },
+      "reasons": {
+        "expired": "Истёк срок годности",
+        "damaged": "Повреждение",
+        "lost": "Утеря",
+        "shortage": "Недостача",
+        "other": "Другое"
+      },
+      "fields": {
+        "warehouse": "Склад",
+        "warehousePlaceholder": "Выберите склад",
+        "reason": "Причина списания",
+        "reasonPlaceholder": "Выберите причину",
+        "notes": "Примечания",
+        "notesPlaceholder": "Дополнительная информация..."
+      },
+      "validation": {
+        "warehouseRequired": "Выберите склад",
+        "reasonRequired": "Выберите причину списания",
+        "exceedsAvailable": "Количество списания не может превышать доступное количество на складе"
+      },
+      "detail": {
+        "backToList": "Назад к списаниям",
+        "status": "Статус",
+        "reason": "Причина списания",
+        "createdDate": "Дата создания",
+        "publishDate": "Дата публикации",
+        "warehouse": "Склад",
+        "responsible": "Ответственный",
+        "itemsCount": "Количество позиций",
+        "totalAmount": "Общая сумма списания",
+        "notes": "Заметки",
+        "comments": "Комментарии",
+        "history": "История",
+        "searchProducts": "Поиск товаров",
+        "addProduct": "Добавить товары",
+        "removeProducts": "Удалить выбранные",
+        "saveChanges": "Сохранить изменения",
+        "productAdded": "Товары добавлены",
+        "commentAdded": "Комментарий добавлен",
+        "deleteSuccess": "Списание удалено",
+        "publishSuccess": "Списание опубликовано",
+        "cancelSuccess": "Списание отменено",
+        "saveSuccess": "Изменения сохранены",
+        "table": {
+          "product": "Товар",
+          "available": "Доступно",
+          "writeoffQty": "Количество списания",
+          "costPrice": "Себестоимость",
+          "totalAmount": "Сумма",
+          "sku": "Артикул",
+          "category": "Категория",
+          "currentStock": "Текущий остаток"
+        },
+        "reasons": {
+          "expired": "Истёк срок",
+          "damaged": "Повреждение",
+          "lost": "Потеря",
+          "shortage": "Недостача",
+          "other": "Другое"
+        },
+        "actions": {
+          "edit": "Редактировать",
+          "delete": "Удалить",
+          "publish": "Опубликовать",
+          "cancel": "Отменить"
+        },
+        "confirmDialogs": {
+          "publish": {
+            "title": "Опубликовать списание",
+            "message": "После публикации товары будут списаны со склада. Продолжить?"
+          },
+          "cancel": {
+            "title": "Отменить списание",
+            "message": "Вы уверены, что хотите отменить это списание? Это действие необратимо."
+          },
+          "delete": {
+            "title": "Удалить списание",
+            "message": "Вы уверены, что хотите удалить это списание? Это действие необратимо."
+          }
+        },
+        "selectProducts": "Выбор товаров",
+        "selectProductsDescription": "Выберите товары для добавления в списание",
+        "noProductsFound": "Товары не найдены",
+        "noProductsAvailable": "Нет доступных товаров",
+        "selectedProducts": "Выбрано товаров",
+        "addSelectedProducts": "Добавить выбранные"
+      }
     }
   },
   "components": {

@@ -4,6 +4,8 @@ import { headers } from 'next/headers';
 import './globals.css';
 import { ThemeProvider } from '../providers/theme-provider';
 import { I18nProvider } from '../providers/i18n-provider';
+import { QueryProvider } from '../providers/query-provider';
+import { AuthProvider } from '../providers/auth-provider';
 import { CustomToaster } from '../components/custom-toaster';
 
 const inter = Inter({ subsets: ['latin', 'cyrillic'] });
@@ -30,17 +32,21 @@ export default async function RootLayout({
   return (
     <html lang={language} suppressHydrationWarning>
       <body className={inter.className}>
-        <I18nProvider initialLanguage={language}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
-            {children}
-            <CustomToaster />
-          </ThemeProvider>
-        </I18nProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <I18nProvider initialLanguage={language}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem={false}
+                disableTransitionOnChange
+              >
+                {children}
+                <CustomToaster />
+              </ThemeProvider>
+            </I18nProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

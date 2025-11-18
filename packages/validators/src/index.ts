@@ -16,29 +16,7 @@ export const paginationSchema = z.object({
   limit: z.number().int().positive().max(100).default(20),
 });
 
-// Auth
-export const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-});
-
-export const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  name: z.string().min(2).max(100),
-  businessName: z.string().min(2).max(200),
-  taxId: z.string().optional(),
-  locale: localeSchema.default('ru'),
-});
-
-export const sendOtpSchema = z.object({
-  phone: z.string().min(9).max(20),
-});
-
-export const verifyOtpSchema = z.object({
-  phone: z.string().min(9).max(20),
-  otp: z.string().length(6),
-});
+// Auth schemas are now in ./auth.ts and exported at the bottom of this file
 
 // Registration multi-step schemas
 export const registerStep1Schema = z.object({
@@ -625,7 +603,70 @@ export type ActivityType = z.infer<typeof activityTypeSchema>;
 export type FieldChange = z.infer<typeof fieldChangeSchema>;
 export type CreateDocumentActivitySchema = z.infer<typeof createDocumentActivitySchema>;
 
-// Export all schemas
-// TODO: Add auth and inventory schema modules when needed
-// export * from './auth';
-// export * from './inventory';
+// Auth schemas for API (duplicated to avoid ESM import issues)
+export const phoneSchema = z
+  .string()
+  .regex(/^998\d{9}$/, {
+    message: 'Номер телефона должен быть в формате +998 XX XXX-XX-XX',
+  });
+
+export const otpSchemaAuth = z
+  .string()
+  .length(6, { message: 'Код должен содержать 6 цифр' })
+  .regex(/^\d{6}$/, { message: 'Код должен содержать только цифры' });
+
+export const passwordSchemaAuth = z
+  .string()
+  .min(8, { message: 'Пароль должен содержать минимум 8 символов' })
+  .regex(/[A-ZА-ЯЁ]/, {
+    message: 'Пароль должен содержать минимум одну заглавную букву',
+  });
+
+export const businessTypeSchemaAuth = z.enum(['single_brand', 'multi_brand'], {
+  errorMap: () => ({ message: 'Выберите тип бизнеса' }),
+});
+
+export const registerSchema = z.object({
+  phone: phoneSchema,
+  name: z.string().min(2).max(100),
+  password: passwordSchemaAuth,
+  businessType: businessTypeSchemaAuth,
+  businessName: z.string().min(2).max(200),
+});
+
+export const loginSchema = z.object({
+  phone: phoneSchema,
+  password: z.string().min(1, { message: 'Введите пароль' }),
+});
+
+export const sendOtpSchema = z.object({
+  phone: phoneSchema,
+});
+
+export const verifyOtpSchema = z.object({
+  phone: phoneSchema,
+  otp: otpSchemaAuth,
+});
+
+export const forgotPasswordSchema = z.object({
+  phone: phoneSchema,
+});
+
+export const resetPasswordSchema = z
+  .object({
+    phone: phoneSchema,
+    otp: otpSchemaAuth,
+    newPassword: passwordSchemaAuth,
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Пароли не совпадают',
+    path: ['confirmNewPassword'],
+  });
+
+// Auth types for API
+export type PhoneSchema = z.infer<typeof phoneSchema>;
+export type RegisterSchema = z.infer<typeof registerSchema>;
+export type LoginSchema = z.infer<typeof loginSchema>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;

@@ -12,6 +12,9 @@ import { OtpService } from './otp.service';
 import { RegisterDto } from './dto/register.dto';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
+import { LoginDto } from './dto/login.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()
@@ -110,15 +113,15 @@ export class AuthService {
    * Register new user
    */
   async register(dto: RegisterDto): Promise<{ success: boolean; user: any; accessToken: string }> {
-    const { email, name, password, businessName, taxId, locale } = dto;
+    const { phone, name, password, businessType, businessName } = dto;
 
     // Check if user already exists
     const existingUser = await this.db.user.findUnique({
-      where: { email },
+      where: { phone },
     });
 
     if (existingUser) {
-      throw new ConflictException('Пользователь с таким email уже существует');
+      throw new ConflictException('Пользователь с таким номером телефона уже существует');
     }
 
     // Hash password
@@ -133,22 +136,25 @@ export class AuthService {
     const business = await this.db.business.create({
       data: {
         name: businessName,
-        taxId: taxId || `TEMP-${Date.now()}`, // Temporary taxId if not provided
+        taxId: `TEMP-${Date.now()}`, // Temporary taxId until user provides real one
         currency: 'UZS',
-        locale: locale || 'ru',
+        locale: 'ru', // Default to Russian, can be changed in settings
         isActive: true,
       },
     });
 
+    // Generate email from phone for now (can be updated later by user)
+    const email = `${phone}@jowi.uz`;
+
     // Create user
     const user = await this.db.user.create({
       data: {
-        phone: email.split('@')[0], // Extract phone from email or use email prefix
+        phone,
         firstName,
         lastName,
-        email,
+        email, // Generated email from phone
         password: hashedPassword,
-        role: 'admin',
+        role: 'admin', // First user in business is always admin
         isActive: true,
         tenantId: business.id,
       },
@@ -175,12 +181,12 @@ export class AuthService {
   }
 
   /**
-   * Login existing user
+   * Login existing user with password
    */
-  async login(dto: VerifyOtpDto): Promise<{ success: boolean; user: any; accessToken: string }> {
-    const { phone } = dto;
+  async login(dto: LoginDto): Promise<{ success: boolean; user: any; accessToken: string }> {
+    const { phone, password } = dto;
 
-    // Find user by phone
+    // Find user by phone (include password for verification)
     const user = await this.db.user.findUnique({
       where: { phone },
       select: {
@@ -189,6 +195,7 @@ export class AuthService {
         firstName: true,
         lastName: true,
         email: true,
+        password: true, // Need password for verification
         role: true,
         tenantId: true,
         isActive: true,
@@ -197,20 +204,161 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Пользователь не найден');
+      throw new UnauthorizedException('Неверный номер телефона или пароль');
     }
 
     if (!user.isActive) {
       throw new UnauthorizedException('Аккаунт заблокирован');
     }
 
+    // Verify password
+    if (!user.password) {
+      throw new UnauthorizedException('Пользователь не имеет пароля. Обратитесь к администратору.');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Неверный номер телефона или пароль');
+    }
+
+    // Remove password from response
+    const { password: _, ...userWithoutPassword } = user;
+
     // Generate JWT token
     const accessToken = this.generateAccessToken(user.id, user.tenantId, user.role, user.email);
 
     return {
       success: true,
-      user,
+      user: userWithoutPassword,
       accessToken,
+    };
+  }
+
+  /**
+   * Send OTP code for password reset
+   */
+  async forgotPassword(dto: ForgotPasswordDto): Promise<{ success: boolean; message: string }> {
+    const { phone } = dto;
+
+    // Check if user exists
+    const user = await this.db.user.findUnique({
+      where: { phone },
+      select: { id: true, isActive: true },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Пользователь с таким номером не найден');
+    }
+
+    if (!user.isActive) {
+      throw new BadRequestException('Аккаунт заблокирован');
+    }
+
+    // Check if there's an existing valid OTP request
+    const existingOtp = await this.otpService.getPasswordResetRequest(phone);
+    if (existingOtp) {
+      const key = `password-reset:${phone}`;
+      const ttl = await this.otpService['redis'].ttl(key);
+      if (ttl > 240) {
+        // Still more than 4 minutes left
+        throw new BadRequestException(
+          `Код уже отправлен. Повторная отправка возможна через ${Math.ceil(ttl - 240)} сек`
+        );
+      }
+    }
+
+    // Send verification code via Telegram
+    const requestId = await this.telegramService.sendVerificationCode(phone);
+
+    // Save password reset OTP request to Redis
+    await this.otpService.savePasswordResetRequest(phone, requestId);
+
+    return {
+      success: true,
+      message: 'Код для восстановления пароля отправлен на указанный номер',
+    };
+  }
+
+  /**
+   * Verify OTP code for password reset
+   */
+  async verifyPasswordResetOtp(dto: VerifyOtpDto): Promise<{ success: boolean; message: string }> {
+    const { phone, otp } = dto;
+
+    // Get password reset OTP request from Redis
+    const otpData = await this.otpService.getPasswordResetRequest(phone);
+    if (!otpData) {
+      throw new BadRequestException('Код не найден или истек');
+    }
+
+    // Check if max attempts exceeded
+    if (await this.otpService.hasExceededPasswordResetAttempts(phone)) {
+      throw new BadRequestException('Превышено максимальное количество попыток');
+    }
+
+    // Check if expired
+    if (await this.otpService.isPasswordResetOtpExpired(phone)) {
+      throw new BadRequestException('Код истек. Запросите новый код');
+    }
+
+    // Verify code with Telegram
+    const isValid = await this.telegramService.verifyCode(otpData.requestId, otp);
+
+    if (!isValid) {
+      // Increment attempts
+      await this.otpService.incrementPasswordResetAttempts(phone);
+      throw new UnauthorizedException('Неверный код');
+    }
+
+    return {
+      success: true,
+      message: 'Код подтвержден. Вы можете установить новый пароль',
+    };
+  }
+
+  /**
+   * Reset password with new password
+   */
+  async resetPassword(dto: ResetPasswordDto): Promise<{ success: boolean; message: string }> {
+    const { phone, otp, newPassword } = dto;
+
+    // Verify OTP one more time
+    const otpData = await this.otpService.getPasswordResetRequest(phone);
+    if (!otpData) {
+      throw new BadRequestException('Код не найден или истек');
+    }
+
+    // Verify code with Telegram
+    const isValid = await this.telegramService.verifyCode(otpData.requestId, otp);
+    if (!isValid) {
+      throw new UnauthorizedException('Неверный код');
+    }
+
+    // Find user
+    const user = await this.db.user.findUnique({
+      where: { phone },
+      select: { id: true },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Пользователь не найден');
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user password
+    await this.db.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    // Delete password reset OTP request
+    await this.otpService.deletePasswordResetRequest(phone);
+
+    return {
+      success: true,
+      message: 'Пароль успешно изменён',
     };
   }
 }

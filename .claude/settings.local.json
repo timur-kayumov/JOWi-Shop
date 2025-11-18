@@ -41,7 +41,20 @@
       "WebFetch(domain:github.com)",
       "WebSearch",
       "Bash(pnpm db:push:*)",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(move \"apps\\web\\src\\app\\store\\[id]\\warehouses\\[warehouseId]\" \"apps\\web\\src\\app\\store\\[id]\\warehouses\\warehouses-list\\[warehouseId]\")",
+      "Bash(docker compose:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "WebFetch(domain:www.radix-ui.com)",
+      "WebFetch(domain:preline.co)",
+      "mcp__playwright__browser_type",
+      "WebFetch(domain:core.telegram.org)",
+      "Bash(docker-compose restart:*)",
+      "mcp__playwright__browser_network_requests",
+      "mcp__playwright__browser_run_code",
+      "mcp__playwright__browser_fill_form",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

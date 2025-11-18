@@ -19,20 +19,54 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       separate: false,
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const formattedValue = e.target.value;
+    const processValue = React.useCallback((rawValue: string) => {
       // Extract only the digits from the entire string (includes 998)
-      const allDigits = formattedValue.replace(/\D/g, '');
+      let allDigits = rawValue.replace(/\D/g, '');
+
+      // Handle browser autofill duplicating the country code
+      // If we have 998998... (country code duplicated), remove the first 998
+      if (allDigits.startsWith('998998')) {
+        allDigits = allDigits.slice(3); // Remove first 998
+      }
 
       // Call onChange with all digits (998 + 9 digits = 12 total)
       onChange?.(allDigits.slice(0, 12));
+    }, [onChange]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      // Use setTimeout to let the mask library finish processing
+      setTimeout(() => {
+        const formattedValue = inputRef.current?.value || '';
+        processValue(formattedValue);
+      }, 0);
     };
+
+    // Detect and handle browser autofill
+    React.useEffect(() => {
+      const input = inputRef.current;
+      if (!input) return;
+
+      let lastValue = input.value;
+
+      // Check for value changes (autofill detection)
+      const checkAutofill = () => {
+        if (input.value !== lastValue) {
+          lastValue = input.value;
+          processValue(input.value);
+        }
+      };
+
+      // Use polling to detect autofill (browsers don't always trigger events)
+      const interval = setInterval(checkAutofill, 100);
+
+      return () => clearInterval(interval);
+    }, [processValue]);
 
     // Sync external value changes to the input
     React.useEffect(() => {
       if (inputRef.current && value !== undefined) {
         // Format the value: expect value to be 998XXXXXXXXX (12 digits total)
-        const allDigits = value.replace(/\D/g, '');
+        const allDigits = String(value || '').replace(/\D/g, '');
 
         // Extract the phone digits after 998 prefix
         const phoneDigits = allDigits.substring(0, 3) === '998' ? allDigits.slice(3) : allDigits;
@@ -73,6 +107,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         <input
           ref={inputRef}
           type="tel"
+          autoComplete="tel"
           onChange={handleChange}
           className={cn(
             'flex h-10 w-full rounded-lg border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 transition-colors',

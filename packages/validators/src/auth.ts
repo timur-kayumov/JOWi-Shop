@@ -19,6 +19,19 @@ export const otpSchema = z
   .regex(/^\d{6}$/, { message: 'Код должен содержать только цифры' });
 
 /**
+ * Валидация пароля
+ * Требования:
+ * - Минимум 8 символов
+ * - Минимум 1 заглавная буква (A-Z или А-Я)
+ */
+export const passwordSchema = z
+  .string()
+  .min(8, { message: 'Пароль должен содержать минимум 8 символов' })
+  .regex(/[A-ZА-ЯЁ]/, {
+    message: 'Пароль должен содержать минимум одну заглавную букву',
+  });
+
+/**
  * Тип бизнеса
  */
 export const businessTypeSchema = z.enum(['single_brand', 'multi_brand'], {
@@ -26,20 +39,27 @@ export const businessTypeSchema = z.enum(['single_brand', 'multi_brand'], {
 });
 
 /**
- * Шаг 1 регистрации: телефон + имя + согласие
+ * Шаг 1 регистрации: телефон + имя + пароль + согласие
  */
-export const registerStep1Schema = z.object({
-  phone: phoneSchema,
-  name: z
-    .string()
-    .min(2, { message: 'Имя должно содержать минимум 2 символа' })
-    .max(100, { message: 'Имя не должно превышать 100 символов' }),
-  agreedToTerms: z.literal(true, {
-    errorMap: () => ({
-      message: 'Необходимо согласиться с условиями использования',
+export const registerStep1Schema = z
+  .object({
+    phone: phoneSchema,
+    name: z
+      .string()
+      .min(2, { message: 'Имя должно содержать минимум 2 символа' })
+      .max(100, { message: 'Имя не должно превышать 100 символов' }),
+    password: passwordSchema,
+    confirmPassword: z.string(),
+    agreedToTerms: z.literal(true, {
+      errorMap: () => ({
+        message: 'Необходимо согласиться с условиями использования',
+      }),
     }),
-  }),
-});
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Пароли не совпадают',
+    path: ['confirmPassword'],
+  });
 
 /**
  * Шаг 2 регистрации: OTP код
@@ -62,27 +82,22 @@ export const registerStep3Schema = z.object({
 
 /**
  * Полная схема регистрации (объединение всех шагов)
+ * Используется для финального API запроса после прохождения всех шагов регистрации
  */
 export const registerSchema = z.object({
   phone: phoneSchema,
   name: z.string().min(2).max(100),
+  password: passwordSchema,
   businessType: businessTypeSchema,
   businessName: z.string().min(2).max(200),
 });
 
 /**
- * Шаг 1 входа: телефон
+ * Вход по телефону и паролю
  */
-export const loginStep1Schema = z.object({
+export const loginSchema = z.object({
   phone: phoneSchema,
-});
-
-/**
- * Шаг 2 входа: OTP код
- */
-export const loginStep2Schema = z.object({
-  phone: phoneSchema,
-  otp: otpSchema,
+  password: z.string().min(1, { message: 'Введите пароль' }),
 });
 
 /**
@@ -101,16 +116,40 @@ export const verifyOtpSchema = z.object({
 });
 
 /**
+ * Запрос на восстановление пароля (шаг 1)
+ */
+export const forgotPasswordSchema = z.object({
+  phone: phoneSchema,
+});
+
+/**
+ * Сброс пароля (шаг 3 - после проверки OTP)
+ */
+export const resetPasswordSchema = z
+  .object({
+    phone: phoneSchema,
+    otp: otpSchema,
+    newPassword: passwordSchema,
+    confirmNewPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Пароли не совпадают',
+    path: ['confirmNewPassword'],
+  });
+
+/**
  * TypeScript типы из схем
  */
 export type PhoneSchema = z.infer<typeof phoneSchema>;
 export type OtpSchema = z.infer<typeof otpSchema>;
+export type PasswordSchema = z.infer<typeof passwordSchema>;
 export type BusinessTypeSchema = z.infer<typeof businessTypeSchema>;
 export type RegisterStep1Schema = z.infer<typeof registerStep1Schema>;
 export type RegisterStep2Schema = z.infer<typeof registerStep2Schema>;
 export type RegisterStep3Schema = z.infer<typeof registerStep3Schema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
-export type LoginStep1Schema = z.infer<typeof loginStep1Schema>;
-export type LoginStep2Schema = z.infer<typeof loginStep2Schema>;
+export type LoginSchema = z.infer<typeof loginSchema>;
 export type SendOtpSchema = z.infer<typeof sendOtpSchema>;
 export type VerifyOtpSchema = z.infer<typeof verifyOtpSchema>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
